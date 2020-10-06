@@ -1,0 +1,19 @@
+NCPB PUBLISHED WSERVICES:
+
+
+=======================
+
+Pages to publish:
+------------------------------
+
+EmployeeList: 5201
+
+EmployeeCard: 70000 
+
+LeaveApplicationHeader: 70075
+
+LeaveApplicationLines: 70055
+
+LeaveTypesSetup: 50076
+
+LeaveApplicationList: 70053
