@@ -247,6 +247,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 <!--end Aprroval Management-->
 
 
+                        <!--Leave Management-->
                         <li class="nav-item has-treeview  <?= currentCtrl('leave')?'menu-open':'' ?>">
                             <a href="#" class="nav-link <?= currentCtrl('leave')?'active':'' ?>">
                                 <i class="nav-icon fas fa-paper-plane"></i>
@@ -270,38 +271,76 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     </a>
                                 </li>
 
-                                <!--<li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>leave/leavebalances" class="nav-link <?= currentaction('leave','leavebalances')?'active':'' ?>">
-                                        <i class="fa fa-balance-scale nav-icon"></i>
-                                        <p>Leave Balances</p>
-                                    </a>
-                                </li>-->
+
 
                                 <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>leave/reportview" class="nav-link <?= currentaction('leave','reportview')?'active':'' ?>">
                                         <i class="fa fa-file-pdf nav-icon"></i>
-                                        <p>Leave History Report</p>
+                                        <p>Leave Statement</p>
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>leaverecall/create/?create=1" class="nav-link <?= currentaction('leaverecall','create')?'active':'' ?>">
-                                        <i class="fa fa-recycle nav-icon"></i>
-                                        <p>Recall Leave</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>leaverecall/index" class="nav-link <?= currentaction('leaverecall','index')?'active':'' ?>">
-                                        <i class="fa fa-list nav-icon"></i>
-                                        <p>Recall Leave List</p>
-                                    </a>
-                                </li>
 
                             </ul>
                         </li>
 
+<!--/ Leave Management-->
 
+
+
+
+                        <!--Imprest management --->
+
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl('imprest')?'menu-open':'menu-close' ?>">
+                            <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl('imprest')?'active':'' ?>">
+                                <i class="nav-icon fa fa-coins"></i>
+                                <p>
+                                    Imprest Management
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>imprest/create" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','create')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> New Imprest Request</p>
+                                    </a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>imprest" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Imprest List</p>
+                                    </a>
+                                </li>
+
+
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>imprest/unsurrendered" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','unsurrendered')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Surrender</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>imprest/surrenderlist" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','surrenderlist')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Imprest Surrender List</p>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+
+                        </li>
+
+
+                        <!-- Imprest Management -->
 
                         <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(Yii::$app->params['profileControllers'])?'menu-open':'' ?>">
                             <a href="#" class="nav-link <?= currentCtrl('recruitment')?'active':'' ?>">

@@ -16,33 +16,28 @@ class Imprestcard extends Model
 {
 
 public $Key;
-public $No;
-public $Employee_No;
-public $Employee_Name;
-public $Purpose;
-public $CBS_Member_Id;
-public $Employee_Balance;
-public $Imprest_Amount;
-public $Amount_LCY;
+public $Imprest_No;
+public $Source_Document;
+public $Payroll_No;
+public $Staff_Name;
+public $Imprest_Account;
+public $Paying_Bank_Account;
+public $Paying_Cashier;
+public $Paying_Budget_Center;
+public $Requested_On;
+public $Travel_Date;
+public $Total_Imprest_Amount;
 public $Status;
-public $Global_Dimension_1_Code;
-public $Global_Dimension_2_Code;
-public $Expected_Date_of_Surrender;
-public $Imprest_Type;
-public $Currency_Code;
-public $Exchange_Rate;
-public $Exchange_Rate_Factor;
-public $Posting_Date;
-public $Account_Type;
-public $Paying_Bank;
-public $Paying_Bank_Name;
-public $Pay_Mode;
-public $Cheque_No;
-public $EFT_No;
-public $Posted_By;
-public $Posted_On;
-public $Request_For;
-public $Imprest_Request_Line;
+public $Action_ID;
+public $Approval_Levels;
+public $Due_Date;
+public $Purpose;
+public $Payment_Method;
+public $Payment_Refrence;
+public $Created_By;
+public $Created_On;
+public $Created_At;
+public $Posted;
 public $isNewRecord;
 
     /*public function __construct(array $config = [])
@@ -66,13 +61,13 @@ public $isNewRecord;
     }
 
     public function getLines($No){
-        $service = Yii::$app->params['ServiceName']['ImprestRequestSubformPortal'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
         $filter = [
-            'Request_No' => $No,
+            'Imprest_No' => $No,
         ];
 
         $lines = Yii::$app->navhelper->getData($service, $filter);
-       return $lines;
+        return $lines;
 
 
     }

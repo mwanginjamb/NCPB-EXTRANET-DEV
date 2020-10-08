@@ -125,12 +125,13 @@ return [
         'P9YEARS' => 'P9YEARS', //70286
 
 
-
-
-
-
-
-
+        /**************************IMPREST*************************************/
+        'ImprestRequestList' => 'ImprestRequestList', //50138 (Page)
+        'ImprestRequestCard' => 'ImprestRequestCard', //50139 (Page)
+        'ImprestRequestLine' => 'ImprestRequestLine', // 50140 (Page)
+        'AccountList' => 'AccountList', //18 (Page)
+        'PostedImprest' => 'PostedImprest', // 50031 (Page)
+        'Dimensions' => 'Dimensions', // 560
 
         //Approval code unit
         'Portal_Workflows' => 'Portal_Workflows', //50019

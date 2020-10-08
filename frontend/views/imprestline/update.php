@@ -24,7 +24,9 @@ $this->title = 'Update Leave Plan Line.';
 
     <?= $this->render('_form',[
         'model' => $model,
-        'transactionTypes' => $transactionTypes
+        'functions' => $functions,
+        'glAccounts' => $glAccounts,
+        'budgetCenters' => $budgetCenters
     ]) ?>
 
 </div>

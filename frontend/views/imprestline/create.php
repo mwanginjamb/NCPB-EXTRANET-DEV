@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 $model->isNewRecord = true;
-//$model->Request_No = Yii::$app->request->get('Request_No');
+// Yii::$app->recruitment->printrr($glAccounts);
 ?>
 <div class="leave-document-create">
 
@@ -25,7 +25,9 @@ $model->isNewRecord = true;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'transactionTypes' => $transactionTypes
+        'functions' => $functions,
+        'glAccounts' => $glAccounts,
+        'budgetCenters' => $budgetCenters
     ]) ?>
 
 </div>

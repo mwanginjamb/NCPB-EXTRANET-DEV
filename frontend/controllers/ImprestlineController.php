@@ -70,18 +70,21 @@ class ImprestlineController extends Controller
 
     }
 
-    public function actionCreate($Request_No){
-       $service = Yii::$app->params['ServiceName']['ImprestRequestSubformPortal'];
+    public function actionCreate(){
+       $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
+       $Request_No = Yii::$app->request->get('Request_No');
        $model = new Imprestline() ;
 
 
         if($Request_No && !isset(Yii::$app->request->post()['Imprestline'])){
 
-               $model->Request_No = $Request_No;
+               $model->Imprest_No = $Request_No;
 
             return $this->renderAjax('create', [
                 'model' => $model,
-                'transactionTypes' => $this->getTransactiontypes(),
+                'functions' => $this->getFunctioncodes(),
+                'glAccounts' => $this->getGlaccounts(),
+                'budgetCenters' => $this->getBudgetcenters()
             ]);
 
         }
@@ -110,7 +113,9 @@ class ImprestlineController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
-                'transactionTypes' => $this->getTransactiontypes(),
+                'functions' => $this->getFunctioncodes(),
+                'glAccounts' => $this->getGlaccounts(),
+                'budgetCenters' => $this->getBudgetcenters()
             ]);
         }
 
@@ -156,13 +161,17 @@ class ImprestlineController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'transactionTypes' => $this->getTransactiontypes(),
+                'functions' => $this->getFunctioncodes(),
+                'glAccounts' => $this->getGlaccounts(),
+                'budgetCenters' => $this->getBudgetcenters()
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'transactionTypes' => $this->getTransactiontypes(),
+            'functions' => $this->getFunctioncodes(),
+            'glAccounts' => $this->getGlaccounts(),
+            'budgetCenters' => $this->getBudgetcenters()
         ]);
     }
 
@@ -177,13 +186,13 @@ class ImprestlineController extends Controller
         }
     }
 
-    public function actionSettransactiontype(){
+    public function actionSetgl(){
         $model = new Imprestline();
-        $service = Yii::$app->params['ServiceName']['ImprestRequestSubformPortal'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
 
-           $model->Transaction_Type = Yii::$app->request->post('Transaction_Type');
-           $model->Request_No = Yii::$app->request->post('Request_No');
-           $model->Employee_No = Yii::$app->user->identity->{'Employee No_'};
+           $model->G_L_Account = Yii::$app->request->post('G_L_Account');
+           $model->Imprest_No = Yii::$app->request->post('Imprest_No');
+          // $model->Employee_No = Yii::$app->user->identity->{'Employee No_'};
            $model->Line_No = time();
 
         $line = Yii::$app->navhelper->postData($service, $model);
@@ -249,8 +258,39 @@ class ImprestlineController extends Controller
         return ArrayHelper::map($result,'Code','Description');
     }
 
+    /* Get Dimension 1s*/
 
 
+    public function getFunctioncodes(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 1 ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+
+
+    }
+
+    /* Get Budget Centers*/
+
+    public function getBudgetcenters(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 2];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+
+
+    }
+
+    /* Get GL Accounts */
+
+    public function getGlaccounts(){
+        $service = Yii::$app->params['ServiceName']['AccountList'];
+        $filter = [];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+
+        return  ArrayHelper::map($result,'No','Name');
+
+    }
 
 
 

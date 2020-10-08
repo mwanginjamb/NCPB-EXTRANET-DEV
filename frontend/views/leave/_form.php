@@ -39,7 +39,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                             <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Employee_Phone_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Department_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= $form->field($model, 'Application_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Application_No')->textInput(['readonly'=> true]) ?>
                             <?= '<p><span>Days_Applied</span> '.Html::a($model->Days_Applied,'#'); '</p>' ?>
                             <?= $form->field($model, 'Application_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Leave_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>

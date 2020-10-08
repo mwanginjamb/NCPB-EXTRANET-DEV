@@ -74,29 +74,29 @@ $script = <<<JS
     $(function(){
          /*Data Tables*/
          
-         // $.fn.dataTable.ext.errMode = 'throw';
+         $.fn.dataTable.ext.errMode = 'throw';
         const url = $('#url').val();
     
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'imprest/getimprests',
+            ajax: url+'imprest/list',
             paging: true,
             columns: [
                 { title: 'No' ,data: 'No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
-                { title: 'Purpose' ,data: 'Purpose'},
-                { title: 'Imprest_Amount' ,data: 'Imprest_Amount'},
-                
-                { title: 'Status' ,data: 'Status'},
-                { title: 'Action', data: 'Action' },
-                { title: 'Update Action', data: 'Update_Action' },
-                { title: 'Details', data: 'view' },
+                { title: 'Imprest Account' ,data: 'Imprest_Account'},
+                { title: 'Imprest Amount' ,data: 'Total_Imprest_Amount'},   
+                { title: 'Paying Cashier' ,data: 'Paying_Cashier'},
+                { title: 'Requested On', data: 'Requested_On' },
+                { title: 'Travel Date', data: 'Travel_Date' },
+                { title: 'Status', data: 'Status' },
+                { title: 'Actions', data: 'Actions' },
                
             ] ,                              
            language: {
-                "zeroRecords": "No Imprest to display"
+                "zeroRecords": "No Imprests to display"
             },
             
             order : [[ 0, "desc" ]]
@@ -106,7 +106,7 @@ $script = <<<JS
         
        //Hidding some 
        var table = $('#table').DataTable();
-      // table.columns([0,6]).visible(false);
+       table.columns([5,6]).visible(false);
     
     /*End Data tables*/
         $('#table').on('click','tr', function(){

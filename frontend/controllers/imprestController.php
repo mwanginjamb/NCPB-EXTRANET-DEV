@@ -35,7 +35,7 @@ class ImprestController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','signup','index','surrenderlist'],
+                'only' => ['logout','signup','index','list'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -43,7 +43,7 @@ class ImprestController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index','surrenderlist'],
+                        'actions' => ['logout','index','list'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -57,7 +57,7 @@ class ImprestController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['getimprests','getimprestsurrenders'],
+                'only' => ['list'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -307,7 +307,7 @@ class ImprestController extends Controller
         $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
 
         $filter = [
-            'No' => $No
+            'Imprest_No' => $No
         ];
 
         $result = Yii::$app->navhelper->getData($service, $filter);
@@ -346,36 +346,38 @@ class ImprestController extends Controller
 
     // Get imprest list
 
-    public function actionGetimprests(){
-        $service = Yii::$app->params['ServiceName']['ImprestRequestListPortal'];
+    public function actionList(){
+        $service = Yii::$app->params['ServiceName']['ImprestRequestList'];
         $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
+            'Payroll_No' => Yii::$app->user->identity->Employee[0]->No,
         ];
         //Yii::$app->recruitment->printrr( );
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
-            $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->No ],['class'=>'btn btn-outline-primary btn-xs']);
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Imprest_No ],['title' => 'View Imprest Application.','class'=>'btn btn-outline-primary btn-xs']);
             if($item->Status == 'New'){
-                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
+                $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Imprest_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
 
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->No ],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Status == 'Pending_Approval'){
-                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
+                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Imprest_No ],['title' => 'Update Imprest Application','class'=>'btn btn-info btn-xs']);
+            }else if($item->Status == 'Approval_Pending'){
+                $ApprovalLink = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Imprest_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
 
             $result['data'][] = [
                 'Key' => $item->Key,
-                'No' => $item->No,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Purpose' => !empty($item->Purpose)?$item->Purpose:'',
-                'Imprest_Amount' => !empty($item->Imprest_Amount)?$item->Imprest_Amount:'',
+                'No' => $item->Imprest_No,
+                'Employee_No' => !empty($item->Payroll_No)?$item->Payroll_No:'',
+                'Employee_Name' => !empty($item->Staff_Name)?$item->Staff_Name:'',
+                'Imprest_Account' => !empty($item->Imprest_Account)?$item->Imprest_Account:'',
+                'Total_Imprest_Amount' => !empty($item->Total_Imprest_Amount)?$item->Total_Imprest_Amount:'',
+                'Paying_Cashier' => !empty($item->Paying_Cashier)?$item->Paying_Cashier:'',
+                'Requested_On' => !empty($item->Requested_On)?$item->Requested_On:'',
+                'Travel_Date' => !empty($item->Travel_Date)?$item->Travel_Date:'',
                 'Status' => $item->Status,
-                'Action' => $link,
-                'Update_Action' => $updateLink,
-                'view' => $Viewlink
+                'Actions' => $ApprovalLink.' '.$updateLink.' '.$ViewLink ,
+
             ];
         }
 

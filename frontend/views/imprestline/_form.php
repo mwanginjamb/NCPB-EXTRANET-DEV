@@ -38,19 +38,37 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
 
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <?= $form->field($model, 'Line_No')->textInput(['readonly' => true])->label() ?>
-                                <?= $form->field($model, 'Request_No')->textInput(['readonly' => true,'disabled'=>true])->label() ?>
+                                <?= $form->field($model, 'Imprest_No')->textInput(['readonly' => true,'disabled'=>true])->label() ?>
                                 <?= $form->field($model, 'Key')->textInput(['readonly'=> true])->label() ?>
 
-                                <?= $form->field($model, 'Transaction_Type')->
-                                dropDownList($transactionTypes,['prompt' => 'Select Transaction Type ..',
+                                <?= $form->field($model, 'G_L_Account')->
+                                dropDownList($glAccounts,['prompt' => 'Select Transaction Type ..',
                                     'required'=> true, 'required' => true]) ?>
 
 
 
-                                    <?= $form->field($model, 'Description')->textarea(['rows' => 3,'required' => true]) ?>
-                                    <?= $form->field($model, 'Amount')->textInput(['type' => 'number','required' => true]) ?>
+                                <?= $form->field($model, 'Shortcut_Dimension_1_Code')->
+                                dropDownList($functions,['prompt' => 'Select ..',
+                                    'required'=> true, 'required' => true]) ?>
+
+                                <?= $form->field($model, 'Shortcut_Dimension_2_Code')->
+                                dropDownList($budgetCenters,['prompt' => 'Select ..',
+                                    'required'=> true, 'required' => true]) ?>
+
+
+                                <?= $form->field($model, 'Amount')->textInput(['type' => 'number','required' => true]) ?>
+                                <?= $form->field($model, 'Actual_to_Date')->textInput(['type' => 'date','required' => true]) ?>
+                            </div>
+
+                            <div class="col-md-6">
+                                <?= $form->field($model, 'Description')->textInput(['readonly'=> true, 'disabled'=>true])->label() ?>
+                                <?= $form->field($model, 'Annual_Budget_Amount')->textInput(['readonly'=> true,'disabled'=>true])->label() ?>
+                                <?= $form->field($model, 'Budget_To_Date')->textInput(['readonly'=> true,'disabled'=>true])->label() ?>
+                                <?= $form->field($model, 'Commitments')->textInput(['readonly'=> true,'disabled'=>true])->label() ?>
+                                <?= $form->field($model, 'Available_Budget')->textInput(['readonly'=> true,'disabled'=>true])->label() ?>
+
                             </div>
 
 
@@ -115,29 +133,34 @@ $script = <<<JS
                 },'json');
         });
 
-         $('#imprestline-transaction_type').on('change', function(e){
+         $('#imprestline-g_l_account').on('change', function(e){
             e.preventDefault();
                   
-            let Transaction_Type = e.target.value;
-            let Request_No = $('#imprestline-request_no').val();
+            let G_L_Account = e.target.value;
+            let Imprest_No = $('#imprestline-imprest_no').val();
             
             
-            const url = $('input[name="absolute"]').val()+'imprestline/settransactiontype';
-            $.post(url,{'Transaction_Type': Transaction_Type,'Request_No': Request_No}).done(function(msg){
+            const url = $('input[name="absolute"]').val()+'imprestline/setgl';
+            $.post(url,{'G_L_Account': G_L_Account,'Imprest_No': Imprest_No}).done(function(msg){
                    //populate empty form fields with new data
                    
                     $('#imprestline-line_no').val(msg.Line_No);
                     $('#imprestline-key').val(msg.Key);
+                    $('#imprestline-description').val(msg.Description);
+                    $('#imprestline-annual_budget_amount').val(msg.Annual_Budget_Amount);
+                    $('#imprestline-budget_to_date').val(msg.Budget_To_Date);
+                    $('#imprestline-commitments').val(msg.Commitments);
+                    $('#imprestline-available_budget').val(msg.Available_Budget);
                   
                     console.log(typeof msg);
                     console.table(msg);
                     if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-imprestline-transaction_type');
+                        const parent = document.querySelector('.field-imprestline-g_l_account');
                         const helpbBlock = parent.children[2];
                         helpbBlock.innerText = msg;
                         disableSubmit();
                     }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestline-transaction_type');
+                        const parent = document.querySelector('.field-imprestline-g_l_account');
                         const helpbBlock = parent.children[2];
                         helpbBlock.innerText = ''; 
                         enableSubmit();
@@ -186,6 +209,8 @@ $script = <<<JS
             document.getElementById('submit').removeAttribute("disabled");
         
         }
+        
+        // $('#imprestline-g_l_account').select2();
 JS;
 
 $this->registerJs($script);

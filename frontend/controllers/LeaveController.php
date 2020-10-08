@@ -97,12 +97,21 @@ class LeaveController extends Controller
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
 
+
             $filter = [
                 'Application_No' => $model->Application_No,
             ];
             /*Read the card again to refresh Key in case it changed*/
             $refresh = Yii::$app->navhelper->getData($service,$filter);
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
+
+            //Yii::$app->recruitment->printrr($refresh);
+            $model = Yii::$app->navhelper->loadmodel($refresh[0],$model);
+            $model->Comments = Yii::$app->request->post()['Leave']['Comments'];
+            $model->Reliever = Yii::$app->request->post()['Leave']['Reliever'];
+            $model->Key = Yii::$app->request->post()['Leave']['Key'];
+
+
+
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
