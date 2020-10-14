@@ -79,10 +79,10 @@ class ImprestController extends Controller
 
     }
 
-    public function actionCreate($requestfor){
+    public function actionCreate(){
 
         $model = new Imprestcard() ;
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
         $request = '';
         /*Do initial request */
         if(!isset(Yii::$app->request->post()['Imprestcard'])){
@@ -93,9 +93,9 @@ class ImprestController extends Controller
                 Yii::$app->navhelper->loadmodel($request,$model);
 
                 // Update Request for
-                $model->Request_For = $requestfor;
+
                 $model->Key = $request->Key;
-                $model->Imprest_Type = 'Local';
+
                 $request = Yii::$app->navhelper->updateData($service, $model);
 
                 $model = Yii::$app->navhelper->loadmodel($request,$model);
@@ -111,16 +111,16 @@ class ImprestController extends Controller
 
 
 
-        //Yii::$app->recruitment->printrr($request);
+        // Yii::$app->recruitment->printrr(Yii::$app->request->post());
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
             //Yii::$app->recruitment->printrr(Yii::$app->request->post()['Imprestcard']);
             $filter = [
-                'No' => $model->No,
+                'Imprest_No' => $model->Imprest_No,
             ];
 
             $refresh = Yii::$app->navhelper->getData($service,$filter);
             $model->Key = $refresh[0]->Key;
-            //Yii::$app->navhelper->loadmodel($refresh[0],$model);
+            Yii::$app->navhelper->loadmodel($refresh[0],$model);
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -130,7 +130,7 @@ class ImprestController extends Controller
                 Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
 
                 // Yii::$app->recruitment->printrr($result);
-                return $this->redirect(['view','No' => $result->No]);
+                return $this->redirect(['view','No' => $result->Imprest_No]);
 
             }else{
                 Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
@@ -146,9 +146,10 @@ class ImprestController extends Controller
         return $this->render('create',[
             'model' => $model,
             'employees' => $this->getEmployees(),
-            'programs' => $this->getPrograms(),
-            'departments' => $this->getDepartments(),
-            'currencies' => $this->getCurrencies()
+            'programs' =>[],
+            'departments' => [],
+            'currencies' => [],
+            'paymentMethods' => $this->getPaymentmethods()
         ]);
     }
 
@@ -250,9 +251,10 @@ class ImprestController extends Controller
                 return $this->render('update',[
                     'model' => $model,
                     'employees' => $this->getEmployees(),
-                    'programs' => $this->getPrograms(),
-                    'departments' => $this->getDepartments(),
-                    'currencies' => $this->getCurrencies()
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
                 ]);
 
             }else{
@@ -261,9 +263,10 @@ class ImprestController extends Controller
                 return $this->render('update',[
                     'model' => $model,
                     'employees' => $this->getEmployees(),
-                    'programs' => $this->getPrograms(),
-                    'departments' => $this->getDepartments(),
-                    'currencies' => $this->getCurrencies()
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
                 ]);
             }
 
@@ -424,7 +427,7 @@ class ImprestController extends Controller
 
 
     public function getEmployees(){
-        $service = Yii::$app->params['ServiceName']['Employees'];
+        $service = Yii::$app->params['ServiceName']['EmployeeList'];
 
         $employees = \Yii::$app->navhelper->getData($service);
         return ArrayHelper::map($employees,'No','FullName');
@@ -615,6 +618,27 @@ class ImprestController extends Controller
 
         return $result;
 
+    }
+
+    // Get Payment Methods
+
+    public function getPaymentmethods(){
+        $service = Yii::$app->params['ServiceName']['PaymentMethods'];
+        $results = \Yii::$app->navhelper->getData($service);
+        $data = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as  $res){
+                $i++;
+                if(!empty($res->Code) && !empty($res->Description)){
+                    $data[$i] = [
+                        'Code' => $res->Code,
+                        'Description' => $res->Description
+                    ];
+                }
+            }
+        }
+        return ArrayHelper::map($data,'Code','Description');
     }
 
     public function loadtomodel($obj,$model){

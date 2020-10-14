@@ -14,8 +14,6 @@ use frontend\models\Imprestcard;
 use frontend\models\Imprestline;
 use frontend\models\Imprestsurrendercard;
 use frontend\models\Leaveplancard;
-use frontend\models\Leave;
-use frontend\models\Salaryadvance;
 use frontend\models\Trainingplan;
 use Yii;
 use yii\filters\AccessControl;
@@ -26,17 +24,18 @@ use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\BadRequestHttpException;
 
+use frontend\models\Leave;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class LeaveController extends Controller
+class SurrenderController extends Controller
 {
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','signup','index','list','create','update','delete','view'],
+                'only' => ['logout','signup','index','list'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -44,7 +43,7 @@ class LeaveController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index','list','create','update','delete','view'],
+                        'actions' => ['logout','index','list'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -74,52 +73,61 @@ class LeaveController extends Controller
 
     }
 
-
     public function actionCreate(){
 
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
-
+        $model = new Imprestcard() ;
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
+        $request = '';
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave'])){
-
-
+        if(!isset(Yii::$app->request->post()['Imprestcard'])){
             $request = Yii::$app->navhelper->postData($service,$model);
-            //Yii::$app->recruitment->printrr($request);
+            $filter = [];
             if(is_object($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
-            }else{
-                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
-                return $this->redirect(['index']);
+
+                // Update Request for
+
+                $model->Key = $request->Key;
+
+                $request = Yii::$app->navhelper->updateData($service, $model);
+
+                $model = Yii::$app->navhelper->loadmodel($request,$model);
+                if(is_string($request)){
+                    Yii::$app->recruitment->printrr($request);
+                }
+
             }
         }
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
 
 
+
+
+
+        // Yii::$app->recruitment->printrr(Yii::$app->request->post());
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
+            //Yii::$app->recruitment->printrr(Yii::$app->request->post()['Imprestcard']);
             $filter = [
-                'Application_No' => $model->Application_No,
+                'Imprest_No' => $model->Imprest_No,
             ];
-            /*Read the card again to refresh Key in case it changed*/
+
             $refresh = Yii::$app->navhelper->getData($service,$filter);
-
-            //Yii::$app->recruitment->printrr($refresh);
-            $model = Yii::$app->navhelper->loadmodel($refresh[0],$model);
-            $model->Comments = Yii::$app->request->post()['Leave']['Comments'];
-            $model->Reliever = Yii::$app->request->post()['Leave']['Reliever'];
-            $model->Key = Yii::$app->request->post()['Leave']['Key'];
-
-
+            $model->Key = $refresh[0]->Key;
+            Yii::$app->navhelper->loadmodel($refresh[0],$model);
 
             $result = Yii::$app->navhelper->updateData($service,$model);
+
+
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Leave Header Created Successfully.' );
-                return $this->redirect(['view','No' => $result->Application_No]);
+                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
+
+                // Yii::$app->recruitment->printrr($result);
+                return $this->redirect(['view','No' => $result->Imprest_No]);
 
             }else{
-                Yii::$app->session->setFlash('error','Error Creating Leave Header '.$result );
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
                 return $this->redirect(['index']);
 
             }
@@ -131,21 +139,92 @@ class LeaveController extends Controller
 
         return $this->render('create',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
             'employees' => $this->getEmployees(),
+            'programs' =>[],
+            'departments' => [],
+            'currencies' => [],
+            'paymentMethods' => $this->getPaymentmethods()
         ]);
     }
 
 
+    public function actionCreateSurrender(){
+        // Yii::$app->recruitment->printrr(Yii::$app->request->get('requestfor'));
+        $model = new Imprestsurrendercard();
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCardPortal'];
+
+        /*Do initial request */
+        $request = Yii::$app->navhelper->postData($service,[]);
+
+        if(is_object($request) )
+        {
+            Yii::$app->navhelper->loadmodel($request,$model);
+
+            // Update Request for
+            $model->Request_For = Yii::$app->request->get('requestfor');
+            $model->Key = $request->Key;
+            $request = Yii::$app->navhelper->updateData($service, $model);
+
+            if(is_string($request)){
+                Yii::$app->recruitment->printrr($request);
+            }
+
+
+        }
+
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestsurrendercard'],$model) ){
+
+            $filter = [
+                'No' => $model->No,
+            ];
+
+            $refresh = Yii::$app->navhelper->getData($service,$filter);
+            Yii::$app->navhelper->loadmodel($refresh[0],$model);
+
+            $result = Yii::$app->navhelper->updateData($service,$model);
+
+
+            if(!is_string($result)){
+                //Yii::$app->recruitment->printrr($result);
+                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
+
+                return $this->redirect(['view-surrender','No' => $result->No]);
+
+            }else{
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                return $this->render('createsurrender',[
+                    'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => $this->getPrograms(),
+                    'departments' => $this->getDepartments(),
+                    'currencies' => $this->getCurrencies(),
+                    'imprests' => $this->getmyimprests(),
+                    'receipts' => $this->getimprestreceipts($model->No)
+                ]);
+
+            }
+
+        }
+
+        return $this->render('createsurrender',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies(),
+            'imprests' => $this->getmyimprests(),
+            'receipts' => $this->getimprestreceipts($model->No)
+        ]);
+    }
 
 
     public function actionUpdate(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Imprestcard() ;
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
         $model->isNewRecord = false;
 
         $filter = [
-            'Application_No' => Yii::$app->request->get('No'),
+            'No' => Yii::$app->request->get('No'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -157,28 +236,32 @@ class LeaveController extends Controller
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
-            $filter = [
-                'Application_No' => $model->Application_No,
-            ];
-            /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
-
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
             $result = Yii::$app->navhelper->updateData($service,$model);
+            if(!empty($result)){
 
-            if(!is_string($result)){
+                Yii::$app->session->setFlash('success','Imprest Request Updated Successfully.' );
 
-                Yii::$app->session->setFlash('success','Leave Header Updated Successfully.' );
-
-                return $this->redirect(['view','No' => $result->Application_No]);
-
-            }else{
-                Yii::$app->session->setFlash('success','Error Updating Leave Header '.$result );
                 return $this->render('update',[
                     'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
                 ]);
 
+            }else{
+
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                return $this->render('update',[
+                    'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
+                ]);
             }
 
         }
@@ -188,23 +271,25 @@ class LeaveController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'leavetypes' => $this->getLeaveTypes(),
                 'employees' => $this->getEmployees(),
-
+                'programs' => $this->getPrograms(),
+                'departments' => $this->getDepartments(),
+                'currencies' => $this->getCurrencies()
 
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
             'employees' => $this->getEmployees(),
-
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies()
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+        $service = Yii::$app->params['ServiceName']['CareerDevStrengths'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -216,17 +301,16 @@ class LeaveController extends Controller
     }
 
     public function actionView($No){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
 
         $filter = [
-            'Application_No' => $No
+            'Imprest_No' => $No
         ];
 
         $result = Yii::$app->navhelper->getData($service, $filter);
 
         //load nav result to model
-        $model = $this->loadtomodel($result[0], $model);
+        $model = $this->loadtomodel($result[0], new Imprestcard());
 
         //Yii::$app->recruitment->printrr($model);
 
@@ -235,40 +319,59 @@ class LeaveController extends Controller
         ]);
     }
 
+    /*Imprest surrender card view*/
 
+    public function actionViewSurrender($No){
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCard'];
+
+        $filter = [
+            'No' => $No
+        ];
+
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        //load nav result to model
+        $model = $this->loadtomodel($result[0], new Imprestsurrendercard());
+
+        return $this->render('viewsurrender',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies()
+        ]);
+    }
 
     // Get imprest list
 
     public function actionList(){
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationList'];
+        $service = Yii::$app->params['ServiceName']['PostedImprest'];
         $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
+            //'Payroll_No' => Yii::$app->user->identity->Employee[0]->No,
         ];
-
+        //Yii::$app->recruitment->printrr( );
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
-            $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Application_No ],['class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Approval_Status == 'New'){
-                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Application_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Application_No],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Approval_Status == 'Approval_Pending'){
-                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Application_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
+
+            if(!empty($item->Imprest_No)){
+                $updateLink = Html::a('<i class="far fa-edit"></i>',['view','No'=> $item->Imprest_No ],['title' => 'Update Posted Imprest Application','class'=>'btn btn-info btn-xs']);
+
+
+                $result['data'][] = [
+                    'Key' => $item->Key,
+                    'No' => $item->Imprest_No,
+                    'Employee_No' => !empty($item->Payroll_No)?$item->Payroll_No:'',
+                    'Employee_Name' => !empty($item->Staff_Name)?$item->Staff_Name:'',
+                    'Imprest_Account' => !empty($item->Imprest_Account)?$item->Imprest_Account:'',
+                    'Paying_Bank_Account' => !empty($item->Paying_Bank_Account)?$item->Paying_Bank_Account:'',
+                    'Paying_Cashier' => !empty($item->Paying_Cashier)?$item->Paying_Cashier:'',
+                    'Requested_On' => !empty($item->Requested_On)?$item->Requested_On:'',
+                    'Travel_Date' => !empty($item->Travel_Date)?$item->Travel_Date:'',
+                    'Actions' => $updateLink ,
+
+                ];
             }
 
-            $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Application_No,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Application_Date' => !empty($item->Application_Date)?$item->Application_Date:'',
-                'Days_Applied' => !empty($item->Days_Applied)?$item->Days_Applied:'',
-                'Status' => $item->Approval_Status,
-                'Action' => $link,
-                'Update_Action' => $updateLink,
-                'view' => $Viewlink
-            ];
         }
 
         return $result;
@@ -313,25 +416,11 @@ class LeaveController extends Controller
     }
 
 
-    public function getCovertypes(){
-        $service = Yii::$app->params['ServiceName']['MedicalCoverTypes'];
+    public function getEmployees(){
+        $service = Yii::$app->params['ServiceName']['EmployeeList'];
 
-        $results = \Yii::$app->navhelper->getData($service);
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                if(!empty($res->Code) && !empty($res->Description)){
-                    $result[$i] =[
-                        'Code' => $res->Code,
-                        'Description' => $res->Description
-                    ];
-                    $i++;
-                }
-
-            }
-        }
-        return ArrayHelper::map($result,'Code','Description');
+        $employees = \Yii::$app->navhelper->getData($service);
+        return ArrayHelper::map($employees,'No','FullName');
     }
 
     /* My Imprests*/
@@ -360,15 +449,6 @@ class LeaveController extends Controller
         return ArrayHelper::map($result,'No','detail');
     }
 
-    /*Get Staff Loans */
-
-    public function getLoans(){
-        $service = Yii::$app->params['ServiceName']['StaffLoans'];
-
-        $results = \Yii::$app->navhelper->getData($service);
-        return ArrayHelper::map($results,'Code','Loan_Name');
-    }
-
     /* Get My Posted Imprest Receipts */
 
     public function getimprestreceipts($imprestNo){
@@ -395,58 +475,54 @@ class LeaveController extends Controller
         return ArrayHelper::map($result,'No','detail');
     }
 
-    public function getLeaveTypes($gender = ''){
-        $service = Yii::$app->params['ServiceName']['LeaveTypesSetup']; //['leaveTypes'];
+    /*Get Programs */
+
+    public function getPrograms(){
+        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
+
         $filter = [
-            // 'Gender' => $gender,
-            //'Gender' => !empty(Yii::$app->user->identity->Employee[0]->Gender)?Yii::$app->user->identity->Employee[0]->Gender:'Both'
+            'Global_Dimension_No' => 1
         ];
 
-        $result = \Yii::$app->navhelper->getData($service,$filter);
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+    }
+
+    /* Get Department*/
+
+    public function getDepartments(){
+        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
+
+        $filter = [
+            'Global_Dimension_No' => 2
+        ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+    }
+
+
+    // Get Currencies
+
+    public function getCurrencies(){
+        $service = Yii::$app->params['ServiceName']['Currencies'];
+
+        $result = \Yii::$app->navhelper->getData($service, []);
         return ArrayHelper::map($result,'Code','Description');
     }
 
-    public function getEmployees(){
-        $service = Yii::$app->params['ServiceName']['EmployeeList'];
-
-        $employees = \Yii::$app->navhelper->getData($service);
-        // Yii::$app->recruitment->printrr($employees);
-        $data = [];
-        $i = 0;
-        if(is_array($employees)){
-
-            foreach($employees as  $emp){
-                $i++;
-                if(!empty($emp->FullName) && !empty($emp->No)){
-                    $data[$i] = [
-                        'No' => $emp->No,
-                        'Full_Name' => $emp->FullName
-                    ];
-                }
-
-            }
-
-        }
-
-        return ArrayHelper::map($data,'No','Full_Name');
-    }
-
-
-
-
-    public function actionSetleavetype(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+    public function actionSetemployee(){
+        $model = new Imprestcard();
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
 
         $filter = [
-            'Application_No' => Yii::$app->request->post('No')
+            'No' => Yii::$app->request->post('No')
         ];
         $request = Yii::$app->navhelper->getData($service, $filter);
 
         if(is_array($request)){
             Yii::$app->navhelper->loadmodel($request[0],$model);
             $model->Key = $request[0]->Key;
-            $model->Leave_Code = Yii::$app->request->post('Leave_Code');
+            $model->Employee_No = Yii::$app->request->post('Employee_No');
         }
 
 
@@ -458,45 +534,21 @@ class LeaveController extends Controller
 
     }
 
-    /*Set Receipt Amount */
-    public function actionSetdays(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+    public function actionSetdimension($dimension){
+        $model = new Imprestcard();
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
 
         $filter = [
-            'Application_No' => Yii::$app->request->post('No')
+            'No' => Yii::$app->request->post('No')
         ];
         $request = Yii::$app->navhelper->getData($service, $filter);
 
         if(is_array($request)){
             Yii::$app->navhelper->loadmodel($request[0],$model);
             $model->Key = $request[0]->Key;
-            $model->Days_To_Go_on_Leave = Yii::$app->request->post('Days_To_Go_on_Leave');
+            $model->{$dimension} = Yii::$app->request->post('dimension');
         }
 
-        $result = Yii::$app->navhelper->updateData($service,$model);
-
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
-
-        return $result;
-
-    }
-
-    /*Set Start Date */
-    public function actionSetstartdate(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
-
-        $filter = [
-            'Application_No' => Yii::$app->request->post('No')
-        ];
-        $request = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($request)){
-            Yii::$app->navhelper->loadmodel($request[0],$model);
-            $model->Key = $request[0]->Key;
-            $model->Start_Date = Yii::$app->request->post('Start_Date');
-        }
 
         $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -556,6 +608,27 @@ class LeaveController extends Controller
 
         return $result;
 
+    }
+
+    // Get Payment Methods
+
+    public function getPaymentmethods(){
+        $service = Yii::$app->params['ServiceName']['PaymentMethods'];
+        $results = \Yii::$app->navhelper->getData($service);
+        $data = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as  $res){
+                $i++;
+                if(!empty($res->Code) && !empty($res->Description)){
+                    $data[$i] = [
+                        'Code' => $res->Code,
+                        'Description' => $res->Description
+                    ];
+                }
+            }
+        }
+        return ArrayHelper::map($data,'Code','Description');
     }
 
     public function loadtomodel($obj,$model){

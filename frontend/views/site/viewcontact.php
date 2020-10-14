@@ -44,23 +44,16 @@ if(Yii::$app->session->hasFlash('success')){
                 <table class="table table-bordered">
                     <tbody>
                         <tr>
-                            <th>Home Phone Number</th><td><?= $model->Home_Phone_Number ?></td>
+                            <th>Home Phone Number</th><td><?= $model->Phone_No ?></td>
                         </tr>
 
                         <tr>
-                            <th>Cellular Phone Number</th><td><?= $model->Cellular_Phone_Number ?></td>
+                            <th>Cellular Phone Number</th><td><?= $model->Mobile_No ?></td>
                         </tr>
 
-                        <tr>
-                            <th>Work Phone Number</th><td><?= $model->Work_Phone_Number ?></td>
-                        </tr>
 
                         <tr>
-                            <th>Alternative E-Mail</th><td><?= $model->E_Mail ?></td>
-                        </tr>
-
-                        <tr>
-                            <th>Company E-Mail</th><td><?= $model->Company_E_Mail ?></td>
+                            <th>Company E-Mail</th><td><?= $model->Office_E_Mail ?></td>
                         </tr>
                         <tr>
                             <th colspan="2">Address</th>
@@ -68,8 +61,8 @@ if(Yii::$app->session->hasFlash('success')){
                         <tr>
                             <td colspan="2" align="center">
                                 <address>
-                                    Postal Address: <?= $model->Postal_Address.'<br>' ?> 
-                                    Postal Code: <?= $model->Post_Code.'<br>' ?> 
+                                    Postal Address: <?php //$model->Postal_Address.'<br>' ?>
+                                    Postal Code: <?= $model->Post_Code.'<br>' ?>
                                     <?= $model->City.'<br>' ?> 
                                 </address>
                             </td>

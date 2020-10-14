@@ -11,12 +11,13 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Imprest Request ';
-$this->params['breadcrumbs'][] = ['label' => 'imprest', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'New Imprest Request', 'url' => ['create']];
+$this->title = 'Imprest Line Request';
+$this->params['breadcrumbs'][] = ['label' => 'Imprest Line', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 
 
 $model->isNewRecord = true;
+// Yii::$app->recruitment->printrr($glAccounts);
 ?>
 <div class="leave-document-create">
 
@@ -24,11 +25,9 @@ $model->isNewRecord = true;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'employees' => $employees,
-        'programs' => $programs,
-        'departments' => $departments,
-        'currencies' => $currencies,
-        'paymentMethods' => $paymentMethods
+        'functions' => $functions,
+        'glAccounts' => $glAccounts,
+        'budgetCenters' => $budgetCenters
     ]) ?>
 
 </div>

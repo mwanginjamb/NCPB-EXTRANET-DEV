@@ -127,25 +127,32 @@ class ImprestlineController extends Controller
         $model = new Imprestline() ;
         $model->isNewRecord = false;
         $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
-        $filter = [
-            'Line_No' => Yii::$app->request->get('Line_No'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+
+        if(!isset(Yii::$app->request->post()['Imprestline'])){
+            $filter = [
+                'Line_No' => Yii::$app->request->get('Line_No'),
+            ];
+            $result = Yii::$app->navhelper->getData($service,$filter);
 
 
-        if(is_array($result)){
-            //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;
-            // Yii::$app->recruitment->printrr($model);
-        }else{
-            Yii::$app->recruitment->printrr($result);
+            if(is_array($result)){
+                //load nav result to model
+                $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;
+                // Yii::$app->recruitment->printrr($model);
+            }else{
+                Yii::$app->recruitment->printrr($result);
+            }
         }
+
+
 
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestline'],$model) ){
 
             $refresh = Yii::$app->navhelper->getData($service,['Line_No' => Yii::$app->request->post()['Imprestline']['Line_No']]);
             $model->Key = $refresh[0]->Key;
+
+            //Yii::$app->recruitment->printrr($model);
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -180,9 +187,9 @@ class ImprestlineController extends Controller
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
-            return ['note' => '<div class="alert alert-success">Record Purged Successfully</div>'];
+            return ['status' => true ,'note' => '<div class="alert alert-success">Record Purged Successfully</div>'];
         }else{
-            return ['note' => '<div class="alert alert-danger">Error Purging Record: '.$result.'</div>' ];
+            return ['status' => false ,'note' => '<div class="alert alert-danger">Error Purging Record: '.$result.'</div>' ];
         }
     }
 
@@ -201,29 +208,25 @@ class ImprestlineController extends Controller
 
     }
 
-    public function actionSetenddate(){
+    public function actionSetbudgetcenter(){
         $model = new Imprestline();
-        $service = Yii::$app->params['ServiceName']['Leave__Plan__Line'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
+
+        // Get Line to update
 
         $filter = [
-            'Line_No' => Yii::$app->request->post('Line_No')
+            'Line_No' => Yii::$app->request->post('Line_No'),
         ];
-        $line = Yii::$app->navhelper->getData($service, $filter);
+        $res = Yii::$app->navhelper->getData($service, $filter);
+        $model = Yii::$app->navhelper->loadmodel($res[0],$model);
 
-        if(is_array($line)){
-            Yii::$app->navhelper->loadmodel($line[0],$model);
-            $model->Key = $line[0]->Key;
-            $model->End_Date = date('Y-m-d',strtotime(Yii::$app->request->post('End_Date')));
-        }
+        $model->Shortcut_Dimension_2_Code = Yii::$app->request->post('Shortcut_Dimension_2_Code');
 
-
-        $result = Yii::$app->navhelper->updateData($service,$model);
-
+        $line = Yii::$app->navhelper->updateData($service, $model);
         Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+        return $line;
 
-        return $result;
     }
-
     public function actionView($ApplicationNo){
         $service = Yii::$app->params['ServiceName']['leaveApplicationCard'];
         $leaveTypes = $this->getLeaveTypes();

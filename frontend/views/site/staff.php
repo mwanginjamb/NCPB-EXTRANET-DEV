@@ -90,9 +90,9 @@ $script = <<<JS
             columns: [
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Full Name' ,data: 'Full_Name'},
-                { title: 'User ID' ,data: 'User_ID'},
+                { title: 'Station' ,data: 'User_ID'},
                 { title: 'Company E-Mail' ,data: 'Company_E_Mail'},
-                { title: 'Contract Type' ,data: 'Contract_Type'},    
+                { title: 'Department' ,data: 'Contract_Type'},    
                 { title: 'View Contacts' ,data: 'view'},             
                
             ] ,                              

@@ -291,7 +291,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                         <!--Imprest management --->
 
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl('imprest')?'menu-open':'menu-close' ?>">
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender'])?'menu-open':'menu-close' ?>">
                             <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl('imprest')?'active':'' ?>">
                                 <i class="nav-icon fa fa-coins"></i>
                                 <p>
@@ -321,16 +321,9 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
 
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>imprest/unsurrendered" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','unsurrendered')?'active':'' ?>">
+                                    <a href="<?= $absoluteUrl ?>surrender" class="nav-link <?= Yii::$app->recruitment->currentaction('surrender','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
-                                        <p> Surrender</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>imprest/surrenderlist" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','surrenderlist')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p> Imprest Surrender List</p>
+                                        <p> Posted Imprest List</p>
                                     </a>
                                 </li>
 

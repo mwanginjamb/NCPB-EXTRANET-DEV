@@ -35,17 +35,17 @@ $data = chunk_split(Yii::$app->user->identity->getImage());
 
                         <ul class="list-group list-group-unbordered mb-3">
                             <li class="list-group-item">
-                                <b><i class="fa fa-phone-alt"></i></b> <a class="float-right"><?= !empty($employee->Cellular_Phone_Number)?$employee->Cellular_Phone_Number:'' ?></a>
+                                <b><i class="fa fa-phone-alt"></i></b> <a class="float-right"><?= !empty($employee->Mobile_No)?$employee->Mobile_No:'' ?></a>
                             </li>
                             <li class="list-group-item">
-                                <b><i class="fa fa-mail-bulk"></i></b><a class="float-right"><?= !empty($employee->Company_E_Mail)?$employee->Company_E_Mail:'' ?></a>
+                                <b><i class="fa fa-mail-bulk"></i></b><a class="float-right"><?= !empty($employee->E_Mail)?$employee->E_Mail:'' ?></a>
                             </li>
                             <li class="list-group-item">
-                                <b><i class="fa fa-hourglass-start"></i></b> <a title="Length of Service" class="float-right"><?= !empty($employee->DService)?$employee->DService:'' ?></a>
+                                <b><i class="fa fa-hourglass-start"></i></b> <a title="Length of Service" class="float-right"><?= !empty($employee->Service_Period)?$employee->Service_Period:'' ?></a>
                             </li>
                         </ul>
 
-                        <a href="mailto:<?= !empty($supervisor->Company_E_Mail)?$supervisor->Company_E_Mail:'Not Set' ?>" class="btn bg-yellow btn-block"><b>Email Supervisor</b></a>
+                        <a href="mailto:<?= !empty($supervisor->Office_E_Mail)?$supervisor->Office_E_Mail:'Not Set' ?>" class="btn bg-yellow btn-block"><b>Email Supervisor</b></a>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -58,10 +58,10 @@ $data = chunk_split(Yii::$app->user->identity->getImage());
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <strong><i class="fas fa-book mr-1"></i> Job Title</strong>
+                        <strong><i class="fas fa-book mr-1"></i> Job Description</strong>
 
                         <p class="text-muted">
-                            <?= !empty($employee->Job_Title)?$employee->Job_Title:'' ?>
+                            <?= !empty($employee->Position_Description)?$employee->Position_Description:'' ?>
                         </p>
 
                         <hr>
@@ -82,7 +82,7 @@ $data = chunk_split(Yii::$app->user->identity->getImage());
 
                         <strong><i class="far fa-file-alt mr-1"></i> Date of Join:</strong>
 
-                        <p class="text-muted"><?= !empty($employee->Date_Of_Join)?$employee->Date_Of_Join:'' ?></p>
+                        <p class="text-muted"><?= !empty($employee->Employment_Date)?$employee->Employment_Date:'' ?></p>
                     </div>
                     <!-- /.card-body -->
                 </div>

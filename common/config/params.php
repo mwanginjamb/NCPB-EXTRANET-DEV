@@ -50,6 +50,11 @@ return [
 
         'EmployeeCard' => 'EmployeeCard',
         'EmployeeList' => 'EmployeeList',
+        'EthnicGroups' => 'EthnicGroups', //70409
+        'Regions' => 'Regions', // 50112
+        'Stations' => 'Stations', //70410
+        'Counties' => 'Counties', // 50334
+        'SubCounties' => 'SubCounties', // 50335
 
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
@@ -129,8 +134,10 @@ return [
         'ImprestRequestList' => 'ImprestRequestList', //50138 (Page)
         'ImprestRequestCard' => 'ImprestRequestCard', //50139 (Page)
         'ImprestRequestLine' => 'ImprestRequestLine', // 50140 (Page)
+        'PaymentMethods' => 'PaymentMethods', //427 (Page)
         'AccountList' => 'AccountList', //18 (Page)
         'PostedImprest' => 'PostedImprest', // 50031 (Page)
+        'SurrenderCard' => 'SurrenderCard', // 50032 (Page)
         'Dimensions' => 'Dimensions', // 560
 
         //Approval code unit

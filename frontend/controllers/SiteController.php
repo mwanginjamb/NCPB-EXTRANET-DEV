@@ -361,7 +361,7 @@ class SiteController extends Controller
     //Get Staff list
 
      public function actionGetstaff(){
-        $service = Yii::$app->params['ServiceName']['employees'];
+        $service = Yii::$app->params['ServiceName']['EmployeeList'];
        
 
         $staff = \Yii::$app->navhelper->getData($service);
@@ -370,9 +370,9 @@ class SiteController extends Controller
         $result = [];
         foreach($staff as $leave){
 
-            if(property_exists($leave,'Company_E_Mail' )){
+            if(property_exists($leave,'E_Mail' )){
                 $Viewlink = Html::a('Contacts',['viewcontact','No'=> $leave->No ],['class'=>'btn btn-outline-warning contact btn-xs']);
-            $emailLink = '<a href="mailto:'. $leave->Company_E_Mail .'" class="btn btn-outline-warning " title="Email this Staff">'.$leave->Company_E_Mail.'</a>';
+            $emailLink = '<a href="mailto:'. $leave->E_Mail .'" class="btn btn-outline-warning " title="Email this Staff">'.$leave->E_Mail.'</a>';
            
 
 
@@ -380,10 +380,10 @@ class SiteController extends Controller
             $result['data'][] = [
                 'Key' => $leave->Key,
                 'Employee_No' => !empty($leave->No)?$leave->No:'',
-                'Full_Name' => !empty($leave->Full_Name)?$leave->Full_Name:'',
-                'User_ID' => !empty($leave->User_ID)?$leave->User_ID:'',
-                'Company_E_Mail' => !empty($leave->Company_E_Mail)?$emailLink:'',
-                'Contract_Type' => !empty($leave->Contract_Type)?$leave->Contract_Type:'',
+                'Full_Name' => !empty($leave->FullName)?$leave->FullName:'',
+                'User_ID' => !empty($leave->Current_Station)?$leave->Current_Station:'',
+                'Company_E_Mail' => !empty($leave->E_Mail)?$emailLink:'',
+                'Contract_Type' => !empty($leave->Employee_Department)?$leave->Employee_Department:'',
                 
                 'view' => $Viewlink
             ];
@@ -400,7 +400,7 @@ class SiteController extends Controller
 
     public function actionViewcontact($No){
         $model = new Employee();
-        $service = Yii::$app->params['ServiceName']['employeeCard'];
+        $service = Yii::$app->params['ServiceName']['EmployeeCard'];
         $filter = [
             'No' => $No,
         ];
