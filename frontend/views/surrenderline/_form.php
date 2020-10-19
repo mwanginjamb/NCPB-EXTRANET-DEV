@@ -43,6 +43,10 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
                             <div class="col-md-6">
 
+                                <?= $form->field($model, 'Currency')->
+                                dropDownList($currencies,['prompt' => 'Select Currency ..',
+                                    'required'=> true, 'required' => true]) ?>
+
                                 <?= $form->field($model, 'Account_No')->
                                 dropDownList($glAccounts,['prompt' => 'Select Account  ..',
                                     'required'=> true, 'required' => true]) ?>

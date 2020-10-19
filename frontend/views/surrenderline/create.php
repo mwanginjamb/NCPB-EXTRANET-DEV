@@ -29,6 +29,7 @@ $model->isNewRecord = true;
         'glAccounts' => $glAccounts,
         'budgetCenters' => $budgetCenters,
         'locations' => $locations,
+        'currencies' => $currencies,
     ]) ?>
 
 </div>

@@ -87,6 +87,7 @@ class SurrenderlineController extends Controller
                 'glAccounts' => $this->getGlaccounts(),
                 'budgetCenters' => $this->getBudgetcenters(),
                 'locations' => $this->getLocations(),
+                'currencies' => $this->getCurrencies(),
             ]);
 
         }
@@ -118,6 +119,7 @@ class SurrenderlineController extends Controller
                 'glAccounts' => $this->getGlaccounts(),
                 'budgetCenters' => $this->getBudgetcenters(),
                 'locations' => $this->getLocations(),
+                'currencies' => $this->getCurrencies(),
             ]);
         }
 
@@ -174,6 +176,7 @@ class SurrenderlineController extends Controller
                 'glAccounts' => $this->getGlaccounts(),
                 'budgetCenters' => $this->getBudgetcenters(),
                 'locations' => $this->getLocations(),
+                'currencies' => $this->getCurrencies(),
             ]);
         }
 
@@ -183,11 +186,12 @@ class SurrenderlineController extends Controller
             'glAccounts' => $this->getGlaccounts(),
             'budgetCenters' => $this->getBudgetcenters(),
             'locations' => $this->getLocations(),
+            'currencies' => $this->getCurrencies(),
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['ImprestRequestLine'];
+        $service = Yii::$app->params['ServiceName']['SurrenderLines'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -286,6 +290,15 @@ class SurrenderlineController extends Controller
         return ArrayHelper::map($result,'Code','Name');
 
 
+    }
+
+    /* Get Currencies*/
+
+    public function getCurrencies(){
+        $service = Yii::$app->params['ServiceName']['Currencies'];
+        $filter = ['Description' => '<> " "'];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Description');
     }
 
     /* Get expense locations */

@@ -28,6 +28,7 @@ $this->title = 'Update Imprest Surrender Line.';
         'glAccounts' => $glAccounts,
         'budgetCenters' => $budgetCenters,
         'locations' => $locations,
+        'currencies' => $currencies,
     ]) ?>
 
 </div>

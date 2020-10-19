@@ -141,6 +141,7 @@ return [
         'SurrenderLines' => 'SurrenderLines', //50037 (Page)
         'Dimensions' => 'Dimensions', // 560
         'PostCodes' => 'PostCodes', //367
+        'Currencies' => 'Currencies', //5
 
         //Approval code unit
         'Portal_Workflows' => 'Portal_Workflows', //50019
