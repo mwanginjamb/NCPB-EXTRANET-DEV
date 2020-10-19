@@ -62,7 +62,7 @@ public $isNewRecord;
     }
 
     public function getLines($imprestNo){
-        $service = Yii::$app->params['ServiceName']['PostedImprest'];
+        $service = Yii::$app->params['ServiceName']['SurrenderLines'];
         $filter = [
             'Requisition_No' => $imprestNo,
         ];
@@ -70,8 +70,47 @@ public $isNewRecord;
         $lines = Yii::$app->navhelper->getData($service, $filter);
         return $lines;
 
-
     }
+
+    public function getLocation($Code)
+    {
+        $service = Yii::$app->params['ServiceName']['PostCodes'];
+        $filter = [
+            'City' => '<> " "',
+            'Code' => $Code
+        ];
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        return $result[0]->City;
+    }
+
+    public function getBudgetCenter($Code)
+    {
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = [
+            'Name' => '<> " "',
+            'Global_Dimension_No' => 2,
+            'Code' => $Code
+        ];
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        return $result[0]->Name;
+    }
+
+    public function getFunction($Code)
+    {
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = [
+            'Name' => '<> " "',
+            'Global_Dimension_No' => 1,
+            'Code' => $Code
+        ];
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        return $result[0]->Name;
+    }
+
+
+
+
+
 
 
 

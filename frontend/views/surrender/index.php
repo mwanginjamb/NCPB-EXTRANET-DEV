@@ -74,7 +74,7 @@ $script = <<<JS
             ajax: url+'surrender/list',
             paging: true,
             columns: [
-                { title: 'No' ,data: 'No'},
+                { title: 'Imprest No.' ,data: 'No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
                 { title: 'Imprest Account' ,data: 'Imprest_Account'},

@@ -138,7 +138,9 @@ return [
         'AccountList' => 'AccountList', //18 (Page)
         'PostedImprest' => 'PostedImprest', // 50031 (Page)
         'SurrenderCard' => 'SurrenderCard', // 50032 (Page)
+        'SurrenderLines' => 'SurrenderLines', //50037 (Page)
         'Dimensions' => 'Dimensions', // 560
+        'PostCodes' => 'PostCodes', //367
 
         //Approval code unit
         'Portal_Workflows' => 'Portal_Workflows', //50019

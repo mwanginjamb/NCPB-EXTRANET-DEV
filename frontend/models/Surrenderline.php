@@ -14,6 +14,7 @@ class Surrenderline extends Model
 {
 
 public $Key;
+public $Line_No;
 public $Expense_Date;
 public $Requisition_No;
 public $Expense_Location;
@@ -41,15 +42,15 @@ public $isNewRecord;
     public function rules()
     {
         return [
-
+            [['Description','Expense_Date','Account_No','Amount'],'required'],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            'Shortcut_Dimension_1_Code' => 'Function Code',
-            'Shortcut_Dimension_2_Code' => 'Budget Center Code',
+            'Global_Dimension_1_Code' => 'Function Code',
+            'Global_Dimension_2_Code' => 'Budget Center Code',
         ];
     }
 }

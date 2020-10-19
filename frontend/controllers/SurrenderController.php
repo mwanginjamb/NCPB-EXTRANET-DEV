@@ -14,6 +14,7 @@ use frontend\models\Imprestcard;
 use frontend\models\Imprestline;
 use frontend\models\Imprestsurrendercard;
 use frontend\models\Leaveplancard;
+use frontend\models\Surrendercard;
 use frontend\models\Trainingplan;
 use Yii;
 use yii\filters\AccessControl;
@@ -301,8 +302,8 @@ class SurrenderController extends Controller
     }
 
     public function actionView($No){
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
-
+        $service = Yii::$app->params['ServiceName']['SurrenderCard'];
+        $model = new Surrendercard();
         $filter = [
             'Imprest_No' => $No
         ];
@@ -310,7 +311,7 @@ class SurrenderController extends Controller
         $result = Yii::$app->navhelper->getData($service, $filter);
 
         //load nav result to model
-        $model = $this->loadtomodel($result[0], new Imprestcard());
+        $model = $this->loadtomodel($result[0], $model);
 
         //Yii::$app->recruitment->printrr($model);
 
@@ -354,7 +355,7 @@ class SurrenderController extends Controller
         foreach($results as $item){
 
             if(!empty($item->Imprest_No)){
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['view','No'=> $item->Imprest_No ],['title' => 'Update Posted Imprest Application','class'=>'btn btn-info btn-xs']);
+                $updateLink = Html::a('<i class="far fa-edit"></i>',['view','No'=> $item->Imprest_No ],['title' => 'Surrender Imprest','class'=>'btn btn-info btn-xs']);
 
 
                 $result['data'][] = [

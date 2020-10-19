@@ -11,7 +11,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Imprest Line Request';
+$this->title = 'Imprest  Surrender Line Request';
 $this->params['breadcrumbs'][] = ['label' => 'Imprest Line', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -27,7 +27,8 @@ $model->isNewRecord = true;
         'model' => $model,
         'functions' => $functions,
         'glAccounts' => $glAccounts,
-        'budgetCenters' => $budgetCenters
+        'budgetCenters' => $budgetCenters,
+        'locations' => $locations,
     ]) ?>
 
 </div>
