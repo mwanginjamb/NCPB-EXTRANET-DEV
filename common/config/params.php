@@ -41,10 +41,7 @@ return [
         'employeerequisition'
     ],
     'codeUnits' => [
-        'Portal_Workflows', //50019
-        'JobApplication', //50023
-        'AppraisalWorkflow' => 'AppraisalWorkflow', //50020 np  not taken to live
-        'PortalReports', //50021
+       'IntegrationFuctions' => 'IntegrationFuctions', // 51000
     ],
     'ServiceName'=>[
 
@@ -143,11 +140,10 @@ return [
         'PostCodes' => 'PostCodes', //367
         'Currencies' => 'Currencies', //5
 
-        //Approval code unit
-        'Portal_Workflows' => 'Portal_Workflows', //50019
+        /* Integration Code Unit*/
 
-        //Job Application Code Unit
-        'JobApplication' => 'JobApplication', //50023
+        'IntegrationFuctions' => 'IntegrationFuctions', //(Code Unit)51000
+
 
         /* Request to Approve */
         'RequeststoApprove' => 'RequeststoApprove', //654
