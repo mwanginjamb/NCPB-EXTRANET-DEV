@@ -9,6 +9,7 @@
 namespace frontend\controllers;
 use frontend\models\Employeeappraisalkra;
 use frontend\models\Experience;
+use frontend\models\Kpi;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -22,14 +23,14 @@ use frontend\models\Leave;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class AppraisalkraController extends Controller
+class KpiController extends Controller
 {
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index'],
+                'only' => ['logout', 'signup','index','create','view','delete','update'],
                 'rules' => [
                     [
                         'actions' => ['signup','index'],
@@ -37,7 +38,7 @@ class AppraisalkraController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout','index','create','view','delete','update'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -69,28 +70,28 @@ class AppraisalkraController extends Controller
 
     public function actionCreate(){
 
-        $model = new Employeeappraisalkra() ;
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
+        $model = new Kpi();
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
 
-        $Kralookup = ArrayHelper::map($this->getKRAs(),'code','description');
+        $Objectivelookup = ArrayHelper::map($this->getPerspectiveObjectives(Yii::$app->request->get('KRA_Code')),'code','description');
 
         //Yii::$app->recruitment->printrr($this->getKRAs());
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Employeeappraisalkra'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Kpi'],$model) ){
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
             $model->Appraisal_Code = Yii::$app->request->get('Appraisal_Code');
             $model->Employee_No = Yii::$app->user->identity->{'Employee No_'};
-            $model->Calender_Code = Yii::$app->request->get('Calender_Code');
+            $model->KRA_Code = Yii::$app->request->get('KRA_Code');
+
 
             $result = Yii::$app->navhelper->postData($service,$model);
 
             if(!is_string($result)){
-
-                return ['note' => '<div class="alert alert-success">Appraisal KRA Added Successfully. </div>'];
+                return ['note' => '<div class="alert alert-success">Appraisal KPI Added Successfully. </div>'];
             }else{
-
-                return ['note' => '<div class="alert alert-danger"> Error Adding Appraisal KRA . </div>'];
+                return $result;
+                return ['note' => '<div class="alert alert-danger"> Error Adding Appraisal KPI . </div>'];
 
             }
 
@@ -99,13 +100,13 @@ class AppraisalkraController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
-                'Kralookup' => $Kralookup
+                'Objectivelookup' => $Objectivelookup
             ]);
         }
 
         return $this->render('create',[
             'model' => $model,
-            'Kralookup' => $Kralookup
+            'Objectivelookup' => $Objectivelookup
         ]);
     }
 
@@ -113,7 +114,7 @@ class AppraisalkraController extends Controller
     public function actionUpdate(){
         $model = new Employeeappraisalkra() ;
         $model->isNewRecord = false;
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
         $Kralookup = ArrayHelper::map($this->getKRAs(),'code','description');
         $filter = [
 
@@ -129,7 +130,7 @@ class AppraisalkraController extends Controller
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['EmployeeAppraisalKRAs'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['EmployeeAppraisalKPIs'],$model) ){
             $result = Yii::$app->navhelper->updateData($service,$model);
 
             //Yii::$app->recruitment->printrr($result);
@@ -164,7 +165,7 @@ class AppraisalkraController extends Controller
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -228,104 +229,14 @@ class AppraisalkraController extends Controller
         }
     }
 
-    /*Data access functions */
-
-    public function actionLeavebalances(){
-
-        $balances = $this->Getleavebalance();
-
-        return $this->render('leavebalances',['balances' => $balances]);
-
-    }
-
-    public function actionGetexperience(){
-        $service = Yii::$app->params['ServiceName']['experience'];
-        $experience = \Yii::$app->navhelper->getData($service);
-
-        $result = [];
-        $count = 0;
-        foreach($experience as $exp){
-          if(!empty($exp->Job_Application_No) && !empty($exp->Position)){
-              ++$count;
-              $link = $updateLink =  '';
-
-
-              $updateLink = Html::a('Update Experience',['update','Line'=> $exp->Line_No ],['class'=>'update btn btn-outline-info btn-xs']);
-
-              $link = Html::a('Remove Experience',['delete','Key'=> $exp->Key ],['class'=>'btn btn-outline-warning btn-xs']);
 
 
 
 
-              $result['data'][] = [
-                  'index' => $count,
-                  'Key' => $exp->Key,
-                  'Position' => $exp->Position,
-                  'Job_Description' => $exp->Job_Description,
-                  'Institution' => !empty($exp->Institution)? $exp->Institution : '',
-                  'Update_Action' => $updateLink,
-                  'Remove' => $link
-              ];
-          }
 
-        }
 
-        return $result;
-    }
 
-    public function actionReport(){
-        $service = Yii::$app->params['ServiceName']['expApplicationList'];
-        $leaves = \Yii::$app->navhelper->getData($service);
-        krsort( $leaves);//sort by keys in descending order
-        $content = $this->renderPartial('_historyreport',[
-            'leaves' => $leaves
-        ]);
 
-        //return $content;
-        $pdf = \Yii::$app->pdf;
-        $pdf->content = $content;
-        $pdf->orientation = Pdf::ORIENT_PORTRAIT;
-
-        //The trick to returning binary content
-        $content = $pdf->render('', 'S');
-        $content = chunk_split(base64_encode($content));
-
-        return $content;
-    }
-
-    public function actionReportview(){
-        return $this->render('_viewreport',[
-            'content'=>$this->actionReport()
-        ]);
-    }
-
-    public function Getleavebalance(){
-        $service = Yii::$app->params['ServiceName']['leaveBalance'];
-        $filter = [
-            'No' => Yii::$app->user->identity->{'Employee No_'},
-        ];
-
-        $balances = \Yii::$app->navhelper->getData($service,$filter);
-        $result = [];
-
-        //print '<pre>';
-        // print_r($balances);exit;
-
-        foreach($balances as $b){
-            $result = [
-                'Key' => $b->Key,
-                'Annual_Leave_Bal' => $b->Annual_Leave_Bal,
-                'Maternity_Leave_Bal' => $b->Maternity_Leave_Bal,
-                'Paternity' => $b->Paternity,
-                'Study_Leave_Bal' => $b->Study_Leave_Bal,
-                'Compasionate_Leave_Bal' => $b->Compasionate_Leave_Bal,
-                'Sick_Leave_Bal' => $b->Sick_Leave_Bal
-            ];
-        }
-
-        return $result;
-
-    }
 
 
 
@@ -361,9 +272,11 @@ class AppraisalkraController extends Controller
         return $res;
     }
 
-    public function getKRAs(){
-        $service = Yii::$app->params['ServiceName']['KRALookup'];
-        $filter = [];
+    public function getPerspectiveObjectives($KRA_Code){
+        $service = Yii::$app->params['ServiceName']['PerspectiveObjectives'];
+        $filter = [
+            'KRA_Code' => $KRA_Code
+        ];
         $result = \Yii::$app->navhelper->getData($service, $filter);
 
         $arr = [];
@@ -373,11 +286,11 @@ class AppraisalkraController extends Controller
             foreach($result as $res)
             {
                 ++$count;
-                if(!empty($res->KRA_Description) )
+                if(!empty($res->KPI) && !empty($res->KRA_Code) )
                 {
                     $arr[$count] = [
-                        'code' => $res->KRA_Code,
-                        'description' => $res->KRA_Description
+                        'code' => $res->KPI,
+                        'description' => $res->KPI
                     ];
                 }
 

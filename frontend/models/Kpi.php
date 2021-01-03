@@ -10,17 +10,26 @@ namespace frontend\models;
 use yii\base\Model;
 
 
-class Employeeappraisalkra extends Model
+class Kpi extends Model
 {
-public $KRA_Code;
-public $Objective;
-public $Objective_Description;
-public $Total_KPI_x0027_s;
+
+public $KPI_Code;
+public $Activity;
+public $Target;
+public $Maximum_Weight;
+public $Target_Achieved;
+public $Self_Assesment;
+public $Self_Comments;
+public $Joint_Assesment;
+public $Supervisor_Comments;
+public $Weighted_Rating;
+public $Hr_Comments;
 public $Appraisal_Code;
 public $Employee_No;
+public $KRA_Code;
 public $Key;
 public $isNewRecord;
-public $Calender_Code;
+
 
 
     public function rules()
@@ -33,8 +42,7 @@ public $Calender_Code;
     public function attributeLabels()
     {
         return [
-            'KRA_Code' => 'Key Result Area',
-            'Total_KPI_x0027_s' => 'Total KPIs'
+
         ];
     }
 }

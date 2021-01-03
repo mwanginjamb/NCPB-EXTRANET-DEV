@@ -363,7 +363,6 @@ class ImprestController extends Controller
             if($item->Status == 'New'){
                 $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Imprest_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
 
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Imprest_No ],['title' => 'Update Imprest Application','class'=>'btn btn-info btn-xs']);
             }else if($item->Status == 'Approval_Pending'){
                 $ApprovalLink = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Imprest_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
@@ -379,7 +378,7 @@ class ImprestController extends Controller
                 'Requested_On' => !empty($item->Requested_On)?$item->Requested_On:'',
                 'Travel_Date' => !empty($item->Travel_Date)?$item->Travel_Date:'',
                 'Status' => $item->Status,
-                'Actions' => $ApprovalLink.' '.$updateLink.' '.$ViewLink ,
+                'Actions' => $ApprovalLink.' '.$ViewLink ,
 
             ];
         }

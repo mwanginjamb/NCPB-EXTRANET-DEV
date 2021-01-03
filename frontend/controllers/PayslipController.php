@@ -66,24 +66,35 @@ class PayslipController extends Controller
         ];
     }
 
+
+
+
+
     public function actionIndex(){
         $payrollperiods = $this->getPayrollperiods();
-        $service = Yii::$app->params['ServiceName']['PortalReports'];
+        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
 
-        //Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Date_Opened','desc'));
+        // Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Period_Code','desc'));
         if(Yii::$app->request->post()){
-            //Yii::$app->recruitment->printrr(Yii::$app->request->post('payperiods'));
+
             $data = [
                 'payrollPeriod' =>Yii::$app->request->post('payperiods'),
-                'employeeNo' => Yii::$app->user->identity->{'Employee No_'}
+                'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
+                'path' => ''
              ];
-            $path = Yii::$app->navhelper->IanGeneratePayslip($service,$data);
-            $binary = file_get_contents($path['return_value']); //fopen($path['return_value'],'rb');
+            $path = Yii::$app->navhelper->Integration($service,$data,'DownloadEmployeePayslip');
+            //Yii::$app->recruitment->printrr($path);
+            $mappedPath = '\\\\167.86.85.187\\Reports\\'.basename($path['return_value']);
+
+
+             //$binary = file_get_contents($mappedPath);
+            $binary = fopen($mappedPath,'rb');
+
             $content = chunk_split(base64_encode($binary));
             //delete the file after getting it's contents --> This is some house keeping
             unlink($path['return_value']);
 
-           // Yii::$app->recruitment->printrr($path);
+
             return $this->render('index',[
                 'report' => true,
                 'content' => $content,
@@ -93,7 +104,7 @@ class PayslipController extends Controller
 
         return $this->render('index',[
             'report' => false,
-            'pperiods' => ArrayHelper::map($payrollperiods,'Date_Opened','desc')
+            'pperiods' => ArrayHelper::map($payrollperiods,'Period_Code','desc')
         ]);
 
     }
@@ -375,7 +386,7 @@ class PayslipController extends Controller
         $res = [];
         foreach($periods as $p){
             $res[] = [
-                'Date_Opened' => $p->Date_Opened,
+                'Period_Code' => $p->Period_Code,
                 'desc' => $p->Period_Year.' - '.$p->Period_Name
             ];
         }

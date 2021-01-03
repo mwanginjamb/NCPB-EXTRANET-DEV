@@ -16,34 +16,18 @@ class Appraisalcard extends Model
 {
 
 public $Key;
-public $Appraisal_No;
+public $Appraisal_Code;
 public $Employee_No;
 public $Employee_Name;
-public $Level_Grade;
-public $Job_Title;
-public $Function_Team;
-public $Appraisal_Period;
-public $Goal_Setting_Start_Date;
-public $Goal_Setting_End_Date;
-public $Goal_Setting_Status;
+public $Department;
+public $Calender_Code;
 public $Appraisal_Start_Date;
-public $Created_By;
-public $Supervisor_User_Id;
-public $Employee_User_Id;
-public $Supervisor_No;
-public $MY_Appraisal_Status;
-public $EY_Appraisal_Status;
-public $Peer_1_Employee_No;
-public $Peer_1_Employee_Name;
-public $Peer_2_Employee_No;
-public $Peer_2_Employee_Name;
-public $MY_End_Date;
-public $EY_Start_Date;
-public $EY_End_Date;
+public $Appraisal_End_Date;
+public $Total_KPI_x0027_s;
+public $Deparrtment_Name;
+public $Approval_Status;
+public $Action_ID;
 public $Employee_Appraisal_KRAs;
-public $Training_Plan;
-public $Employee_Appraisal_Competence;
-public $Learning_Assesment_Competenc;
 
     public function rules()
     {
@@ -55,71 +39,24 @@ public $Learning_Assesment_Competenc;
     public function attributeLabels()
     {
         return [
-            'MY_End_Date' => 'Mid Year Appraisal End Date',
-            'EY_End_Date' => 'End Year Appraisal End Date',
-            'EY_Start_Date' =>  'End Year Start Date',
-            'EY_Appraisal_Status' => 'End Year Appraisal Status',
-            'MY_Appraisal_Status' => 'Mid Year Appraisal Status'
-
 
         ];
     }
 
-    public function getKPI($KRA_Line_No){
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPI'];
+    public function getKPI($KRA_Code){
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
         $filter = [
-            'Appraisal_No' => $this->Appraisal_No,
-            'KRA_Line_No' => $KRA_Line_No
+            'Appraisal_Code' => $this->Appraisal_Code,
+            'Employee_No' => $this->Employee_No,
+            'KRA_Code' => $KRA_Code
         ];
 
         $kpas = Yii::$app->navhelper->getData($service, $filter);
         return $kpas;
     }
 
-    public function getAppraisalbehaviours($Category_Line_No){
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalBehaviours'];
-        $filter = [
-            'Appraisal_Code' => $this->Appraisal_No,
-            'Category_Line_No' => $Category_Line_No
-        ];
-
-        $behaviours = Yii::$app->navhelper->getData($service, $filter);
-        return $behaviours;
-    }
-
-    public function getCareerdevelopmentstrengths($Goal_Line_No){
-        $service = Yii::$app->params['ServiceName']['CareerDevStrengths'];
-        $filter = [
-            'Appraisal_Code' => $this->Appraisal_No,
-            'Goal_Line_No' => $Goal_Line_No
-        ];
-
-        $result = Yii::$app->navhelper->getData($service, $filter);
-        return $result;
-    }
-
-    public function getWeaknessdevelopmentplan($Wekaness_Line_No){
-        $service = Yii::$app->params['ServiceName']['WeeknessDevPlan'];
-        $filter = [
-            'Appraisal_Code' => $this->Appraisal_No,
-            'Wekaness_Line_No' => $Wekaness_Line_No
-        ];
-
-        $result = Yii::$app->navhelper->getData($service, $filter);
-        return $result;
-    }
 
 
-    //get supervisor status
-
-    public function isSupervisor($Employee_User_Id,$Supervisor_User_Id)
-    {
-
-        $user = Yii::$app->user->identity->getId();
-
-        return ($user == $Supervisor_User_Id);
-
-    }
 
 
 }

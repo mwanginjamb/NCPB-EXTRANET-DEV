@@ -9,6 +9,10 @@ class Navision extends Component
     {
         parent::init();
     }
+
+
+
+/*CORE ERP WEB SERVICE INTERACTION METHODS FOR CRUD*/
     public function isUp($url)
     {
         //Check if service is up
@@ -32,6 +36,7 @@ class Navision extends Component
     }
     public function readEntries($credentials, $soapWsdl, $filter='')
     {
+
         $client = $this->createClient($credentials, $soapWsdl);
         try {
             $result = $client->ReadMultiple(['filter' => $filter, 'setSize' => 1000]);
@@ -110,7 +115,20 @@ class Navision extends Component
 
 
 
+/*CUSTOM INTEGRATION FUNCTIONS E.G CODE UNIT INVOCATIONS*/
 
+
+    public function Integration($credentials, $soapWsdl, $Entry,$method)/* Utilizes the 'IntegrationFuctions' code unit*/
+    {
+        $client = $this->createClient($credentials, $soapWsdl);
+        try {
+            $result = $client->$method($Entry);
+            return $result;
+        } catch (\SoapFault $e) {
+            return $e->getMessage();
+        }
+
+    }
 
 
 

@@ -56,24 +56,25 @@ $script = <<<JS
         var absolute = $('input[name=absolute]').val();
          /*Data Tables*/
          
-         $.fn.dataTable.ext.errMode = 'throw';
+         //$.fn.dataTable.ext.errMode = 'throw';
         
     
           $('#appraisal').DataTable({
            
             //serverSide: true,  
-            ajax: absolute+'appraisal/getappraisals',
+            ajax: absolute+'appraisal/list',
             paging: true,
             columns: [
-                { title: 'Appraisal No' ,data: 'Appraisal_No'},
+                { title: 'Appraisal No' ,data: 'No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
-                { title: 'Level Grade' ,data: 'Level_Grade'},
-                { title: 'Job Title' ,data: 'Job_Title'},
-                { title: 'Function Team' ,data: 'Function_Team'},
-                { title: 'Appraisal Period' ,data: 'Appraisal_Period'},
-                { title: 'Goal Setting Start Date' ,data: 'Goal_Setting_Start_Date'},
-               
+                { title: 'Department' ,data: 'Department'},
+                { title: 'Appraisal Start Date' ,data: 'Appraisal_Start_Date'},
+                { title: 'Appraisal End Date' ,data: 'Appraisal_End_Date'},
+                { title: 'Remaining Days' ,data: 'Remaining_Days'},
+                { title: 'Total KPIs' ,data: 'Total_KPI_x0027_s'},
+                { title: 'Created By' ,data: 'Created_By'},
+                { title: 'Created On' ,data: 'Created_On'},
                 { title: 'Action', data: 'Action' },
                 
                

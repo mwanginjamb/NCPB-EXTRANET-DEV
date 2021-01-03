@@ -574,18 +574,19 @@ class LeaveController extends Controller
 
     /* Call Approval Workflow Methods */
 
-    public function actionSendForApproval($No)
+    public function actionSendForApproval()
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
-
+        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
+        $No = Yii::$app->request->get('No');
         $data = [
-            'applicationNo' => $No,
-            'sendMail' => 1,
-            'approvalUrl' => '',
+            'documentType' => 1,
+            'documentNo' => Yii::$app->request->get('No'),
+            'currentLevel' => '',
+            'sourceId' => ''
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanSendImprestForApproval');
+        $result = Yii::$app->navhelper->Integration($service,$data,'SendApprovalRequest');
 
         if(!is_string($result)){
             Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);

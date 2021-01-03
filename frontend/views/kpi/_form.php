@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
                         <table class="table">
                             <tbody>
 
-                            <?= $form->field($model, 'KRA_Code')->dropDownList($Kralookup, ['prompt' => 'Select KRA']) ?>
+                            <?= $form->field($model, 'KPI_Code')->dropDownList($Objectivelookup, ['prompt' => 'Select KPI']) ?>
 
                             <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
 
@@ -42,7 +42,9 @@ use yii\widgets\ActiveForm;
                     <div class="form-group">
                         <?= Html::submitButton(($model->isNewRecord)?'Save':'Add', ['class' => 'btn btn-success']) ?>
                     </div>
-
+                    <div class="form-group" id="indicator" >
+                        <span class="color-success">Working......</span>
+                    </div>
 
                 </div>
                 <?php ActiveForm::end(); ?>
@@ -53,12 +55,16 @@ use yii\widgets\ActiveForm;
 
 <?php
 $script = <<<JS
- //Submit Rejection form and get results in json    
+ //Submit Rejection form and get results in json  
+       
+        $('#indicator').hide();
         $('form').on('submit', function(e){
+            $('#indicator').show();
             e.preventDefault()
             const data = $(this).serialize();
             const url = $(this).attr('action');
             $.post(url,data).done(function(msg){
+                    $('#indicator').hide();
                     $('.modal').modal('show')
                     .find('.modal-body')
                     .html(msg.note);

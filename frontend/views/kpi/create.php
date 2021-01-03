@@ -11,7 +11,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Add KRA Line';
+$this->title = 'Add Key Performance Indicator Line';
 $this->params['breadcrumbs'][] = ['label' => 'KRA Evaluation', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'Kralookup' => $Kralookup
+        'Objectivelookup' => $Objectivelookup
     ]) ?>
 
 </div>

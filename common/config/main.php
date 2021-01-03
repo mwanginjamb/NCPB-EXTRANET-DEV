@@ -13,7 +13,7 @@ return [
         ],
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'sqlsrv:server=FRANCIS\FRANC;database=AAS',
+            'dsn' => 'sqlsrv:server=167.86.85.187;database=NCPB',
             'username' => 'mwangi',
             'password' => 'mwangi123',
             'charset' => 'utf8',

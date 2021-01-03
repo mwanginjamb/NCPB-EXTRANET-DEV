@@ -42,6 +42,7 @@ return [
     ],
     'codeUnits' => [
        'IntegrationFuctions' => 'IntegrationFuctions', // 51000
+        'AppraisalStatusChange' => 'AppraisalStatusChange', //50020
     ],
     'ServiceName'=>[
 
@@ -82,44 +83,31 @@ return [
         'Countries' => 'Countries', //10
         'Religion' => 'Religion', //70085
 
-        //Appraisal--------------------------------------------------------------------------------
-        'AppraisalRating' => 'AppraisalRating',//60023
-        'AppraisalProficiencyLevel' => 'AppraisalProficiencyLevel', //60025
+        //-------------NCPB Appraisal--------------------------------------------------------------------------------
+
         'AppraisalList' => 'AppraisalList', //60007
-        'AppraisalCard' => 'AppraisalCard',//60008
-        'EmployeeAppraisalKPI' => 'EmployeeAppraisalKPI', //60010
-        'SubmittedAppraisals' => 'SubmittedAppraisals', //60012
-        'ApprovedAppraisals' => 'ApprovedAppraisals', //60013
-        'MYAppraiseeList' => 'MYAppraiseeList',//60014
-        'MYSupervisorList' => 'MYSupervisorList',//60015
-        'MYApprovedList' => 'MYApprovedList',//60016
-        'EYAppraiseeList' => 'EYAppraiseeList',//60017
-        'EYSupervisorList' => 'EYSupervisorList',//60018
-        'EYPeer1List' => 'EYPeer1List',//60019
-        'EYPeer2List' => 'EYPeer2List',//60020
-        'EYAgreementList' => 'EYAgreementList',//60021
-        'ClosedAppraisalsList' => 'ClosedAppraisalsList',//60022
+        'AppraisalCard' => 'AppraisalCard', //60008
+        'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
+        'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
+        'ScoreCards' => 'ScoreCards', //60011
+        'AppraisalListSupervisor' => 'AppraisalListSupervisor', //60012
+        'AppraisalListHr' => 'AppraisalListHr', //60013
+        'AppraisalListClosed' => 'AppraisalListClosed', //60014
+        'AppraisalListExtraSupervisor' => 'AppraisalListExtraSupervisor', //60015
+        'ApprovedAppraisals' => 'ApprovedAppraisals', //60016
+        'ApprovedAppraisalCard' => 'ApprovedAppraisalCard', //60017
+        'ApprovedAppraisalKRAs' => 'ApprovedAppraisalKRAs', //60018
+        'ApprovedKPIs' => 'ApprovedKPIs', //60019
+        'KPIAttachments' => 'KPIAttachments', //60020
+        'KRALookup'=> 'KRALookup', //60046 KRALookup
+        'PerspectiveObjectives' => 'PerspectiveObjectives', //60001
 
-        'CareerDevelopmentPlan' => 'CareerDevelopmentPlan', //60038 -->Not Taken to live server
-        'CareerDevStrengths' => 'CareerDevStrengths', //60039 -->Not Taken to live server
-        'FurtherDevAreas' => 'FurtherDevAreas', //60040 -->Not Taken to live server
-        'WeeknessDevPlan' => 'WeeknessDevPlan', //60041 -->Not Taken to live server
+        'AppraisalStatusChange' => 'AppraisalStatusChange', // Code Unit
 
-
-
-
-        'AppraisalWorkflow' => 'AppraisalWorkflow', // 50020 ---> Code Unit
-        'PerformanceLevel' => 'PerformanceLevel',//60037 page
-
-        'EmployeeAppraisalKRA' => 'EmployeeAppraisalKRA',//60009
-        'TrainingPlan' => 'TrainingPlan', //60036
-        'EmployeeAppraisalCompetence' => 'EmployeeAppraisalCompetence',//60033
-        'EmployeeAppraisalBehaviours' => 'EmployeeAppraisalBehaviours', //60034
-        'LearningAssessmentCompetence' => 'LearningAssessmentCompetence', //60035
+        /*End Appraisal service declaration*/
 
 
         //Payslip report
-        'PortalReports' => 'PortalReports',//50021
         'Payrollperiods' => 'Payrollperiods', //70255
 
         //P9 report
@@ -182,6 +170,38 @@ return [
         'application/vnd.ms-access',
         'application/rtf',
         'application/octet-stream'
-    ]
+    ],
+
+    'Documents' => [
+        'Purchase Requisition' => 1,
+        'Transfer Order' => 2,
+        'Imprest' => 3,
+        'Surrender' => 4,
+        'Fleet Request' => 5,
+        'Payment Voucher' => 6,
+        'Bank Transfer' => 7,
+        'SAF' => 8,
+        'Service Order' => 9,
+        'GRV' =>  10,
+        'GIV' => 11,
+        'Appraisal' => 12,
+        'Leave' =>  13,
+        'Safari' => 14,
+        'Store Requisition' => 15,
+        'Claim' => 16,
+        'GRN' => 17,
+        'SCM' => 18,
+        'SO' => 19,
+        'PCM' => 20,
+        'PO' => 21,
+        'JV' => 22,
+        'PI' => 23,
+        'SI' => 24,
+        'P. Variation' =>  25,
+        'Stk. Maint.' => 26,
+        'Port Pass' =>  27,
+        'Lease' => 28,
+        'Leave Adj.' => 29
+    ],
 
 ];

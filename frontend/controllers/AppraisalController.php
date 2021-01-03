@@ -2,49 +2,49 @@
 /**
  * Created by PhpStorm.
  * User: HP ELITEBOOK 840 G5
- * Date: 2/28/2020
- * Time: 12:27 AM
+ * Date: 3/9/2020
+ * Time: 4:21 PM
  */
 
-
 namespace frontend\controllers;
-
-use common\models\HrloginForm;
-use common\models\SignupForm;
 use frontend\models\Appraisalcard;
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\VerifyEmailForm;
-use frontend\models\Applicantprofile;
-use frontend\models\Employeerequisition;
-use frontend\models\Employeerequsition;
-use frontend\models\Job;
+use frontend\models\Careerdevelopmentstrength;
+use frontend\models\Employeeappraisalkra;
+use frontend\models\Experience;
+use frontend\models\Imprestcard;
+use frontend\models\Imprestline;
+use frontend\models\Imprestsurrendercard;
+use frontend\models\Leaveplancard;
+use frontend\models\Trainingplan;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use frontend\models\Employee;
 use yii\web\Controller;
+use yii\web\BadRequestHttpException;
+
+use frontend\models\Leave;
 use yii\web\Response;
+use kartik\mpdf\Pdf;
 
 class AppraisalController extends Controller
 {
-
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index','vacancies'],
+                'only' => ['logout','signup','index','list'],
                 'rules' => [
                     [
-                        'actions' => ['vacancies'],
+                        'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index','vacancies'],
+                        'actions' => ['logout','index','list'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -53,30 +53,12 @@ class AppraisalController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['get'],
-                    'reject' => ['POST']
+                    'logout' => ['post'],
                 ],
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => [
-                    'getappraisals',
-                    'getsubmittedappraisals',
-                    'getapprovedappraisals',
-                    'getsuperapprovedappraisals',
-                    'getmyappraiseelist',
-                    'getmysupervisorlist',
-                    'getmyapprovedappraiseelist',
-                    'getmyapprovedsupervisorlist',
-                    'geteyappraiseelist',
-                    'geteysupervisorlist',
-                    'geteypeer1list',
-                    'geteypeer2list',
-                    'geteyagreementlist',
-                    'geteyappraiseeclosedlist',
-                    'geteysupervisorclosedlist'
-
-                    ],
+                'only' => ['list'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -92,1113 +74,637 @@ class AppraisalController extends Controller
 
     }
 
-    public function actionSubmitted(){
+    public function actionSurrenderlist(){
 
-        return $this->render('submitted');
-
-    }
-
-    public function actionApprovedappraisals(){
-
-        return $this->render('approvedappraisals');
+        return $this->render('surrenderlist');
 
     }
 
-    public function actionSuperapprovedappraisals(){
+    public function actionCreate(){
 
-        return $this->render('superapprovedappraisals');
+        $model = new Imprestcard() ;
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
+        $request = '';
+        /*Do initial request */
+        if(!isset(Yii::$app->request->post()['Imprestcard'])){
+            $request = Yii::$app->navhelper->postData($service,$model);
+            $filter = [];
+            if(is_object($request) )
+            {
+                Yii::$app->navhelper->loadmodel($request,$model);
 
-    }
+                // Update Request for
 
-    public function actionMyappraiseelist(){
+                $model->Key = $request->Key;
 
-        return $this->render('myappraiseelist');
+                $request = Yii::$app->navhelper->updateData($service, $model);
 
-    }
+                $model = Yii::$app->navhelper->loadmodel($request,$model);
+                if(is_string($request)){
+                    Yii::$app->recruitment->printrr($request);
+                }
 
-    public function actionMysupervisorlist(){
+            }
+        }
 
-        return $this->render('mysupervisorlist');
 
-    }
 
-    public function actionMyapprovedappraiseelist(){
 
-        return $this->render('myapprovedappraiseelist');
 
-    }
 
-    public function actionMyapprovedsupervisorlist(){
+        // Yii::$app->recruitment->printrr(Yii::$app->request->post());
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
+            //Yii::$app->recruitment->printrr(Yii::$app->request->post()['Imprestcard']);
+            $filter = [
+                'Imprest_No' => $model->Imprest_No,
+            ];
 
-        return $this->render('myapprovedsupervisorlist');
+            $refresh = Yii::$app->navhelper->getData($service,$filter);
+            $model->Key = $refresh[0]->Key;
+            Yii::$app->navhelper->loadmodel($refresh[0],$model);
 
-    }
+            $result = Yii::$app->navhelper->updateData($service,$model);
 
-    public function actionEyappraiseelist(){
 
-        return $this->render('eyappraiseelist');
+            if(!is_string($result)){
 
-    }
+                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
 
-    public function actionEysupervisorlist(){
+                // Yii::$app->recruitment->printrr($result);
+                return $this->redirect(['view','No' => $result->Imprest_No]);
 
-        return $this->render('eysupervisorlist');
+            }else{
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                return $this->redirect(['index']);
 
-    }
+            }
 
-    public function actionEypeer1list(){
+        }
 
-        return $this->render('eypeer1list');
 
-    }
+        //Yii::$app->recruitment->printrr($model);
 
-    public function actionEypeer2list(){
-
-        return $this->render('eypeer2list');
-
-    }
-
-    public function actionEyagreementlist(){
-
-        return $this->render('eyagreementlist');
-
-    }
-
-    public function actionEyappraiseeclosedlist(){
-
-        return $this->render('eyappraiseeclosedlist');
-
-    }
-
-    public function actionEysupervisorclosedlist(){
-
-        return $this->render('eysupervisorclosedlist');
-
-    }
-
-    public function actionSuperapprovedappraisals12(){
-
-        return $this->render('superapprovedappraisals');
-
+        return $this->render('create',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' =>[],
+            'departments' => [],
+            'currencies' => [],
+            'paymentMethods' => $this->getPaymentmethods()
+        ]);
     }
 
 
-    public function actionGetappraisals(){
+    public function actionCreateSurrender(){
+        // Yii::$app->recruitment->printrr(Yii::$app->request->get('requestfor'));
+        $model = new Imprestsurrendercard();
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCardPortal'];
 
+        /*Do initial request */
+        $request = Yii::$app->navhelper->postData($service,[]);
+
+        if(is_object($request) )
+        {
+            Yii::$app->navhelper->loadmodel($request,$model);
+
+            // Update Request for
+            $model->Request_For = Yii::$app->request->get('requestfor');
+            $model->Key = $request->Key;
+            $request = Yii::$app->navhelper->updateData($service, $model);
+
+            if(is_string($request)){
+                Yii::$app->recruitment->printrr($request);
+            }
+
+
+        }
+
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestsurrendercard'],$model) ){
+
+            $filter = [
+                'No' => $model->No,
+            ];
+
+            $refresh = Yii::$app->navhelper->getData($service,$filter);
+            Yii::$app->navhelper->loadmodel($refresh[0],$model);
+
+            $result = Yii::$app->navhelper->updateData($service,$model);
+
+
+            if(!is_string($result)){
+                //Yii::$app->recruitment->printrr($result);
+                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
+
+                return $this->redirect(['view-surrender','No' => $result->No]);
+
+            }else{
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                return $this->render('createsurrender',[
+                    'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => $this->getPrograms(),
+                    'departments' => $this->getDepartments(),
+                    'currencies' => $this->getCurrencies(),
+                    'imprests' => $this->getmyimprests(),
+                    'receipts' => $this->getimprestreceipts($model->No)
+                ]);
+
+            }
+
+        }
+
+        return $this->render('createsurrender',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies(),
+            'imprests' => $this->getmyimprests(),
+            'receipts' => $this->getimprestreceipts($model->No)
+        ]);
+    }
+
+
+    public function actionUpdate(){
+        $model = new Imprestcard() ;
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+        $model->isNewRecord = false;
+
+        $filter = [
+            'No' => Yii::$app->request->get('No'),
+        ];
+        $result = Yii::$app->navhelper->getData($service,$filter);
+
+        if(is_array($result)){
+            //load nav result to model
+            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
+        }else{
+            Yii::$app->recruitment->printrr($result);
+        }
+
+
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
+            $result = Yii::$app->navhelper->updateData($service,$model);
+            if(!empty($result)){
+
+                Yii::$app->session->setFlash('success','Imprest Request Updated Successfully.' );
+
+                return $this->render('update',[
+                    'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
+                ]);
+
+            }else{
+
+                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                return $this->render('update',[
+                    'model' => $model,
+                    'employees' => $this->getEmployees(),
+                    'programs' => [],
+                    'departments' => [],
+                    'currencies' => [],
+                    'paymentMethods' => $this->getPaymentmethods()
+                ]);
+            }
+
+        }
+
+
+        // Yii::$app->recruitment->printrr($model);
+        if(Yii::$app->request->isAjax){
+            return $this->renderAjax('update', [
+                'model' => $model,
+                'employees' => $this->getEmployees(),
+                'programs' => $this->getPrograms(),
+                'departments' => $this->getDepartments(),
+                'currencies' => $this->getCurrencies()
+
+            ]);
+        }
+
+        return $this->render('update',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies()
+        ]);
+    }
+
+    public function actionDelete(){
+        $service = Yii::$app->params['ServiceName']['CareerDevStrengths'];
+        $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(!is_string($result)){
+
+            return ['note' => '<div class="alert alert-success">Record Purged Successfully</div>'];
+        }else{
+            return ['note' => '<div class="alert alert-danger">Error Purging Record: '.$result.'</div>' ];
+        }
+    }
+
+    public function actionView($No){
+        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
+
+        $filter = [
+            'Appraisal_Code' => $No
+        ];
+
+        $result = Yii::$app->navhelper->getData($service, $filter);
+
+        //load nav result to model
+        $model = $this->loadtomodel($result[0], new Appraisalcard());
+
+        if(!empty($result[0 ]->Employee_Appraisal_KRAs)){
+            $model->Employee_Appraisal_KRAs = $result[0]->Employee_Appraisal_KRAs->Employee_Appraisal_KRAs;
+        }
+
+        // Yii::$app->recruitment->printrr($model);
+
+        return $this->render('view',[
+            'model' => $model,
+        ]);
+    }
+
+    /*Imprest surrender card view*/
+
+    public function actionViewSurrender($No){
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCard'];
+
+        $filter = [
+            'No' => $No
+        ];
+
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        //load nav result to model
+        $model = $this->loadtomodel($result[0], new Imprestsurrendercard());
+
+        return $this->render('viewsurrender',[
+            'model' => $model,
+            'employees' => $this->getEmployees(),
+            'programs' => $this->getPrograms(),
+            'departments' => $this->getDepartments(),
+            'currencies' => $this->getCurrencies()
+        ]);
+    }
+
+    // Get Appriasal list
+
+    public function actionList(){
         $service = Yii::$app->params['ServiceName']['AppraisalList'];
         $filter = [
             'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
         ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-        //ksort($appraisals);
+       // Yii::$app->recruitment->printrr( $filter);
+        $results = Yii::$app->navhelper->getData($service,$filter);
         $result = [];
 
-       if(is_array($appraisals)){
-           foreach($appraisals as $req){
+        foreach($results as $item){
 
-               $Viewlink = Html::a('View', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
 
-               $result['data'][] = [
-                   'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                   'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                   'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                   'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                   'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                   'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                   'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                   'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                   'Action' => !empty($Viewlink) ? $Viewlink : '',
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($item->Appraisal_Start_Date)?$item->Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => $item->Created_By,
+                'Created_On' => $item->Created_On,
+                'Action' => $ViewLink ,
 
-               ];
-
-           }
-       }
-
-        return $result;
-    }
-
-    /*Get Submitted Appraisals Pending Approval*/
-    public function actionGetsubmittedappraisals(){
-        $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['SubmittedAppraisals'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-        $result = [];
-
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                    Yii::$app->session->set('isSupervisor',true);
-                }else{
-                    Yii::$app->session->set('isSupervisor',false);
-                }
-                $Viewlink = Html::a('<i class="fa fa-eye"></i>', ['viewsubmitted', 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: '','Employee_No' => $req->Employee_No], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
+            ];
         }
 
         return $result;
     }
 
-    /**Get Approved Appraisals (Supervisor view) */
+    // Get Imprest  surrender list
 
-    public function actionGetsuperapprovedappraisals(){
-        $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['ApprovedAppraisals'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-        $result = [];
-
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                    Yii::$app->session->set('isSupervisor',true);
-                }else{
-                    Yii::$app->session->set('isSupervisor',false);
-                }
-
-                $Viewlink = Html::a('<i class="fa fa-eye"></i>', ['viewsubmitted', 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: '','Employee_No' => $req->Employee_No], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-    /** Get Approved Appraisal Goals/Objectives -- Appraisee */
-
-    public function actionGetapprovedappraisals(){
-        $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['ApprovedAppraisals'];
+    public function actionGetimprestsurrenders(){
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderList'];
         $filter = [
             'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
         ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-       
+        //Yii::$app->recruitment->printrr( );
+        $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
+        foreach($results as $item){
+            $link = $updateLink = $deleteLink =  '';
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view-surrender','No'=> $item->No ],['class'=>'btn btn-outline-primary btn-xs']);
+            if($item->Status == 'New'){
+                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
 
-       if(is_array($appraisals)){
-           foreach($appraisals as $req){
-
-
-            if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                Yii::$app->session->set('isSupervisor',true);
-            }else{
-                Yii::$app->session->set('isSupervisor',false);
+                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->No ],['class'=>'btn btn-info btn-xs']);
+            }else if($item->Status == 'Pending_Approval'){
+                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
 
-
-            $Viewlink = Html::a('view', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-            if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                $Viewlink = Html::a('viewsubmitted', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-            }
-               
-
-               $result['data'][] = [
-                   'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                   'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                   'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                   'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                   'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                   'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                   'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                   'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                   'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-               ];
-
-           }
-       }
-
-        return $result;
-    }
-
-    /*Get Mid Year Appraisals - Appraisee List*/
-
-    public function actionGetmyappraiseelist(){
-       // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['MYAppraiseeList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-            'MY_Appraisal_Status' => 'Appraisee_Level'
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('view', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->No,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Purpose' => !empty($item->Purpose)?$item->Purpose:'',
+                'Imprest_Amount' => !empty($item->Imprest_Amount)?$item->Imprest_Amount:'',
+                'Status' => $item->Status,
+                'Action' => $link,
+                'Update_Action' => $updateLink,
+                'view' => $Viewlink
+            ];
         }
 
         return $result;
     }
 
-    /*Get Mid Year Approved Appraisals - Appraisee List*/
-
-    public function actionGetmyapprovedappraiseelist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['MYApprovedList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('view', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-    /*Get Mid Year Appraisals - Supervisor List*/
-
-    public function actionGetmysupervisorlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['MYSupervisorList'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-            'MY_Appraisal_Status' => 'Supervisor_Level',
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('views', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-    /*Get Mid Year Approved Appraisals - Supervisor List*/
-
-    public function actionGetmyapprovedsupervisorlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['MYApprovedList'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('view', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    /*Get End Year Appraisals - Appraisee List*/
-
-    public function actionGeteyappraiseelist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['EYAppraiseeList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-            'EY_Appraisal_Status' => 'Appraisee_Level'
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-
-                /* if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                     Yii::$app->session->set('isSupervisor',true);
-                 }else{
-                     Yii::$app->session->set('isSupervisor',false);
-                 }*/
-
-
-                $Viewlink = Html::a('view', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-                /* if($model->isSupervisor($req->Employee_User_Id,$req->Supervisor_User_Id)){
-                     $Viewlink = Html::a('viewsubmitted', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-                 }*/
-
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-
-    /*Get Mid Year Appraisals - Supervisor List*/
-
-    public function actionGeteysupervisorlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['EYSupervisorList'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-            'EY_Appraisal_Status' => 'Supervisor_Level',
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('views', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    /*Get End Year Appraisals - Peer1 List*/
-
-    public function actionGeteypeer1list(){
-
-        $service = Yii::$app->params['ServiceName']['EYPeer1List'];
-        $filter = [
-            'Peer_1_Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-            'EY_Appraisal_Status' => 'Peer_1_Level'
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('view', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    /*Get End Year Appraisals - Peer2 List*/
-
-    public function actionGeteypeer2list(){
-
-        $service = Yii::$app->params['ServiceName']['EYPeer2List'];
-        $filter = [
-            'Peer_2_Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-            'EY_Appraisal_Status' => 'Peer_2_Level'
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('view', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    /*Get Mid Year Appraisals - Supervisor List*/
-
-    public function actionGeteyagreementlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['EYAgreementList'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-            'EY_Appraisal_Status' => 'Agreement_Level',
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('views', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    /*Get EY Year Closed Appraisals - Appraisee List*/
-
-    public function actionGeteyappraiseeclosedlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['ClosedAppraisalsList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-            'EY_Appraisal_Status' => 'Closed',
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('views', ['view','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-    /*Get EY Year Closed Appraisals -  Supervisor List*/
-
-    public function actionGeteysupervisorclosedlist(){
-        // $model = new Appraisalcard();
-        $service = Yii::$app->params['ServiceName']['ClosedAppraisalsList'];
-        $filter = [
-            'Supervisor_User_Id' => Yii::$app->user->identity->getId(),
-            'EY_Appraisal_Status' => 'Closed',
-        ];
-        $appraisals = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-
-        if(is_array($appraisals)){
-            foreach($appraisals as $req){
-
-                $Viewlink = Html::a('views', ['viewsubmitted','Employee_No' => $req->Employee_No, 'Appraisal_No' => !empty($req->Appraisal_No)?$req->Appraisal_No: ''], ['class' => 'btn btn-outline-primary btn-xs']);
-
-                $result['data'][] = [
-                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
-                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
-                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
-                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
-                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
-                    'Function_Team' =>  !empty($req->Function_Team) ? $req->Function_Team : '',
-                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ?$req->Appraisal_Period : '',
-                    'Goal_Setting_Start_Date' =>  !empty($req->Goal_Setting_Start_Date) ? $req->Goal_Setting_Start_Date : '',
-                    'Action' => !empty($Viewlink) ? $Viewlink : '',
-
-                ];
-
-            }
-        }
-
-        return $result;
-    }
-
-
-
-    public function actionView(){
-        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
-        $model = new Appraisalcard();
-
-        $filter = [
-            'Appraisal_No' => Yii::$app->request->get('Appraisal_No'),
-            'Employee_No' => Yii::$app->request->get('Employee_No')
-        ];
-
-        $appraisal = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($appraisal)){
-            $model = Yii::$app->navhelper->loadmodel($appraisal[0],$model);
-        }
-
-        //echo property_exists($appraisal[0]->Employee_Appraisal_KRAs,'Employee_Appraisal_KRAs')?'Exists':'Haina any';
-
-        // Yii::$app->recruitment->printrr($appraisal[0]);
-
-
-        return $this->render('view',[
-            'model' => $model,
-            'card' => $appraisal[0]
-        ]);
-    }
-
-    public function actionViewsubmitted($Appraisal_No,$Employee_No){
-        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
-        $model = new Appraisalcard();
-
-        $filter = [
-            'Appraisal_No' => Yii::$app->request->get('Appraisal_No'),
-            //'Employee_No' => Yii::$app->request->get('Employee_No')
-        ];
-
-        $appraisal = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($appraisal)){
-            $model = Yii::$app->navhelper->loadmodel($appraisal[0],$model);
-        }
-
-        //echo property_exists($appraisal[0]->Employee_Appraisal_KRAs,'Employee_Appraisal_KRAs')?'Exists':'Haina any';
-
-        // Yii::$app->recruitment->printrr($appraisal[0]);
-
-
-        return $this->render('viewsubmitted',[
-            'model' => $model,
-            'card' => $appraisal[0],
-            'peers' =>  ArrayHelper::map($this->getEmployees(),'No','Full_Name'),
-        ]);
-    }
-
-    //Submit Appraisal to supervisor
-
-    public function actionSubmit($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanSendGoalSettingForApproval($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Perfomance Appraisal Submitted Successfully.', true);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Submitting Performance Appraisal : '. $result);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    /*Supervisor Actions :Approve Reject*/
-
-    public function actionApprove($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            //'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanApproveGoalSetting($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Perfomance Appraisal Goals Approved Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-            Yii::$app->session->setFlash('error', 'Error Approving Performance Appraisal Goals : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }
-
-    }
-
-    public function actionReject()
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $appraisalNo = Yii::$app->request->post('Appraisal_No');
-        $employeeNo = Yii::$app->request->post('Employee_No');
-        $data = [
-            'appraisalNo' => Yii::$app->request->post('Appraisal_No'),
-            'employeeNo' => Yii::$app->request->post('Employee_No'),
-            'sendEmail' => 0,
-            'approvalURL' => 1,
-            'rejectionComments' => Yii::$app->request->post('comment')
-        ];
-
-        $result = Yii::$app->navhelper->IanSendGoalSettingBackToAppraisee($service,$data);
-        //Response of this action is json only
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        if(!is_string($result)){
-            //Yii::$app->session->setFlash('success', 'Perfomance Appraisal Goals Rejected and Sent Back to Appraisee Successfully.', true);
-            return ['note' => '<div class="alert alert-success alert-dismissable">Perfomance Appraisal Goals Rejected and Sent Back to Appraisee Successfully.</div>'];
-        }else{
-
-           // Yii::$app->session->setFlash('error', 'Error Rejecting Performance Appraisal Goals : '. $result);
-            return ['note' => '<div class="alert alert-danger alert-dismissable">Error Rejecting Performance Appraisal Goals </div>'];
-
-
-        }
-
-    }
-
-    //Submit MY Appraisal for Approval
- 
-    public function actionSubmitmy($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanSendMYAppraisalForApproval($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Mid Year Perfomance Appraisal Submitted Successfully.', true);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Submitting Mid Year Performance Appraisal : '. $result);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-
-    //Approve MY appraisal
-    public function actionApprovemy($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanApproveMYAppraisal($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Mid Year Appraisal Approved Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Approving Mid Year Appraisal : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //Reject Mid-Year Appraisal
-
-    public function actionRejectmy()
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => Yii::$app->request->post('Appraisal_No'),
-            'employeeNo' => Yii::$app->request->post('Employee_No'),
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            'rejectionComments' => Yii::$app->request->post('comment')
-        ];
-
-        $result = Yii::$app->navhelper->IanSendMYAppraisaBackToAppraisee($service,$data);
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if(!is_string($result)){
-            //Yii::$app->session->setFlash('success', 'Mid Year Appraisal Rejected and Sent Back to Appraisee Successfully.', true);
-            //return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-            return ['note' => '<div class="alert alert-success alert-dismissable">Mid Year Appraisal Rejected and Sent Back to Appraisee Successfully.</div>'];
-        }else{
-
-            //Yii::$app->session->setFlash('error', 'Error Rejecting Mid Year Appraisal : '. $result);
-            //return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-            return ['note' => '<div class="alert alert-danger alert-dismissable">Error Rejecting Mid Year Appraisal : '. $result.'</div>'];
-
-        }
-
-    }
-
-    //Submit End Year Appraisal for Approval
-
-    public function actionSubmitey($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisalForApproval($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Perfomance Appraisal Submitted Successfully.', true);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Submitting End Year Performance Appraisal : '. $result);
-            return $this->redirect(['view','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-
-    //Approve EY appraisal
-    public function actionApproveey($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1
-        ];
-
-        $result = Yii::$app->navhelper->IanApproveEYAppraisal($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Appraisal Approved Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Approving End Year Appraisal : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //Reject End-Year Appraisal
-
-    public function actionRejectey()
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => Yii::$app->request->post('Appraisal_No'),
-            'employeeNo' => Yii::$app->request->post('Employee_No'),
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            'rejectionComments' => Yii::$app->request->post('comment')
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisaBackToAppraisee($service,$data);
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        if(!is_string($result)){
-            //Yii::$app->session->setFlash('success', 'End Year Appraisal Rejected and Sent Back to Appraisee Successfully.', true);
-            //return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-            return ['note' => '<div class="alert alert-success alert-dismissable">End Year Appraisal Rejected and Sent Back to Appraisee Successfully.</div>'];
-        }else{
-
-            //Yii::$app->session->setFlash('error', 'Error Rejecting End Year Appraisal : '. $result);
-            //return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-            return ['note' => '<div class="alert  alert-danger alert-dismissable">Error Rejecting End Year Appraisal : '. $result .'</div>'];
-        }
-
-    }
-
-    //send appraisal to peer 1
-
-    public function actionSendpeer1($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisalToPeer1($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Appraisal Sent to Peer 1 Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Sending Appraisal to Peer 1 : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //send appraisal to peer 2
-
-    public function actionSendpeer2($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisalToPeer2($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Appraisal Sent to Peer 2 Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Sending Appraisal to Peer 2 for evaluation : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //send End Year Appraisal Back to Supervisor from peer
-
-    public function actionSendbacktosupervisor($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisaBackToSupervisorFromPeer($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Appraisal Sent back to supervisor from peer  Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Sending End Year Appraisal to Supervisor from Peer : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //Send End-Year Appraisal to Agreement Level
-
-    public function actionSendtoagreementlevel($appraisalNo,$employeeNo)
-    {
-        $service = Yii::$app->params['ServiceName']['AppraisalWorkflow'];
-        $data = [
-            'appraisalNo' => $appraisalNo,
-            'employeeNo' => $employeeNo,
-            'sendEmail' => 0,
-            'approvalURL' => 1, //Ask korir to change this to text currently set to int
-            
-        ];
-
-        $result = Yii::$app->navhelper->IanSendEYAppraisalToAgreementLevel($service,$data);
-
-        if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'End Year Appraisal Sent Agreement Level  Successfully.', true);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-        }else{
-
-            Yii::$app->session->setFlash('error', 'Error Sending End Year Appraisal to Agreement Level : '. $result);
-            return $this->redirect(['viewsubmitted','Appraisal_No' => $appraisalNo,'Employee_No' => $employeeNo]);
-
-        }
-
-    }
-
-    //Get Employees this is just for selecting peer1 and Peer 2
 
     public function getEmployees(){
-        $service = Yii::$app->params['ServiceName']['employees'];
+        $service = Yii::$app->params['ServiceName']['EmployeeList'];
 
         $employees = \Yii::$app->navhelper->getData($service);
-        $res = [];
-        foreach($employees as $e){
-            if(!empty($e->User_ID)){
-                $res[] = [
-                    'No' => $e->No,
-                    'Full_Name' => $e->Full_Name
+        return ArrayHelper::map($employees,'No','FullName');
+    }
+
+    /* My Imprests*/
+
+    public function getmyimprests(){
+        $service = Yii::$app->params['ServiceName']['PostedImprestRequest'];
+        $filter = [
+            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
+            'Surrendered' => false,
+        ];
+
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+
+        $result = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as $res){
+                $result[$i] =[
+                    'No' => $res->No,
+                    'detail' => $res->No.' - '.$res->Imprest_Amount
                 ];
+                $i++;
             }
         }
-        return $res;
+        // Yii::$app->recruitment->printrr(ArrayHelper::map($result,'No','detail'));
+        return ArrayHelper::map($result,'No','detail');
     }
+
+    /* Get My Posted Imprest Receipts */
+
+    public function getimprestreceipts($imprestNo){
+        $service = Yii::$app->params['ServiceName']['PostedReceiptsList'];
+        $filter = [
+            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
+            'Appraisal_Code' => $imprestNo,
+        ];
+
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+
+        $result = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as $res){
+                $result[$i] =[
+                    'No' => $res->No,
+                    'detail' => $res->No.' - '.$res->Imprest_No
+                ];
+                $i++;
+            }
+        }
+        // Yii::$app->recruitment->printrr(ArrayHelper::map($result,'No','detail'));
+        return ArrayHelper::map($result,'No','detail');
+    }
+
+    /*Get Programs */
+
+    public function getPrograms(){
+        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
+
+        $filter = [
+            'Global_Dimension_No' => 1
+        ];
+
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+    }
+
+    /* Get Department*/
+
+    public function getDepartments(){
+        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
+
+        $filter = [
+            'Global_Dimension_No' => 2
+        ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return ArrayHelper::map($result,'Code','Name');
+    }
+
+
+    // Get Currencies
+
+    public function getCurrencies(){
+        $service = Yii::$app->params['ServiceName']['Currencies'];
+
+        $result = \Yii::$app->navhelper->getData($service, []);
+        return ArrayHelper::map($result,'Code','Description');
+    }
+
+    public function actionSetemployee(){
+        $model = new Imprestcard();
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+
+        $filter = [
+            'No' => Yii::$app->request->post('No')
+        ];
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+        if(is_array($request)){
+            Yii::$app->navhelper->loadmodel($request[0],$model);
+            $model->Key = $request[0]->Key;
+            $model->Employee_No = Yii::$app->request->post('Employee_No');
+        }
+
+
+        $result = Yii::$app->navhelper->updateData($service,$model);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+    public function actionSetdimension($dimension){
+        $model = new Imprestcard();
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+
+        $filter = [
+            'No' => Yii::$app->request->post('No')
+        ];
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+        if(is_array($request)){
+            Yii::$app->navhelper->loadmodel($request[0],$model);
+            $model->Key = $request[0]->Key;
+            $model->{$dimension} = Yii::$app->request->post('dimension');
+        }
+
+
+        $result = Yii::$app->navhelper->updateData($service,$model);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+    /* Set Imprest Type */
+
+    public function actionSetimpresttype(){
+        $model = new Imprestcard();
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+
+        $filter = [
+            'No' => Yii::$app->request->post('No')
+        ];
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+        if(is_array($request)){
+            Yii::$app->navhelper->loadmodel($request[0],$model);
+            $model->Key = $request[0]->Key;
+            $model->Imprest_Type = Yii::$app->request->post('Imprest_Type');
+        }
+
+
+        $result = Yii::$app->navhelper->updateData($service,$model,['Amount_LCY']);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+        /*Set Imprest to Surrend*/
+
+    public function actionSetimpresttosurrender(){
+        $model = new Imprestsurrendercard();
+        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCardPortal'];
+
+        $filter = [
+            'No' => Yii::$app->request->post('No')
+        ];
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+        if(is_array($request)){
+            Yii::$app->navhelper->loadmodel($request[0],$model);
+            $model->Key = $request[0]->Key;
+            $model->Imprest_No = Yii::$app->request->post('Imprest_No');
+        }
+
+
+        $result = Yii::$app->navhelper->updateData($service,$model);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+    // Get Payment Methods
+
+    public function getPaymentmethods(){
+        $service = Yii::$app->params['ServiceName']['PaymentMethods'];
+        $results = \Yii::$app->navhelper->getData($service);
+        $data = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as  $res){
+                $i++;
+                if(!empty($res->Code) && !empty($res->Description)){
+                    $data[$i] = [
+                        'Code' => $res->Code,
+                        'Description' => $res->Description
+                    ];
+                }
+            }
+        }
+        return ArrayHelper::map($data,'Code','Description');
+    }
+
+    public function loadtomodel($obj,$model){
+
+        if(!is_object($obj)){
+            return false;
+        }
+        $modeldata = (get_object_vars($obj)) ;
+        foreach($modeldata as $key => $val){
+            if(is_object($val)) continue;
+            $model->$key = $val;
+        }
+
+        return $model;
+    }
+
+    /* Call Approval Workflow Methods */
+
+    public function actionSendForApproval($No)
+    {
+        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+
+        $data = [
+            'applicationNo' => $No,
+            'sendMail' => 1,
+            'approvalUrl' => '',
+        ];
+
+
+        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanSendImprestForApproval');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
+            return $this->redirect(['view','No' => $No]);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
+            return $this->redirect(['view','No' => $No]);
+
+        }
+    }
+
+    /*Cancel Approval Request */
+
+    public function actionCancelRequest($No)
+    {
+        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+
+        $data = [
+            'applicationNo' => $No,
+        ];
+
+
+        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            return $this->redirect(['view','No' => $No]);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            return $this->redirect(['view','No' => $No]);
+
+        }
+    }
+
 
 
 }
