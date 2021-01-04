@@ -250,6 +250,33 @@ class Navhelper extends Component{
         }
 
     }
+
+      // Refactor an array with valid and existing data
+
+    public function refactorArray($arr,$from,$to)
+    {
+        $list = [];
+        if(is_array($arr))
+        {
+
+            foreach($arr as $item)
+            {
+                if(!empty($item->$from) && !empty($item->$to))
+                {
+                    $list[] = [
+                        $from => $item->$from,
+                        $to => $item->$to
+                    ];
+                }
+
+            }
+
+            return  yii\helpers\ArrayHelper::map($list, $from, $to);
+
+        }
+
+        return $list;
+    }
 }
 
 

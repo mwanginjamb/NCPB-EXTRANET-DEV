@@ -7,7 +7,7 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'powered' => 'Iansoft Ltd',
     'NavisionUsername'=>'Administrator',
-    'NavisionPassword'=>'4g5EUcm2S2f3eAR',
+    'NavisionPassword'=>'bjU8a72nRPgmWh',
     'generalTitle' => 'NCPB EXTRANET ',
 
 
