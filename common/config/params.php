@@ -14,12 +14,12 @@ return [
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'167.86.85.187',//'app-svr-dev.rbss.com',//Navision Server
-    'WebServicePort'=>'6047',//Nav server Port
-    'ServerInstance'=>'NCPBDEMO',//Nav Server Instance
+    'server'=>'vmi455998',//'app-svr-dev.rbss.com',//Navision Server
+    'WebServicePort'=>'10047',//Nav server Port
+    'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
     'ServiceCompanyName'=>'NCPB',//Nav Company,
     'DbCompanyName' => 'NCPB$',
-    'ldPrefix'=>'VMI373788',//ACTIVE DIRECTORY prefix
+    'ldPrefix'=>'vmi455998',//ACTIVE DIRECTORY prefix
     'adServer' => 'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
 
     //sharepoint config
