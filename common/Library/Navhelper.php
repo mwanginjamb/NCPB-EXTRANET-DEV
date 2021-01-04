@@ -92,7 +92,7 @@ class Navhelper extends Component{
         return $lv[$service];*/
     }
     //update data   -->post data
-    public function updateData($service,$data){
+    public function updateData($service,$data, $exception = []){
         $identity = \Yii::$app->user->identity;
         $username = (!Yii::$app->user->isGuest)? Yii::$app->user->identity->{'User ID'} : Yii::$app->params['NavisionUsername'];
         $password = Yii::$app->session->has('IdentityPassword')? Yii::$app->session->get('IdentityPassword'):Yii::$app->params['NavisionPassword'];
@@ -107,7 +107,7 @@ class Navhelper extends Component{
         $entry = (object)[];
         $entryID = $service;
         foreach($data as $key => $value){
-            if($key !=='_csrf-backend'){
+            if($key !=='_csrf-frontend' && !in_array($key, $exception, TRUE)){
                 $entry->$key = $value;
             }
 
@@ -175,6 +175,34 @@ class Navhelper extends Component{
         }
 
         return $model;
+    }
+
+
+    // Refactor an array with valid and existing data
+
+    public function refactorArray($arr,$from,$to)
+    {
+        $list = [];
+        if(is_array($arr))
+        {
+
+            foreach($arr as $item)
+            {
+                if(!empty($item->$from) && !empty($item->$to))
+                {
+                    $list[] = [
+                        $from => $item->$from,
+                        $to => $item->$to
+                    ];
+                }
+
+            }
+
+            return  yii\helpers\ArrayHelper::map($list, $from, $to);
+
+        }
+
+        return $list;
     }
 
 
