@@ -9,49 +9,49 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Leave - '.$model->Application_No;
-$this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['leave']];
-$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Application_No]];
+$this->title = 'Contract - '.$model->Code;
+$this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Contract Card', 'url' => ['view','No'=> $model->Code]];
 /** Status Sessions */
 
 ?>
 
-    <div class="row">
-        <div class="col-md-4">
+<div class="row">
+    <div class="col-md-4">
 
-            <?= ($model->Approval_Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Send Approval Req',['send-for-approval'],['class' => 'btn btn-app submitforapproval',
-                'data' => [
-                    'confirm' => 'Are you sure you want to send this document for approval?',
-                    'params'=>[
-                        'No'=> $model->Application_No ,
-                        //'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
-                    ],
-                    'method' => 'get',
+        <?= ($model->Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Activate',['activate-contract'],['class' => 'btn btn-app submitforapproval',
+            'data' => [
+                'confirm' => 'Are you sure you want to Activate Contract ?',
+                'params'=>[
+                    'No'=> $model->Code,
+                    'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
                 ],
-                'title' => 'Submit Imprest Approval'
+                'method' => 'get',
+        ],
+            'title' => 'Activate Contract'
 
-            ]):'' ?>
+        ]):'' ?>
 
 
-            <?= ($model->Approval_Status == 'Pending_Approval')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
-                'data' => [
-                    'confirm' => 'Are you sure you want to cancel imprest approval request?',
-                    'params'=>[
-                        'No'=> $model->Application_No,
-                    ],
-                    'method' => 'get',
-                ],
-                'title' => 'Cancel Imprest Approval Request'
+        <?= ($model->Status == 'Running')?Html::a('<i class="fas fa-times"></i> Close Contract.',['close-contract'],['class' => 'btn btn-app submitforapproval',
+            'data' => [
+            'confirm' => 'Are you sure you want to close  this contract?',
+            'params'=>[
+                'No'=> $model->Code,
+            ],
+            'method' => 'get',
+        ],
+            'title' => 'Close Contract'
 
-            ]):'' ?>
-        </div>
+        ]):'' ?>
     </div>
+</div>
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card-info">
+            <div class="card-success">
                 <div class="card-header">
-                    <h3>Leave Card </h3>
+                    <h3>Contract Card </h3>
                 </div>
 
 
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
 
-                    <h3 class="card-title">Leave No : <?= $model->Application_No ?></h3>
+                    <h3 class="card-title">Imprest No : <?= $model->Code?></h3>
 
 
 
@@ -96,38 +96,71 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                         <div class=" row col-md-12">
                             <div class="col-md-6">
 
-                                <?= $form->field($model, 'Employee_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Employee_Phone_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Department_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Application_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= '<p><span>Days_Applied</span> '.Html::a($model->Days_Applied,'#'); '</p>' ?>
-                                <?= $form->field($model, 'Application_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Leave_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Comments')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Costing_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                              
+                                <?= $form->field($model, 'Contract_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                               
+                                <?= $form->field($model, 'Quarter')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Procurement_Method')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
+                                <?= $form->field($model, 'Method_Description')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                 <?= $form->field($model, 'Type_Description')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                  <?= $form->field($model, 'Reference_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                   <?= $form->field($model, 'Description')->textarea(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                   <?= $form->field($model, 'Total_Value')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
 
+        <?= '<p><span>Invoiced Value</span> '.Html::a($model->Invoiced_Value,'#'); '</p>'?>
+
+        <?= '<p><span>Deliverables</span> '.Html::a($model->Deliverables,'#'); '</p>' ?>
+  
+
+                                 <?= $form->field($model, 'Contractor')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                  <?= $form->field($model, 'Contractor_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
 
                                 <p class="parent"><span>+</span>
 
-
-
+                                   
 
                                 </p>
 
 
                             </div>
                             <div class="col-md-6">
-                                <?= '<p><span> Leave Balance</span> '.Html::a($model->Leave_balance,'#'); '</p>'?>
-                                <?= $form->field($model, 'Supervisor_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Supervisor_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Contact_Address')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Reliever')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Reliever_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= '<p><span> Approval Level</span> '.Html::a($model->Approval_Level,'#'); '</p>'?>
-                                <?= $form->field($model, 'Action_Id')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                <?= $form->field($model, 'Comments')->textarea(['readonly'=> true, 'disabled'=>true]) ?>
+                                
+                                <?= $form->field($model, 'Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                               
+
+                                <?= $form->field($model, 'Global_Dimension_1_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
+                                <?= $form->field($model, 'Global_Dimension_2_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+
+
+
+                                <?= '<p><span>Start Date</span> '.Html::a($model->Start_Date,'#'); '</p>'?>
+                                <?= '<p><span>End Date</span> '.Html::a($model->End_Date,'#'); '</p>'?>
+
+                                <?= $form->field($model, 'Notify_Period')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Monitoring_Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Administration_Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                <?= $form->field($model, 'Notification_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                <?= $form->field($model, 'Performance_Bond_Exp_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                                <?= $form->field($model, 'Performance_Bond_Notify_Period')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Notify_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model,'Financial_Year')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
 
                                 <p class="parent"><span>+</span>
 
@@ -155,12 +188,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
             <!--Objectives card -->
 
 
-
-
-
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">   <?= ($model->Approval_Level == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['leaveline/create','Request_No'=>$model->Application_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
+                    <div class="card-title">   <?= ($model->Status == 'New')?Html::a('<i class="fa fa-plus-square"></i> New Contract Line',['contractline/create','Code'=>$model->Code],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
                 </div>
 
 
@@ -172,22 +202,23 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
                     <?php
-                    if(is_array($model->getLines($model->Application_No))){ //show Lines ?>
-                        <table class="table table-bordered">
+                    if(is_array($model->getLines())){ //show Lines ?>
+                        <div class="table-responsive">
+                             <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <td><b>Leave Code</b></td>
-                                <td><b>Leave Balance</b></td>
+                                <td><b>Deliverable_Code</b></td>
+                                <td><b>Description</b></td>
                                 <td><b>Start Date</b></td>
-                                <td><b>Days</b></td>
+                                <td><b>Period</b></td>
                                 <td><b>End Date</b></td>
-                                <td><b>Total No Of Days</b></td>
-                                <td><b>Holidays</b></td>
-                                <td><b>Weekend Days</b></td>
-                                <td><b>Days Applied</b></td>
-                                <td><b>Balance After</b></td>
-                                <td><b>Reporting Back Date</b></td>
-                                <td><b>Actions</b></td>
+                                <td><b>Contractor</b></td>
+                                <td><b>Vendor No</b></td>
+                                <td><b>Vendor Name</b></td>
+
+                                <td><b>Amount</b></td>
+                                <td><b>Action</b></td>
+
 
 
                             </tr>
@@ -196,29 +227,30 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                             <?php
                             // print '<pre>'; print_r($model->getObjectives()); exit;
 
-                            foreach($model->getLines($model->Application_No) as $obj):
-                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['leaveline/update','Line_No'=> $obj->Line_No],['class' => 'update-objective btn btn-outline-info btn-xs']);
-                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['leaveline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
+                            foreach($model->lines as $obj):
+                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['contractline/update','Line_No'=> $obj->Line_No],['class' => 'update-objective btn btn-outline-info btn-xs']);
+                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['contractlineline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
                                 ?>
                                 <tr>
 
-                                    <td><?= !empty($obj->Leave_Code)?$obj->Leave_Code:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Leave_balance)?$obj->Leave_balance:'Not Set' ?></td>
+                                    <td><?= !empty($obj->G_L_Account)?$obj->G_L_Account:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Description)?$obj->Description:'Not Set' ?></td>
                                     <td><?= !empty($obj->Start_Date)?$obj->Start_Date:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Days)?$obj->Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->End_Date)?$obj->End_Date:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Total_No_Of_Days)?$obj->Total_No_Of_Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Holidays)?$obj->Holidays:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Weekend_Days)?$obj->Weekend_Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Days_Applied)?$obj->Days_Applied:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Balance_After)?$obj->Balance_After:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Date_of_Reporting_Back)?$obj->Date_of_Reporting_Back:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Period)?$obj->Period:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Contractor)?$obj->Contractor:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Vendor_No)?$obj->Vendor_No:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Vendor_Name)?$obj->Vendor_Name:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Amount)?$obj->Amount:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Invoiced)?Html::checkbox($obj->Invoiced):'Not Set' ?></td>
+                                    
 
-                                    <td><?= ($model->Approval_Level == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
+                                    <td><?= $updateLink.'|'.$deleteLink ?></td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
                         </table>
+                        </div>  
+                       
                     <?php } ?>
                 </div>
             </div>
@@ -232,7 +264,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
 
-
+        </>
     </div>
 
     <!--My Bs Modal template  --->
@@ -244,7 +276,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Leave Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Contract Management</h4>
                 </div>
                 <div class="modal-body">
 
@@ -276,24 +308,20 @@ $script = <<<JS
            }
            
          var url = $(this).attr('href');
+         $(this).closest('tr').remove(); // REMOVE PARENT ELEM
          $.get(url).done(function(msg){
-             $('.modal').modal('show')
+             if(msg.status !== TRUE){
+                 $('.modal').modal('show')
                     .find('.modal-body')
                     .html(msg.note);
+             }             
          },'json');
+         
+         
      });
       
     
-    /*Evaluate KRA*/
-        $('.evalkra').on('click', function(e){
-             e.preventDefault();
-            var url = $(this).attr('href');
-            console.log('clicking...');
-            $('.modal').modal('show')
-                            .find('.modal-body')
-                            .load(url); 
-
-        });
+   
         
         
       //Add a training plan
@@ -309,43 +337,8 @@ $script = <<<JS
      });
      
      
-     //Update a training plan
+      
     
-     $('.update-trainingplan').on('click',function(e){
-        e.preventDefault();
-        var url = $(this).attr('href');
-        console.log('clicking...');
-        $('.modal').modal('show')
-                        .find('.modal-body')
-                        .load(url); 
-
-     });
-     
-     
-     //Update/ Evalute Employeeappraisal behaviour -- evalbehaviour
-     
-      $('.evalbehaviour').on('click',function(e){
-        e.preventDefault();
-        var url = $(this).attr('href');
-        console.log('clicking...');
-        $('.modal').modal('show')
-                        .find('.modal-body')
-                        .load(url); 
-
-     });
-      
-      /*Add learning assessment competence-----> add-learning-assessment */
-      
-      
-      $('.add-learning-assessment').on('click',function(e){
-        e.preventDefault();
-        var url = $(this).attr('href');
-        console.log('clicking...');
-        $('.modal').modal('show')
-                        .find('.modal-body')
-                        .load(url); 
-
-     });
       
       
      

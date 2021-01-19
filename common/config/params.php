@@ -46,20 +46,23 @@ return [
     ],
     'ServiceName'=>[
 
-        'EmployeeCard' => 'EmployeeCard',
-        'EmployeeList' => 'EmployeeList',
+        'EmployeeCard' => 'EmployeeCard', // 5200
+        'EmployeeList' => 'EmployeeList',// 5201
         'EthnicGroups' => 'EthnicGroups', //70409
         'Regions' => 'Regions', // 50112
         'Stations' => 'Stations', //70410
         'Counties' => 'Counties', // 50334
         'SubCounties' => 'SubCounties', // 50335
-
+        /******************************NCPB LEAVE************************************/
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
         'LeaveApplicationLines' => 'LeaveApplicationLines',//70055
         'LeaveTypesSetup' => 'LeaveTypesSetup', //50076
 
-        'Approvals' => 'Approvals', //654---------------duplicated
+
+        /******************************END NCPB LEAVE************************************/
+
+        'RequestsToApprove' => 'RequestsToApprove', //654---------------duplicated
         'ApprovalComments' => 'ApprovalComments', //660
         'RejectedApprovalEntries' => 'RejectedApprovalEntries', //50003
 
@@ -81,7 +84,18 @@ return [
         'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
 
         'Countries' => 'Countries', //10
-        'Religion' => 'Religion', //70085
+
+        'ItemList' => 'ItemList', //31
+        'LocationList' => 'LocationList', //15
+        'VendorList' => 'VendorList', //27
+        'ContractList' => 'ContractList', //60029
+        'ContractCard' => 'ContractCard', //60030
+        'ContractLines' => 'ContractLines', //60031
+        'PurchaseOrderList' => 'PurchaseOrderList', //9307
+        'RFQList' => 'RFQList',// 50045
+
+
+        
 
         //-------------NCPB Appraisal--------------------------------------------------------------------------------
 
@@ -103,6 +117,7 @@ return [
         'PerspectiveObjectives' => 'PerspectiveObjectives', //60001
 
         'AppraisalStatusChange' => 'AppraisalStatusChange', // Code Unit
+        'AppraisalManagement' => 'AppraisalManagement', // 60000 Code Unit
 
         /*End Appraisal service declaration*/
 
@@ -133,8 +148,7 @@ return [
         'IntegrationFuctions' => 'IntegrationFuctions', //(Code Unit)51000
 
 
-        /* Request to Approve */
-        'RequeststoApprove' => 'RequeststoApprove', //654
+       
     ],
     'QualificationsMimeTypes' => [
 

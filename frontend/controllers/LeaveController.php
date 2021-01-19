@@ -102,13 +102,20 @@ class LeaveController extends Controller
                 'Application_No' => $model->Application_No,
             ];
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
+            $request = Yii::$app->navhelper->getData($service,$filter);
 
-            //Yii::$app->recruitment->printrr($refresh);
-            $model = Yii::$app->navhelper->loadmodel($refresh[0],$model);
-            $model->Comments = Yii::$app->request->post()['Leave']['Comments'];
-            $model->Reliever = Yii::$app->request->post()['Leave']['Reliever'];
-            $model->Key = Yii::$app->request->post()['Leave']['Key'];
+           if(!is_string($request) )
+            {
+                Yii::$app->navhelper->loadmodel($request,$model);
+            }else{
+                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
+                return $this->render('create',[
+                    'model' => $model,
+                    'leavetypes' => $this->getLeaveTypes(),
+                    'employees' => $this->getEmployees(),
+                ]);
+            }
+            
 
 
 
@@ -219,16 +226,14 @@ class LeaveController extends Controller
         $model = new Leave();
         $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
 
-        $filter = [
-            'Application_No' => $No
-        ];
+        $result = Yii::$app->navhelper->findOne($service, 'Application_No', $No);
 
-        $result = Yii::$app->navhelper->getData($service, $filter);
+        //Yii::$app->recruitment->printrr($result);
 
         //load nav result to model
-        $model = $this->loadtomodel($result[0], $model);
+        $model = $this->loadtomodel($result, $model);
 
-        //Yii::$app->recruitment->printrr($model);
+        
 
         return $this->render('view',[
             'model' => $model,

@@ -87,8 +87,13 @@ class SiteController extends Controller
 
         $employee = $this->actionGetemployee()[0];
 
-        //Yii::$app->recruitment->printrr($employee);
-        $supervisor = $this->getSupervisor($employee->Supervisor_No);
+        // Yii::$app->recruitment->printrr($employee);
+        if(!empty($employee->Supervisor_No)){
+            $supervisor = $this->getSupervisor($employee->Supervisor_No);
+        }else{
+            $supervisor = "";
+        }
+        
         $balances = $this->Getleavebalance();
 
         return $this->render('index',[
@@ -306,6 +311,9 @@ class SiteController extends Controller
     }
 
     public function getSupervisor($No){
+        if(!$No){
+            return false;
+        }
         $service = Yii::$app->params['ServiceName']['EmployeeCard'];
         $filter = [
             'No' => $No

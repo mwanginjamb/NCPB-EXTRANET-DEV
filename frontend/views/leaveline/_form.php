@@ -32,17 +32,20 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
                             <div class="col-md-12">
-                                <?= $form->field($model, 'Line_No')->textInput(['readonly' => true])->label() ?>
-                                <?= $form->field($model, 'Application_No')->textInput(['readonly' => true,'disabled'=>true])->label() ?>
-                                <?= $form->field($model, 'Key')->textInput(['readonly'=> true])->label() ?>
-                                <?= $form->field($model, 'Leave_balance')->textInput(['readonly'=> true])->label() ?>
+                                <?= $form->field($model, 'Line_No')->hiddenInput(['readonly' => true])->label(false) ?>
+                                <?= $form->field($model, 'Application_No')->hiddenInput(['readonly' => true,'disabled'=>true])->label(false) ?>
+                                <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
+                               
                                 <?= $form->field($model, 'Leave_Code')->dropDownList($LeaveTypes,['prompt' => 'Select ...']) ?>
                                 <?= $form->field($model, 'Start_Date')->textInput(['type'=> 'date','required' => true])->label() ?>
                                 <?= $form->field($model, 'Days')->textInput(['type'=> 'number','required' => true]) ?>
+                                
+                                 <?= $form->field($model, 'Leave_balance')->textInput(['readonly'=> true,'disabled'=> true])->label() ?>
+
                                 <?= $form->field($model, 'End_Date')->textInput(['readonly'=> true,'disabled'=>true]) ?>
 
-                                <?= $form->field($model, 'Holidays')->textInput(['readonly'=> true]) ?>
-                                <?= $form->field($model, 'Weekend_Days')->textInput(['readonly'=> true]) ?>
+                                <?= $form->field($model, 'Holidays')->hiddenInput(['readonly'=> true])->label(false) ?>
+                                <?= $form->field($model, 'Weekend_Days')->hiddenInput(['readonly'=> true])->label(false) ?>
                             </div>
 
 
