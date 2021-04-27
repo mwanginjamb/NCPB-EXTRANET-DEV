@@ -68,19 +68,25 @@ class P9Controller extends Controller
     }
 
     public function actionIndex(){
-        $p9years = $this->getP9years();
-        $service = Yii::$app->params['ServiceName']['PortalReports'];
+       
 
-        //Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Date_Opened','desc'));
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+
+        //Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Period_Code','desc'));
+
+
         if(Yii::$app->request->post()){
-
+             
             $data = [
-                'p9Year' =>Yii::$app->request->post('p9year'),
+                'periodYear' =>Yii::$app->request->post('year'),
                 'employeeNo' => Yii::$app->user->identity->{'Employee No_'}
              ];
-            $path = Yii::$app->navhelper->IanGenerateP9($service,$data);
+            $path = Yii::$app->navhelper->codeunit($service,$data,'DownloadP9Report');
+
+            // Yii::$app->recruitment->printrr($path);
+
             if(!is_file($path['return_value'])){
-                //throw new HttpException(404,"Resouce Not Found: ".$path['return_value']);
+              
                 return $this->render('index',[
                     'report' => false,
                     'p9years' => ArrayHelper::map($p9years,'Year','desc'),
@@ -88,21 +94,21 @@ class P9Controller extends Controller
                 ]);
             }
             $binary = file_get_contents($path['return_value']); //fopen($path['return_value'],'rb');
+
             $content = chunk_split(base64_encode($binary));
             //delete the file after getting it's contents --> This is some house keeping
-            unlink($path['return_value']);
+            @unlink($path['return_value']);
 
            // Yii::$app->recruitment->printrr($path);
             return $this->render('index',[
                 'report' => true,
                 'content' => $content,
-                'p9years' => ArrayHelper::map($p9years,'Year','desc')
+                'p9years' => ''
             ]);
         }
 
         return $this->render('index',[
             'report' => false,
-            'p9years' => ArrayHelper::map($p9years,'Year','desc')
         ]);
 
     }

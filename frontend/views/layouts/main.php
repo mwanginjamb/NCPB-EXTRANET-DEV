@@ -292,8 +292,8 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                         <!--Performance management --->
 
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender'])?'menu-open':'menu-close' ?>">
-                            <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl('imprest')?'active':'' ?>">
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'menu-open':'menu-close' ?>">
+                            <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'active':'' ?>">
                                 <i class="nav-icon fa fa-coins"></i>
                                 <p>
                                     Imprest Management
@@ -304,12 +304,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <ul class="nav nav-treeview">
 
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>imprest/create" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','create')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p> New Imprest Request</p>
-                                    </a>
-                                </li>
+                               
 
 
                                 <li class="nav-item">
@@ -325,6 +320,13 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     <a href="<?= $absoluteUrl ?>surrender" class="nav-link <?= Yii::$app->recruitment->currentaction('surrender','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
                                         <p> Posted Imprest List</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>claim" class="nav-link <?= Yii::$app->recruitment->currentaction('claim','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Mileage Claims</p>
                                     </a>
                                 </li>
 

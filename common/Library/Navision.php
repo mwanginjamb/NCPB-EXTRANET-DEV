@@ -112,11 +112,9 @@ class Navision extends Component
     }
 
 
+   // General Code Unit Invocation method
 
-/*CUSTOM INTEGRATION FUNCTIONS E.G CODE UNIT INVOCATIONS*/
-
-
-    public function Integration($credentials, $soapWsdl, $Entry,$method)/* Utilizes the 'IntegrationFuctions' code unit*/
+     public function Codeunit($credentials, $soapWsdl, $Entry,$method)
     {
         $client = $this->createClient($credentials, $soapWsdl);
         try {

@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = ['label' => 'P9 Report', 'url' => ['index']];
                     <div class="row">
                         <div class="col-md-12">
                             <form method="post" action="<?= Yii::$app->recruitment->absoluteUrl().'p9/index'?>">
-                                <?= \yii\helpers\Html::dropDownList('p9year','',$p9years,['prompt' =>'select P9 Year','class' => 'form-control']) ?>
+                                <?= \yii\helpers\Html::Input('text','year') ?>
 
                                 <div class="form-group" style="margin-top: 10px">
                                 <?= \yii\helpers\Html::submitButton('Generate P9',['class' => 'btn btn-primary']); ?>

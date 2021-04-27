@@ -9,9 +9,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Leave - '.$model->Application_No;
-$this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['leave']];
-$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Application_No]];
+$this->title = 'Claim - '.$model->Claim_No;
+$this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['Claim']];
+$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Claim_No]];
 /** Status Sessions */
 
 ?>
@@ -19,11 +19,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
     <div class="row">
         <div class="col-md-4">
 
-            <?= ($model->Approval_Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Send Approval Req',['send-for-approval'],['class' => 'btn btn-app submitforapproval',
+            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Send Approval Req',['send-for-approval'],['class' => 'btn btn-app submitforapproval',
                 'data' => [
                     'confirm' => 'Are you sure you want to send this document for approval?',
                     'params'=>[
-                        'No'=> $model->Application_No ,
+                        'No'=> $model->Claim_No ,
                         //'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
                     ],
                     'method' => 'get',
@@ -33,11 +33,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
             ]):'' ?>
 
 
-            <?= ($model->Leave_Status == 'New')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
+            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
                 'data' => [
                     'confirm' => 'Are you sure you want to cancel imprest approval request?',
                     'params'=>[
-                        'No'=> $model->Application_No,
+                        'No'=> $model->Claim_No,
                     ],
                     'method' => 'get',
                 ],
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
         <div class="col-md-12">
             <div class="card-info">
                 <div class="card-header">
-                    <h3>Leave Card </h3>
+                    <h3>Claim Card </h3>
                 </div>
 
 
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
 
-                    <h3 class="card-title">Leave No : <?= $model->Application_No ?></h3>
+                    <h3 class="card-title">Claim No : <?= $model->Claim_No ?></h3>
 
 
 
@@ -96,15 +96,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                         <div class=" row col-md-12">
                             <div class="col-md-6">
 
-                                <?= $form->field($model, 'Employee_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Employee_Phone_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Department_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Application_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= '<p><span>Days_Applied</span> '.Html::a($model->Days_Applied,'#'); '</p>' ?>
-                                <?= $form->field($model, 'Application_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Leave_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Comments')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Payroll_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Safari_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Full_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Imprest_Account')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            
+                                <?= $form->field($model, 'Total_Claim')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
 
 
 
@@ -119,15 +118,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
                             </div>
                             <div class="col-md-6">
-                                <?= '<p><span> Leave Balance</span> '.Html::a($model->Leave_balance,'#'); '</p>'?>
-                                <?= $form->field($model, 'Supervisor_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Supervisor_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Contact_Address')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Reliever')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Reliever_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= '<p><span> Approval Level</span> '.Html::a($model->Approval_Level,'#'); '</p>'?>
-                                <?= $form->field($model, 'Action_Id')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            
+                                <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Approvals')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Global_Dimension_1_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Global_Dimension_2_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Document_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Source_Document_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
 
                                 <p class="parent"><span>+</span>
 
@@ -160,7 +158,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">   <?= ($model->Approval_Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['leaveline/create','Request_No'=>$model->Application_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
+                    <div class="card-title">   <?= ($model->Document_Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['claimline/create','No'=>$model->Claim_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
                 </div>
 
 
@@ -172,21 +170,23 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
                     <?php
-                    if(is_array($model->getLines($model->Application_No))){ //show Lines ?>
+                    if(is_array($model->getLines())){ //show Lines ?>
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <td><b>Leave Code</b></td>
-                                <td><b>Leave Balance</b></td>
-                                <td><b>Start Date</b></td>
+                                <td><b>Travel_From</b></td>
+                                <td><b>Travel_To</b></td>
+                                <td><b>Claim_Type</b></td>
+                                <td><b>Description</b></td>
+                                <td><b>Date</b></td>
+                                <td><b>Distance</b></td>
                                 <td><b>Days</b></td>
-                                <td><b>End Date</b></td>
-                                <td><b>Total No Of Days</b></td>
-                                <td><b>Holidays</b></td>
-                                <td><b>Weekend Days</b></td>
-                                <td><b>Days Applied</b></td>
-                                <td><b>Balance After</b></td>
-                                <td><b>Reporting Back Date</b></td>
+                                <td><b>Nights_Spent</b></td>
+                                <td><b>Reason_For_Claim</b></td>
+                                <td><b>Rate</b></td>
+                                <td><b>Total_Amount</b></td>
+                                <td><b>Function Code</b></td>
+                                <td><b>Budget Center Code</b></td>
                                 <td><b>Actions</b></td>
 
 
@@ -196,25 +196,30 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                             <?php
                             // print '<pre>'; print_r($model->getObjectives()); exit;
 
-                            foreach($model->getLines($model->Application_No) as $obj):
-                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['leaveline/update','Line_No'=> $obj->Line_No],['class' => 'update-objective btn btn-outline-info btn-xs']);
-                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['leaveline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
+                            foreach($model->lines as $obj):
+                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['claimline/update',
+                                    'Claim_No'=> $obj->Claim_No,
+                                    'Claim_Type' => $obj->Claim_Type,
+                                    'Travel_To' => $obj->Travel_To
+                                ],
+                                    ['class' => 'update-objective btn btn-outline-info btn-xs','title' => 'update line']);
+                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['claimline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
                                 ?>
                                 <tr>
 
-                                    <td><?= !empty($obj->Leave_Code)?$obj->Leave_Code:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Leave_balance)?$obj->Leave_balance:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Start_Date)?$obj->Start_Date:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Days)?$obj->Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->End_Date)?$obj->End_Date:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Total_No_Of_Days)?$obj->Total_No_Of_Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Holidays)?$obj->Holidays:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Weekend_Days)?$obj->Weekend_Days:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Days_Applied)?$obj->Days_Applied:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Balance_After)?$obj->Balance_After:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Date_of_Reporting_Back)?$obj->Date_of_Reporting_Back:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Travel_From)?$obj->Travel_From:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Travel_To)?$obj->Travel_To:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Claim_Type)?$obj->Claim_Type:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Description)?$obj->Description:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Date)?$obj->Date:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Nights_Spent)?$obj->Nights_Spent:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Reason_For_Claim)?$obj->Reason_For_Claim:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Rate)?$obj->Rate:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Total_Amount)?$obj->Total_Amount:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Global_Dimension_1_Code)?$obj->Global_Dimension_1_Code:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Global_Dimension_2_Code)?$obj->Global_Dimension_2_Code:'Not Set' ?></td>
 
-                                    <td><?= ($model->Approval_Level == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
+                                    <td><?= ($model->Document_Status == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>

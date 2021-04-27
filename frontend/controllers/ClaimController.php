@@ -7,16 +7,9 @@
  */
 
 namespace frontend\controllers;
-use frontend\models\Careerdevelopmentstrength;
-use frontend\models\Employeeappraisalkra;
-use frontend\models\Experience;
-use frontend\models\Imprestcard;
-use frontend\models\Imprestline;
-use frontend\models\Imprestsurrendercard;
-use frontend\models\Leaveplancard;
-use frontend\models\Leave;
-use frontend\models\Salaryadvance;
-use frontend\models\Trainingplan;
+
+use frontend\models\Claim;
+
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -29,7 +22,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class LeaveController extends Controller
+class ClaimController extends Controller
 {
     public function behaviors()
     {
@@ -77,11 +70,11 @@ class LeaveController extends Controller
 
     public function actionCreate(){
 
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave'])){
+        if(!isset(Yii::$app->request->post()['Leave']) && !Yii::$app->request->post()){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);
@@ -91,42 +84,30 @@ class LeaveController extends Controller
                 Yii::$app->navhelper->loadmodel($request,$model);
             }else{
                 Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
-                return $this->redirect(['index']);
+                return $this->render('create',[
+                    'model' => $model,
+                    'safariRequests' => $this->safariRequests(),
+                    'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters()
+                ]);
             }
         }
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
 
 
-            $filter = [
-                'Application_No' => $model->Application_No,
-            ];
             /*Read the card again to refresh Key in case it changed*/
-            $request = Yii::$app->navhelper->getData($service,$filter);
-
-           if(!is_string($request) )
-            {
-                Yii::$app->navhelper->loadmodel($request,$model);
-            }else{
-                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
-                return $this->render('create',[
-                    'model' => $model,
-                    'leavetypes' => $this->getLeaveTypes(),
-                    'employees' => $this->getEmployees(),
-                ]);
-            }
+            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $model->Key = $refresh->Key;
             
-
-
-
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Leave Header Created Successfully.' );
-                return $this->redirect(['view','No' => $result->Application_No]);
+                Yii::$app->session->setFlash('success','Claim saved Successfully.' );
+                return $this->redirect(['view','No' => $result->Claim_No]);
 
             }else{
-                Yii::$app->session->setFlash('error','Error Creating Leave Header '.$result );
+                Yii::$app->session->setFlash('error','Error  '.$result );
                 return $this->redirect(['index']);
 
             }
@@ -138,8 +119,10 @@ class LeaveController extends Controller
 
         return $this->render('create',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
-            'employees' => $this->getEmployees(),
+            'safariRequests' => $this->safariRequests(),
+             'functions' => $this->getFunctioncodes(),
+             'budgetCenters' => $this->getBudgetcenters()
+           
         ]);
     }
 
@@ -147,12 +130,12 @@ class LeaveController extends Controller
 
 
     public function actionUpdate(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
         $model->isNewRecord = false;
 
         $filter = [
-            'Application_No' => Yii::$app->request->get('No'),
+            'Claim_No' => Yii::$app->request->get('No'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -160,30 +143,40 @@ class LeaveController extends Controller
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
-            Yii::$app->recruitment->printrr($result);
+            Yii::$app->sessiom->setFlash('error', $result);
+             return $this->render('update',[
+            'model' => $model,
+            'safariRequests' => $this->safariRequests(),
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters()
+
+        ]);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model,['Leave_balance']) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claim'],$model) ){
             $filter = [
-                'Application_No' => $model->Application_No,
+                'Claim_No' => $model->Claim_No,
             ];
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
+            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $model->Key = $refresh->Key;
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Leave Header Updated Successfully.' );
+                Yii::$app->session->setFlash('success','Record Updated Successfully.' );
 
                 return $this->redirect(['view','No' => $result->Application_No]);
 
             }else{
-                Yii::$app->session->setFlash('success','Error Updating Leave Header '.$result );
+                Yii::$app->session->setFlash('success','Error Updating Record'.$result );
                 return $this->render('update',[
                     'model' => $model,
+                    'safariRequests' => $this->safariRequests(),
+                     'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters()
                 ]);
 
             }
@@ -195,23 +188,21 @@ class LeaveController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'leavetypes' => $this->getLeaveTypes(),
-                'employees' => $this->getEmployees(),
-
-
+                'safariRequests' => $this->safariRequests(),
+                 'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters()
+                
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
-            'employees' => $this->getEmployees(),
 
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -223,17 +214,14 @@ class LeaveController extends Controller
     }
 
     public function actionView($No){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
 
-        $result = Yii::$app->navhelper->findOne($service, 'Application_No', $No);
+        $result = Yii::$app->navhelper->findOne($service, 'Claim_No', $No);
 
-        //Yii::$app->recruitment->printrr($result);
 
         //load nav result to model
         $model = $this->loadtomodel($result, $model);
-
-        
 
         return $this->render('view',[
             'model' => $model,
@@ -242,37 +230,38 @@ class LeaveController extends Controller
 
 
 
-    // Get imprest list
-
     public function actionList(){
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
-        ];
 
+        $service = Yii::$app->params['ServiceName']['Mileagelist'];
+        $filter = [
+            'Payroll_No' => Yii::$app->user->identity->Employee[0]->No,
+        ];
+        
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
-            $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Application_No ],['class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Approval_Status == 'New'){
-                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Application_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Application_No],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Approval_Status == 'Approval_Pending'){
-                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Application_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Claim_No ],['title' => 'View Claim.','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Claim_No ],['title' => 'Update Claim.','class'=>'btn btn-outline-primary btn-xs']);
+            if($item->Document_Status == 'New'){
+                $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Claim_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
+
+            }else if($item->Status == 'Approval_Pending'){
+                $ApprovalLink = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Claim_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
 
             $result['data'][] = [
                 'Key' => $item->Key,
-                'No' => $item->Application_No,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Application_Date' => !empty($item->Application_Date)?$item->Application_Date:'',
-                'Days_Applied' => !empty($item->Days_Applied)?$item->Days_Applied:'',
-                'Status' => $item->Approval_Status,
-                'Action' => $link,
-                'Update_Action' => $updateLink,
-                'view' => $Viewlink
+                'No' => $item->Claim_No,
+                'Employee_No' => !empty($item->Payroll_No)?$item->Payroll_No:'',
+                'Employee_Name' => !empty($item->Full_Name)?$item->Full_Name:'',
+                'Imprest_Account' => !empty($item->Imprest_Account)?$item->Imprest_Account:'',
+                'Total_Imprest_Amount' => !empty($item->Total_Claim)?$item->Total_Claim:'',
+                'Payment_Voucher_No' => !empty($item->Payment_Voucher_No)?$item->Payment_Voucher_No:'',
+                'Requested_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Status' => $item->Document_Status,
+                'Actions' => $ApprovalLink.' '.$ViewLink.' '.$updateLink ,
+
             ];
         }
 
@@ -579,26 +568,26 @@ class LeaveController extends Controller
 
     /* Call Approval Workflow Methods */
 
-    public function actionSendForApproval($No)
+    public function actionSendForApproval()
     {
-        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
-       
+        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
+        $No = Yii::$app->request->get('No');
         $data = [
-            'documentType' => Yii::$app->params['Documents']['Leave'],
+            'documentType' => 1,
             'documentNo' => Yii::$app->request->get('No'),
-            'uID' => Yii::$app->user->identity->{'User ID'}
-            
+            'currentLevel' => '',
+            'sourceId' => ''
         ];
 
 
-        $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
+        $result = Yii::$app->navhelper->Integration($service,$data,'SendApprovalRequest');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Request for Approval  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
@@ -608,18 +597,17 @@ class LeaveController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+        $service = Yii::$app->params['ServiceName']['PortalFactory'];
 
         $data = [
-            'documentType' => Yii::$app->params['Documents']['Leave'],
-            'documentNo' =>  Yii::$app->request->get('No'),
+            'applicationNo' => $No,
         ];
 
 
-        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
+        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Approval Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
@@ -627,6 +615,32 @@ class LeaveController extends Controller
             return $this->redirect(['view','No' => $No]);
 
         }
+    }
+
+
+     public function safariRequests(){
+        $service = Yii::$app->params['ServiceName']['safariRequests'];
+        $result = \Yii::$app->navhelper->getData($service, []);
+        return Yii::$app->navhelper->refactorArray($result,'Safari_No','Purpose');
+    }
+
+     public function getFunctioncodes(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 1 ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
+
+    }
+
+    /* Get Budget Centers*/
+
+    public function getBudgetcenters(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 2];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
     }
 
 

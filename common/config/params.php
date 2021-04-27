@@ -7,20 +7,20 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'powered' => 'Iansoft Ltd',
     'NavisionUsername'=>'Administrator',
-    'NavisionPassword'=>'bjU8a72nRPgmWh',
+    'NavisionPassword'=>'Ncpb&admin&',
     'generalTitle' => 'NCPB EXTRANET ',
 
 
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'vmi455998',//'app-svr-dev.rbss.com',//Navision Server
-    'WebServicePort'=>'10047',//Nav server Port
+    'server'=>'application.cereals',//'app-svr-dev.rbss.com',//Navision Server
+    'WebServicePort'=>'7050',//Nav server Port
     'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
     'ServiceCompanyName'=>'NCPB',//Nav Company,
     'DbCompanyName' => 'NCPB$',
-    'ldPrefix'=>'vmi455998',//ACTIVE DIRECTORY prefix
-    'adServer' => 'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
+    'ldPrefix'=>'cereals',//ACTIVE DIRECTORY prefix
+    'adServer' => '192.168.0.2',//'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
 
     //sharepoint config
     'sharepointUrl' => 'https://ackads.sharepoint.com',
@@ -41,12 +41,13 @@ return [
         'employeerequisition'
     ],
     'codeUnits' => [
-       'IntegrationFuctions' => 'IntegrationFuctions', // 51000
-        'AppraisalStatusChange' => 'AppraisalStatusChange', //50020
+       'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005 ---- philip to rewrite
+       'AppraisalStatusChange' => 'AppraisalStatusChange', //50020 
+       'AppraisalManagement' => 'AppraisalManagement', // 60000 Appraisal Mgt
     ],
     'ServiceName'=>[
 
-        'EmployeeCard' => 'EmployeeCard', // 5200
+        'EmployeeCard' => 'EmployeeCard', // 70000
         'EmployeeList' => 'EmployeeList',// 5201
         'EthnicGroups' => 'EthnicGroups', //70409
         'Regions' => 'Regions', // 50112
@@ -82,6 +83,9 @@ return [
         'JobExperience' => 'JobExperience',//69004
         'HRqualifications' => 'HRqualifications', //5205
         'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
+
+
+        /*NCPB CONTRACT MGT SERVICES*/
 
         'Countries' => 'Countries', //10
 
@@ -127,10 +131,11 @@ return [
 
         //P9 report
 
-        'P9YEARS' => 'P9YEARS', //70286
+        'P9YEARS' => 'P9YEARS', //70286 ---- Not Available
 
 
         /**************************IMPREST*************************************/
+
         'ImprestRequestList' => 'ImprestRequestList', //50138 (Page)
         'ImprestRequestCard' => 'ImprestRequestCard', //50139 (Page)
         'ImprestRequestLine' => 'ImprestRequestLine', // 50140 (Page)
@@ -143,9 +148,21 @@ return [
         'PostCodes' => 'PostCodes', //367
         'Currencies' => 'Currencies', //5
 
+        /****************Mileage and Substance Claim*********************/
+
+
+        'Mileagelist' => 'Mileagelist', //50077
+        'MileageCard' => 'MileageCard', //50078
+        'MileageLines' => 'MileageLines', //50079 
+        'Safaris' => 'Safaris', // 50123
+        'safariRequests' => 'safariRequests', //50327 
+
+
+
+
         /* Integration Code Unit*/
 
-        'IntegrationFuctions' => 'IntegrationFuctions', //(Code Unit)51000
+        'wsPortalWorkflow' => 'wsPortalWorkflow', //(Code Unit)80005 ---Philip
 
 
        

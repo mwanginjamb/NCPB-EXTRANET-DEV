@@ -40,11 +40,12 @@ class LoginForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
+       // var_dump($this->logintoAD($this->username, $this->password)); exit;
         // do Active directory authentication here
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-            if (!$user || !$user->validatePassword($this->password)) {//Add AD login condition here also--> when ad details are given
+            if (!$user || !$user->validatePassword($this->password) || !$this->logintoAD($this->username, $this->password)) {//Add AD login condition here also--> when ad details are given
 
                 $this->addError($attribute, 'Incorrect username or password.');
             }
@@ -77,7 +78,8 @@ class LoginForm extends Model
 
         //$adServer = "ldap://ERC-SVRV7.erc.go.ke";
 
-        $adServer = Yii::$app->params['adServer'];//
+        $adServer = 'ldap://'.Yii::$app->params['adServer'];//
+        //exit($adServer);
         $ldap = ldap_connect($adServer, 389);//connect
         $ldaprdn = Yii::$app->params['ldPrefix'] . "\\" . strtoupper($username);//put the username in a way specific to the domain
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -85,6 +87,7 @@ class LoginForm extends Model
         $bind = @ldap_bind($ldap, $ldaprdn, $password);
 
         if ($bind) {
+            return $bind;
             $filter = "(sAMAccountName=$username)";
             $result = ldap_search($ldap, "CN=KRBHQS,DC=GO, DC=KE", $filter);
 

@@ -13,16 +13,16 @@ return [
         ],
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'sqlsrv:server=vmi455998;database=NCPB',
-            'username' => 'mwangi',
-            'password' => 'mwangi123',
+            'dsn' => 'sqlsrv:server=APPLICATION;database=NCPB',
+            'username' => 'sa',
+            'password' => 'Ncpb@admin',
             'charset' => 'utf8',
         ],
         'nav' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'sqlsrv:server=vmi455998;database=NCPB',
-            'username' => 'mwangi',
-            'password' => 'mwangi123',
+            'dsn' => 'sqlsrv:server=APPLICATION;database=NCPB',
+            'username' => 'sa',
+            'password' => 'Ncpb@admin',
             'charset' => 'utf8',
         ],
         'assetManager' => [
