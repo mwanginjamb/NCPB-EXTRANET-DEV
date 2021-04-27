@@ -1,0 +1,46 @@
+{
+    "name": "NCPB EXTRANET APP",
+    "short_name": "NCPB_EXTRANET",
+    "start_url": "/site",
+    "display": "standalone",
+    "background_color": "green",
+    "theme_color": "#FEF207",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "https://i.imgur.com/2fipok6.png",
+            "type": "image/png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "https://i.imgur.com/ICwkctT.png",
+            "type": "image/png",
+            "sizes": "72x72"
+        },
+        {
+            "src": "https://i.imgur.com/wQYsGsW.png",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "https://i.imgur.com/a50pc19.png",
+            "type": "image/png",
+            "sizes": "144x144",
+            "purpose": "maskable"
+        },
+        {
+            "src": "https://i.imgur.com/dvQpXhX.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "https://i.imgur.com/TSm01vP.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        }
+        
+        
+        
+    ]
+}
