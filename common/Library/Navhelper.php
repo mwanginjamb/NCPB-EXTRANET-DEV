@@ -222,27 +222,23 @@ class Navhelper extends Component{
 
     /*Method to commit single field data to services*/
 
-    public function Commit($service,$fieldName,$fieldValue,$filterKey){
+    public function Commit($service,$field=[],$filter=[]){
        
         $commitService = $service;
-        $name = $fieldName;
-        $value = $fieldValue;
-        $filterKey = $filterKey;
 
-
+        if(sizeof($field)){
+            foreach($field as $key => $value){
+                $fieldName = $key;
+                $fieldValue = $value;
+            }
+        }
 
         $service = Yii::$app->params['ServiceName'][$commitService];
 
-        if(!empty($filterKey))
-        {
-            $filter = [
-                $filterKey => Yii::$app->request->post('no')
-            ];
-        }
-        else{
-            $filter = [
-                'Line_No' => Yii::$app->request->post('no')
-            ];
+        if(sizeof($filter)){
+            foreach($filter as $key => $value){
+                $filter[] = ['Field' => $key, 'Criteria' =>$value];
+            }
         }
 
         $request = Yii::$app->navhelper->getData($service, $filter);
@@ -252,7 +248,7 @@ class Navhelper extends Component{
         if(is_array($request)){
             $data = [
                 'Key' => $request[0]->Key,
-                $name => $value
+                $fieldName => $fieldValue
             ];
         }else{
             Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
