@@ -644,5 +644,29 @@ class ClaimController extends Controller
     }
 
 
+    public function actionSetfield($field){
+        $model = new  Appraisalcard();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
+
+        $filter = [
+            'Claim_No' => Yii::$app->request->post('Claim_No'),
+        ];
+        $result = Yii::$app->navhelper->getData($service, $filter);
+      
+        if(is_array($result)){
+            Yii::$app->navhelper->loadmodel($result[0],$model);
+            $model->Key = $result[0]->Key;
+            $model->$field = Yii::$app->request->post($field);
+
+        }
+
+
+        $result = Yii::$app->navhelper->updateData($service,$model);
+         // Yii::$app->recruitment->printrr( $result);
+        return $result;
+
+    }
+
+
 
 }

@@ -220,6 +220,58 @@ class Navhelper extends Component{
 
 
 
+    /*Method to commit single field data to services*/
+
+    public function Commit($service,$fieldName,$fieldValue,$filterKey){
+       
+        $commitService = $service;
+        $name = $fieldName;
+        $value = $fieldValue;
+        $filterKey = $filterKey;
+
+
+
+        $service = Yii::$app->params['ServiceName'][$commitService];
+
+        if(!empty($filterKey))
+        {
+            $filter = [
+                $filterKey => Yii::$app->request->post('no')
+            ];
+        }
+        else{
+            $filter = [
+                'Line_No' => Yii::$app->request->post('no')
+            ];
+        }
+
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+
+        $data = [];
+        if(is_array($request)){
+            $data = [
+                'Key' => $request[0]->Key,
+                $name => $value
+            ];
+        }else{
+            Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+            return ['error' => $request];
+        }
+
+
+
+        $result = Yii::$app->navhelper->updateData($service,$data);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+
+
+
     /**Auxilliary methods for working with models */
 
     public function loadmodel($obj,$model){ //load object data to a model, e,g from service data to model
@@ -257,46 +309,7 @@ class Navhelper extends Component{
      *  
      * */
 
-    // Call integration Method in Navision
-
-    public function Integration($service,$data,$method){
-
-        $username = Yii::$app->params['NavisionUsername'];
-        $password = Yii::$app->params['NavisionPassword'];
-
-        $creds = (object)[];
-        $creds->UserName = $username;
-        $creds->PassWord = $password;
-        $url = new Services($service);
-        $soapWsdl=$url->getUrl();
-
-        $entry = (object)[];
-
-        foreach($data as $key => $value){
-            if($key !=='_csrf-frontend'){
-                $entry->$key = $value;
-            }
-
-        }
-
-        if(!Yii::$app->navision->isUp($soapWsdl,$creds)) {
-            throw new \yii\web\HttpException(503, 'Service unavailable');
-
-        }
-
-
-        $results = Yii::$app->navision->Integration($creds, $soapWsdl,$entry,$method);
-
-        if(is_object($results)){
-            $lv =(array)$results;
-            return $lv;
-        }
-        else{
-            return $results;
-        }
-
-    }
-
+  
       // Refactor an array with valid and existing data
 
     public function refactorArray($arr,$from,$to)

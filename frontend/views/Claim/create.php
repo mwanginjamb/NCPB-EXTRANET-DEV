@@ -11,8 +11,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Leave Application';
-$this->params['breadcrumbs'][] = ['label' => 'Leaves', 'url' => ['index']];
+$this->title = 'Claim Application';
+$this->params['breadcrumbs'][] = ['label' => 'Claims', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'New Request', 'url' => ['create']];
 //$this->params['breadcrumbs'][] = $this->title;
 
