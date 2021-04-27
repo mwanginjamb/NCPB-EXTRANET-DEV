@@ -23,6 +23,14 @@ $this->title = 'NCBP -  Extranet Login';
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- PWA SHIT -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FEF207">
+    <link rel="apple-touch-icon" href="/images/manifest/96.png"/>
+    <meta name="apple-mobile-web-app-status-bar" content="#01A54F">
+    
+    <!-- / PWA SHIT -->
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>

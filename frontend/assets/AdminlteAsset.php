@@ -30,11 +30,11 @@ class AdminlteAsset extends AssetBundle
         'plugins/daterangepicker/daterangepicker.css',
         'plugins/summernote/summernote-bs4.css',
         'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700',
-        'plugins/js/datatables/fixedHeader.bootstrap.min.css',
-        'plugins/js/datatables/responsive.bootstrap.min.css',
-        'plugins/js/datatables/scroller.bootstrap.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css',
-        'css/plugins/timepicker/bootstrap-timepicker.css',
+        //'plugins/js/datatables/fixedHeader.bootstrap.min.css',
+        //'plugins/js/datatables/responsive.bootstrap.min.css',
+        //'plugins/js/datatables/scroller.bootstrap.min.css',
+        //'https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css',
+        //'css/plugins/timepicker/bootstrap-timepicker.css',
         'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css',
         'css/steps.css',
         'css/validation.css'
@@ -74,6 +74,7 @@ class AdminlteAsset extends AssetBundle
         'https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js',
         'https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js ',
 
+        'Js/app.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
