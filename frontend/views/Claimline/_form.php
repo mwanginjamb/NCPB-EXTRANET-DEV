@@ -27,30 +27,37 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
 
-                        <div class=" row col-md-12">
-
-
-
-                            <div class="col-md-12">
-                                <?= $form->field($model, 'Line_No')->hiddenInput(['readonly' => true])->label(false) ?>
-                                <?= $form->field($model, 'Application_No')->hiddenInput(['readonly' => true,'disabled'=>true])->label(false) ?>
+                        <div class=" row col-md-6">
+                                <?= $form->field($model, 'Claim_No')->hiddenInput(['readonly' => true])->label(false) ?>
                                 <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
                                
-                                <?= $form->field($model, 'Leave_Code')->dropDownList($LeaveTypes,['prompt' => 'Select ...']) ?>
-                                <?= $form->field($model, 'Start_Date')->textInput(['type'=> 'date','required' => true])->label() ?>
-                                <?= $form->field($model, 'Days')->textInput(['type'=> 'number','required' => true]) ?>
+                                <?= $form->field($model, 'Travel_From')->dropDownList($towns,['prompt' => 'Select ...']) ?>
+                                <?= $form->field($model, 'Claim_Type')->dropDownList($claimtype,['prompt' => 'Select ...']) ?>
+                                <?= $form->field($model, 'Date')->textInput(['type' => 'date']) ?>
+                                <?= $form->field($model, 'Distance')->textInput(['maxlength'=> 4,'type' => 'number']) ?>
+                                <?= $form->field($model, 'Global_Dimension_1_Code')->dropDownList( $functions,['prompt'=> 'select ...']) ?>
+                                <?= $form->field($model, 'Reason_For_Claim')->textarea(['maxlength'=> 250,'type' => 'number']) ?>
+
+                        </div>
+
+
+
+                            <div class="col-md-6">
+                               
+                               
+                                <?= $form->field($model, 'Travel_To')->dropDownList($towns,['prompt' => 'Select ...']) ?>
+                                <?= $form->field($model, 'Description')->textInput(['readonly'=> true,'disabled' => true]) ?>
+                                <?= $form->field($model, 'Rate')->textInput(['readonly'=> true,'disabled' => true]) ?>
+                                <?= $form->field($model, 'Total_Amount')->textInput(['readonly'=> true,'disabled' => true]) ?>
+                                <?= $form->field($model, 'Days')->textInput(['type' => 'number']) ?>
+                                <?= $form->field($model, 'Global_Dimension_2_Code')->dropDownList($budgetCenters, ['prompt'=> 'Select ...']) ?>
+                                <?= $form->field($model, 'Nights_Spent')->textInput(['type' => 'number']) ?>
                                 
-                                 <?= $form->field($model, 'Leave_balance')->textInput(['readonly'=> true,'disabled'=> true])->label() ?>
-
-                                <?= $form->field($model, 'End_Date')->textInput(['readonly'=> true,'disabled'=>true]) ?>
-
-                                <?= $form->field($model, 'Holidays')->hiddenInput(['readonly'=> true])->label(false) ?>
-                                <?= $form->field($model, 'Weekend_Days')->hiddenInput(['readonly'=> true])->label(false) ?>
+                                
                             </div>
 
 
 
-                        </div>
 
 
 

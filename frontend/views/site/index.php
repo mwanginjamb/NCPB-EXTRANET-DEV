@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'HRMIS - NCPB';
+$this->title = 'Extranet - NCPB';
 $this->params['breadcrumbs'][] = ['label' => 'Dashboard', 'url' => ['index']];
 $this->params['breadcrumbs'][] = '';
 

@@ -7,20 +7,20 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'powered' => 'Iansoft Ltd',
     'NavisionUsername'=>'Administrator',
-    'NavisionPassword'=>'bjU8a72nRPgmWh',
+    'NavisionPassword'=>'Ncpb&admin&',
     'generalTitle' => 'NCPB EXTRANET ',
 
 
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'167.86.85.187',//'app-svr-dev.rbss.com',//Navision Server
-    'WebServicePort'=>'6047',//Nav server Port
-    'ServerInstance'=>'NCPBDEMO',//Nav Server Instance
+    'server'=>'application.cereals',//'app-svr-dev.rbss.com',//Navision Server
+    'WebServicePort'=>'7050',//Nav server Port
+    'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
     'ServiceCompanyName'=>'NCPB',//Nav Company,
     'DbCompanyName' => 'NCPB$',
-    'ldPrefix'=>'VMI373788',//ACTIVE DIRECTORY prefix
-    'adServer' => 'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
+    'ldPrefix'=>'cereals',//ACTIVE DIRECTORY prefix
+    'adServer' => '192.168.0.2',//'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
 
     //sharepoint config
     'sharepointUrl' => 'https://ackads.sharepoint.com',
@@ -41,25 +41,29 @@ return [
         'employeerequisition'
     ],
     'codeUnits' => [
-       'IntegrationFuctions' => 'IntegrationFuctions', // 51000
-        'AppraisalStatusChange' => 'AppraisalStatusChange', //50020
+       'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005 ---- philip to rewrite
+       'AppraisalStatusChange' => 'AppraisalStatusChange', //50020 
+       'AppraisalManagement' => 'AppraisalManagement', // 60000 Appraisal Mgt
     ],
     'ServiceName'=>[
 
-        'EmployeeCard' => 'EmployeeCard',
-        'EmployeeList' => 'EmployeeList',
+        'EmployeeCard' => 'EmployeeCard', // 70000
+        'EmployeeList' => 'EmployeeList',// 5201
         'EthnicGroups' => 'EthnicGroups', //70409
         'Regions' => 'Regions', // 50112
         'Stations' => 'Stations', //70410
         'Counties' => 'Counties', // 50334
         'SubCounties' => 'SubCounties', // 50335
-
+        /******************************NCPB LEAVE************************************/
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
         'LeaveApplicationLines' => 'LeaveApplicationLines',//70055
         'LeaveTypesSetup' => 'LeaveTypesSetup', //50076
 
-        'Approvals' => 'Approvals', //654---------------duplicated
+
+        /******************************END NCPB LEAVE************************************/
+
+        'RequestsToApprove' => 'RequestsToApprove', //654---------------duplicated
         'ApprovalComments' => 'ApprovalComments', //660
         'RejectedApprovalEntries' => 'RejectedApprovalEntries', //50003
 
@@ -80,8 +84,22 @@ return [
         'HRqualifications' => 'HRqualifications', //5205
         'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
 
+
+        /*NCPB CONTRACT MGT SERVICES*/
+
         'Countries' => 'Countries', //10
-        'Religion' => 'Religion', //70085
+
+        'ItemList' => 'ItemList', //31
+        'LocationList' => 'LocationList', //15
+        'VendorList' => 'VendorList', //27
+        'ContractList' => 'ContractList', //60029
+        'ContractCard' => 'ContractCard', //60030
+        'ContractLines' => 'ContractLines', //60031
+        'PurchaseOrderList' => 'PurchaseOrderList', //9307
+        'RFQList' => 'RFQList',// 50045
+
+
+        
 
         //-------------NCPB Appraisal--------------------------------------------------------------------------------
 
@@ -103,6 +121,7 @@ return [
         'PerspectiveObjectives' => 'PerspectiveObjectives', //60001
 
         'AppraisalStatusChange' => 'AppraisalStatusChange', // Code Unit
+        'AppraisalManagement' => 'AppraisalManagement', // 60000 Code Unit
 
         /*End Appraisal service declaration*/
 
@@ -112,10 +131,11 @@ return [
 
         //P9 report
 
-        'P9YEARS' => 'P9YEARS', //70286
+        'P9YEARS' => 'P9YEARS', //70286 ---- Not Available
 
 
         /**************************IMPREST*************************************/
+
         'ImprestRequestList' => 'ImprestRequestList', //50138 (Page)
         'ImprestRequestCard' => 'ImprestRequestCard', //50139 (Page)
         'ImprestRequestLine' => 'ImprestRequestLine', // 50140 (Page)
@@ -128,13 +148,24 @@ return [
         'PostCodes' => 'PostCodes', //367
         'Currencies' => 'Currencies', //5
 
+        /****************Mileage and Substance Claim*********************/
+
+
+        'Mileagelist' => 'Mileagelist', //50077
+        'MileageCard' => 'MileageCard', //50078
+        'MileageLines' => 'MileageLines', //50079 
+        'Safaris' => 'Safaris', // 50123
+        'safariRequests' => 'safariRequests', //50327 
+
+
+
+
         /* Integration Code Unit*/
 
-        'IntegrationFuctions' => 'IntegrationFuctions', //(Code Unit)51000
+        'wsPortalWorkflow' => 'wsPortalWorkflow', //(Code Unit)80005 ---Philip
 
 
-        /* Request to Approve */
-        'RequeststoApprove' => 'RequeststoApprove', //654
+       
     ],
     'QualificationsMimeTypes' => [
 

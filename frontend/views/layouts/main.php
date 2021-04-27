@@ -290,10 +290,10 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
 
 
-                        <!--Imprest management --->
+                        <!--Performance management --->
 
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender'])?'menu-open':'menu-close' ?>">
-                            <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl('imprest')?'active':'' ?>">
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'menu-open':'menu-close' ?>">
+                            <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'active':'' ?>">
                                 <i class="nav-icon fa fa-coins"></i>
                                 <p>
                                     Imprest Management
@@ -304,12 +304,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <ul class="nav nav-treeview">
 
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>imprest/create" class="nav-link <?= Yii::$app->recruitment->currentaction('imprest','create')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p> New Imprest Request</p>
-                                    </a>
-                                </li>
+                               
 
 
                                 <li class="nav-item">
@@ -328,19 +323,26 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     </a>
                                 </li>
 
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>claim" class="nav-link <?= Yii::$app->recruitment->currentaction('claim','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Mileage Claims</p>
+                                    </a>
+                                </li>
+
 
                             </ul>
 
                         </li>
 
 
-                        <!-- Imprest Management -->
+                        <!-- Contract Management -->
 
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(Yii::$app->params['profileControllers'])?'menu-open':'' ?>">
-                            <a href="#" class="nav-link <?= currentCtrl('recruitment')?'active':'' ?>">
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['contract'])?'menu-open':'' ?>">
+                            <a href="#" class="nav-link <?= currentCtrl(['contract'])?'active':'' ?>">
                                 <i class="nav-icon fas fa-briefcase " ></i>
                                 <p>
-                                    Employee Recruitment
+                                    Contract Management
                                     <i class="fas fa-angle-left right"></i>
                                     <!--<span class="badge badge-info right">6</span>-->
                                 </p>
@@ -348,43 +350,18 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>recruitment/vacancies" class="nav-link <?= currentaction('recruitment','vacancies')?'active':'' ?>">
+                                    <a href="<?= $absoluteUrl ?>contract" class="nav-link <?= currentaction('contract','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Job Vacancies </p>
+                                        <p>Contracts List </p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>recruitment/externalvacancies" class="nav-link <?= currentaction('recruitment','externalvacancies')?'active':'' ?>">
+                                    <a href="<?= $absoluteUrl ?>contract/create" class="nav-link <?= currentaction('contract','create')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
-                                        <p>External Job Vacancies </p>
+                                        <p>New Contract </p>
                                     </a>
                                 </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>applicantprofile/create" class="nav-link <?= Yii::$app->recruitment->currentaction('applicantprofile',['create','index'])?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Applicant Profile</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>employeerequisition" class="nav-link <?= currentaction('employeerequisition','index')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>HR Requsitions List</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>employeerequisition/create?create=1" class="nav-link <?= currentaction('employeerequisition','create')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Create HR Requsitions</p>
-                                    </a>
-                                </li>
-
-
-
-
 
                             </ul>
                         </li>
@@ -608,86 +585,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             </ul>
                         </li>
 
-<!---start fake menu--->
-                        <li class="nav-item has-treeview <?= currentCtrl('approvals')?'menu-open':'' ?>">
 
-                            <a href="#" class="nav-link <?= currentCtrl('approvals')?'active':'' ?>">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    Supplier Portal
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-
-                        </li>
-
-                        <li class="nav-item has-treeview <?= currentCtrl('approvals')?'menu-open':'' ?>">
-
-                            <a href="#" class="nav-link <?= currentCtrl('approvals')?'active':'' ?>">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    Farmers Portal
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item has-treeview <?= currentCtrl('approvals')?'menu-open':'' ?>">
-
-                            <a href="#" class="nav-link <?= currentCtrl('approvals')?'active':'' ?>">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    Customer Portal
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item has-treeview <?= currentCtrl('approvals')?'menu-open':'' ?>">
-
-                            <a href="#" class="nav-link <?= currentCtrl('approvals')?'active':'' ?>">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    E-Commerce
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-
-                        </li>
-
-
-
-                        <li class="nav-item has-treeview <?= currentCtrl('approvals')?'menu-open':'' ?>">
-
-                            <a href="#" class="nav-link <?= currentCtrl('approvals')?'active':'' ?>">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    SFR / Ministry
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-
-                        </li>
-
-
-
-
-<!--end fake menu-->
-
-
-
-
-
-                    </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>

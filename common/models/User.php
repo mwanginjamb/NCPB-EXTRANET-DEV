@@ -254,6 +254,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function isSupervisor($AppraiseeNo = ''){
+        
         //loop through user setup check if current identity appears in approvers column
         $super = $this::find()->where(['Approver ID ' => $this->getId()])->count();
 

@@ -7,12 +7,8 @@
  */
 
 namespace frontend\controllers;
-use frontend\models\Employeeappraisalkra;
-use frontend\models\Experience;
-use frontend\models\Imprestline;
-use frontend\models\Leaveline;
-use frontend\models\Leaveplanline;
-use frontend\models\Weeknessdevelopmentplan;
+
+use frontend\models\Claimline;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -26,14 +22,14 @@ use frontend\models\Leave;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class LeavelineController extends Controller
+class ClaimlineController extends Controller
 {
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index','create','update','delete','view'],
+                'only' => ['logout', 'signup','index','create','update','delete','view','list'],
                 'rules' => [
                     [
                         'actions' => ['signup','index'],
@@ -55,7 +51,7 @@ class LeavelineController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['uu'],
+                'only' => ['list'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -71,16 +67,15 @@ class LeavelineController extends Controller
 
     }
 
-    public function actionCreate($Request_No){
-       $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
-       $model = new Leaveline();
+    public function actionCreate($No){
+       $service = Yii::$app->params['ServiceName']['MileageLines'];
+       $model = new Claimline();
 
 
-        if($Request_No && !isset(Yii::$app->request->post()['Leaveline']) && !Yii::$app->request->post()){
+        if($No && !isset(Yii::$app->request->post()['Claimline']) && !Yii::$app->request->post()){
 
-               $model->Application_No = $Request_No;
-               $model->Line_No = time();
-            
+               $model->Claim_No = $No;
+                        
 
                $res = Yii::$app->navhelper->postData($service, $model);
               //Yii::$app->recruitment->printrr($res);
@@ -91,7 +86,8 @@ class LeavelineController extends Controller
 
                     // Yii::$app->recruitment->printrr($model);
                }else {
-                      Yii::$app->recruitment->printrr($res);
+                   
+                    return '<div class="alert alert-danger">Error : '.$res.'</div>';
                }
 
            
@@ -99,10 +95,14 @@ class LeavelineController extends Controller
         }
         
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leaveline'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
 
 
-            $refresh = Yii::$app->navhelper->getData($service,['Line_No' => Yii::$app->request->post()['Leaveline']['Line_No']]);
+             $refresh = Yii::$app->navhelper->getData($service,[
+                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
+                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
+                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
+            ]);
             $model->Key = $refresh[0]->Key;
             $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -111,19 +111,22 @@ class LeavelineController extends Controller
             // return $model;
             if(is_object($result)){
 
-                return ['note' => '<div class="alert alert-success">Leave Line Created Successfully. </div>' ];
+                return ['note' => '<div class="alert alert-success">Line Saved Successfully. </div>' ];
             }else{
 
-                return ['note' => '<div class="alert alert-danger">Error Creating Leave Line: '.$result.'</div>'];
+                return ['note' => '<div class="alert alert-danger">Error Saving Line: '.$result.'</div>'];
             }
 
         }
 
-        $model->Start_Date = Date('Y-m-d');
+        
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
-                'LeaveTypes' => $this->getLeavetypes(),
+                'towns' => $this->getPostcodes(),
+                'claimtype' => $this->getClaimtype(),
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters()
             ]);
         }
 
@@ -132,11 +135,13 @@ class LeavelineController extends Controller
 
 
     public function actionUpdate(){
-        $model = new Leaveline() ;
+        $model = new Claimline() ;
         $model->isNewRecord = false;
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
         $filter = [
-            'Line_No' => Yii::$app->request->get('Line_No'),
+            'Claim_No' => Yii::$app->request->get('Claim_No'),
+            'Claim_Type' => Yii::$app->request->get('Claim_Type'),
+            'Travel_To' => Yii::$app->request->get('Travel_To'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -150,18 +155,22 @@ class LeavelineController extends Controller
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leaveline'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
 
-            $refresh = Yii::$app->navhelper->getData($service,['Line_No' => Yii::$app->request->post()['Leaveline']['Line_No']]);
+            $refresh = Yii::$app->navhelper->getData($service,[
+                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
+                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
+                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
+            ]);
             $model->Key = $refresh[0]->Key;
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             if(!is_string($result)){
-                return ['note' => '<div class="alert alert-success">Leave Line Updated Successfully. </div>' ];
+                return ['note' => '<div class="alert alert-success">Line Updated Successfully. </div>' ];
             }else{
-                return ['note' => '<div class="alert alert-danger">Error Updating Leave Line: '.$result.'</div>'];
+                return ['note' => '<div class="alert alert-danger">Error Updating Line: '.$result.'</div>'];
             }
 
         }
@@ -169,18 +178,24 @@ class LeavelineController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'LeaveTypes' => $this->getLeavetypes(),
+                'towns' => $this->getPostcodes(),
+                'claimtype' => $this->getClaimtype(),
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters()
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'LeaveTypes' => $this->getLeavetypes(),
+            'towns' => $this->getPostcodes(),
+            'claimtype' => $this->getClaimtype(),
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters()
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -192,7 +207,7 @@ class LeavelineController extends Controller
 
     public function actionSetleavetype(){
         $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
 
            $model->Leave_Code = Yii::$app->request->post('Leave_Code');
            $model->Application_No = Yii::$app->request->post('Application_No');
@@ -206,7 +221,7 @@ class LeavelineController extends Controller
 
     public function actionSetstartdate(){
         $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
 
         $filter = [
             'Line_No' => Yii::$app->request->post('Line_No')
@@ -232,7 +247,7 @@ class LeavelineController extends Controller
 
     public function actionSetdays(){
         $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
 
         $filter = [
             'Line_No' => Yii::$app->request->post('Line_No')
@@ -254,7 +269,7 @@ class LeavelineController extends Controller
     }
 
     public function actionView($ApplicationNo){
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationLines'];
+        $service = Yii::$app->params['ServiceName']['MileageLines'];
         $leaveTypes = $this->getLeaveTypes();
         $employees = $this->getEmployees();
 
@@ -277,17 +292,48 @@ class LeavelineController extends Controller
     }
 
 
+    
 
-    /*Get Leave Types */
 
-    public function getLeavetypes(){
-        $service = Yii::$app->params['ServiceName']['LeaveTypesSetup'];
 
+
+    /*Get Postal Code */
+
+    public function getPostcodes(){
+        $service = Yii::$app->params['ServiceName']['PostCodes'];
         $result = \Yii::$app->navhelper->getData($service, []);
-        return ArrayHelper::map($result,'Code','Description');
+        return Yii::$app->navhelper->refactorArray($result,'Code','City');
     }
 
 
+/*Get safaris*/
+
+
+    public function getClaimtype(){
+        $service = Yii::$app->params['ServiceName']['Safaris'];
+        $result = \Yii::$app->navhelper->getData($service, []);
+        return Yii::$app->navhelper->refactorArray($result,'Claim_Type','Claim_Description');
+    }
+
+
+     public function getFunctioncodes(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 1 ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
+
+    }
+
+    /* Get Budget Centers*/
+
+    public function getBudgetcenters(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 2];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
+    }
 
 
 

@@ -88,7 +88,7 @@ class ImprestController extends Controller
         if(!isset(Yii::$app->request->post()['Imprestcard'])){
             $request = Yii::$app->navhelper->postData($service,$model);
             $filter = [];
-            if(is_object($request) )
+            if(!is_string($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
 
@@ -98,20 +98,22 @@ class ImprestController extends Controller
 
                 $request = Yii::$app->navhelper->updateData($service, $model);
 
-                $model = Yii::$app->navhelper->loadmodel($request,$model);
-                if(is_string($request)){
-                    Yii::$app->recruitment->printrr($request);
-                }
+                Yii::$app->navhelper->loadmodel($request,$model);
+            
 
-            }
+            }else{
+                Yii::$app->session->setFlash('error','Error: '.$request);
+                      return $this->render('create',[
+                        'model' => $model,
+                        'employees' => $this->getEmployees(),
+                        'programs' =>[],
+                        'departments' => [],
+                        'currencies' => [],
+                        'paymentMethods' => $this->getPaymentmethods()
+                    ]);
+                }
         }
 
-
-
-
-
-
-        // Yii::$app->recruitment->printrr(Yii::$app->request->post());
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
             //Yii::$app->recruitment->printrr(Yii::$app->request->post()['Imprestcard']);
             $filter = [

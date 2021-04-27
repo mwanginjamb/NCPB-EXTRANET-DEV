@@ -72,27 +72,26 @@ class PayslipController extends Controller
 
     public function actionIndex(){
         $payrollperiods = $this->getPayrollperiods();
-        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         // Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Period_Code','desc'));
         if(Yii::$app->request->post()){
 
             $data = [
-                'payrollPeriod' =>Yii::$app->request->post('payperiods'),
-                'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
-                'path' => ''
+                'periodCode' =>Yii::$app->request->post('payperiods'),
+                'employeeNo' => Yii::$app->user->identity->{'Employee No_'}
              ];
-            $path = Yii::$app->navhelper->Integration($service,$data,'DownloadEmployeePayslip');
+            $path = Yii::$app->navhelper->codeunit($service,$data,'DownloadEmployeePayslip');
             //Yii::$app->recruitment->printrr($path);
-            $mappedPath = '\\\\167.86.85.187\\Reports\\'.basename($path['return_value']);
+            $mappedPath = $path['return_value'];
 
 
-             //$binary = file_get_contents($mappedPath);
-            $binary = fopen($mappedPath,'rb');
+            $binary = file_get_contents($mappedPath);
+           
 
             $content = chunk_split(base64_encode($binary));
             //delete the file after getting it's contents --> This is some house keeping
-            unlink($path['return_value']);
+            @unlink($path['return_value']);
 
 
             return $this->render('index',[

@@ -15,7 +15,7 @@ use frontend\models\Imprestline;
 use frontend\models\Imprestsurrendercard;
 use frontend\models\Leaveplancard;
 use frontend\models\Leave;
-use frontend\models\Salaryadvance;
+use frontend\models\Contract;
 use frontend\models\Trainingplan;
 use Yii;
 use yii\filters\AccessControl;
@@ -29,7 +29,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class LeaveController extends Controller
+class ContractController extends Controller
 {
     public function behaviors()
     {
@@ -77,11 +77,11 @@ class LeaveController extends Controller
 
     public function actionCreate(){
 
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Contract();
+        $service = Yii::$app->params['ServiceName']['ContractCard'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave'])){
+        if(!isset(Yii::$app->request->post()['Contract'])){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);
@@ -164,7 +164,7 @@ class LeaveController extends Controller
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model,['Leave_balance']) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
             $filter = [
                 'Application_No' => $model->Application_No,
             ];
@@ -223,12 +223,12 @@ class LeaveController extends Controller
     }
 
     public function actionView($No){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+        $model = new Contract();
+        $service = Yii::$app->params['ServiceName']['ContractCard'];
 
-        $result = Yii::$app->navhelper->findOne($service, 'Application_No', $No);
+        $result = Yii::$app->navhelper->findOne($service, 'Code', $No);
 
-        //Yii::$app->recruitment->printrr($result);
+        ///Yii::$app->recruitment->printrr($result);
 
         //load nav result to model
         $model = $this->loadtomodel($result, $model);
@@ -245,33 +245,30 @@ class LeaveController extends Controller
     // Get imprest list
 
     public function actionList(){
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationList'];
+        $service = Yii::$app->params['ServiceName']['ContractList'];
         $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
+            // 'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
         ];
 
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Application_No ],['class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Approval_Status == 'New'){
-                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Application_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Application_No],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Approval_Status == 'Approval_Pending'){
-                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Application_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
-            }
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Code ],['class'=>'btn btn-outline-primary btn-xs']);
+           
 
             $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Application_No,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Application_Date' => !empty($item->Application_Date)?$item->Application_Date:'',
-                'Days_Applied' => !empty($item->Days_Applied)?$item->Days_Applied:'',
-                'Status' => $item->Approval_Status,
-                'Action' => $link,
-                'Update_Action' => $updateLink,
+                'Code' => $item->Code,
+                'Description' => $item->Description,
+                'Total_Value' => !empty($item->Total_Value)?number_format($item->Total_Value):'',
+                'Invoiced_Value' => !empty($item->Invoiced_Value)?number_format($item->Invoiced_Value):'',
+                'Deliverables' => !empty($item->Deliverables)?$item->Deliverables:'',
+                'Contractor_Name' => !empty($item->Contractor_Name)?$item->Contractor_Name:'',
+                'Comments' => !empty($item->Comments)?$item->Comments:'',
+                'Status' => $item->Status,
+                'Start_Date' => $item->Start_Date,
+                'End_Date' => $item->End_Date,
+                'Procurement_Method' => $item->Procurement_Method,
                 'view' => $Viewlink
             ];
         }
@@ -579,26 +576,26 @@ class LeaveController extends Controller
 
     /* Call Approval Workflow Methods */
 
-    public function actionSendForApproval($No)
+    public function actionSendForApproval()
     {
-        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
-       
+        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
+        $No = Yii::$app->request->get('No');
         $data = [
-            'documentType' => Yii::$app->params['Documents']['Leave'],
+            'documentType' => 1,
             'documentNo' => Yii::$app->request->get('No'),
-            'uID' => Yii::$app->user->identity->{'User ID'}
-            
+            'currentLevel' => '',
+            'sourceId' => ''
         ];
 
 
-        $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
+        $result = Yii::$app->navhelper->Integration($service,$data,'SendApprovalRequest');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Request for Approval  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
@@ -608,18 +605,17 @@ class LeaveController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+        $service = Yii::$app->params['ServiceName']['PortalFactory'];
 
         $data = [
-            'documentType' => Yii::$app->params['Documents']['Leave'],
-            'documentNo' =>  Yii::$app->request->get('No'),
+            'applicationNo' => $No,
         ];
 
 
-        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
+        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Approval Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
