@@ -8,7 +8,7 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Claimline;
+use frontend\models\Safariline;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -22,7 +22,7 @@ use frontend\models\Leave;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class ClaimlineController extends Controller
+class SafarilineController extends Controller
 {
     public function behaviors()
     {
@@ -51,7 +51,7 @@ class ClaimlineController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['list'],
+                'only' => ['list','setfield'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -68,13 +68,13 @@ class ClaimlineController extends Controller
     }
 
     public function actionCreate($No){
-       $service = Yii::$app->params['ServiceName']['MileageLines'];
-       $model = new Claimline();
+       $service = Yii::$app->params['ServiceName']['safariLine'];
+       $model = new Safariline();
 
 
-        if($No && !isset(Yii::$app->request->post()['Claimline']) && !Yii::$app->request->post()){
+        if($No && !isset(Yii::$app->request->post()['Safariline']) && !Yii::$app->request->post()){
 
-               $model->Claim_No = $No;
+               $model->Document_No = $No;
                         
 
                $res = Yii::$app->navhelper->postData($service, $model);
@@ -95,13 +95,13 @@ class ClaimlineController extends Controller
         }
         
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safariline'],$model) ){
 
 
              $refresh = Yii::$app->navhelper->getData($service,[
-                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
-                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
-                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
+                'Document_No' => Yii::$app->request->post()['Safariline']['Document_No'],
+                'Expense_Date' => Yii::$app->request->post()['Safariline']['Expense_Date'],
+                
             ]);
             $model->Key = $refresh[0]->Key;
             $result = Yii::$app->navhelper->updateData($service,$model);
@@ -119,6 +119,8 @@ class ClaimlineController extends Controller
 
         }
 
+         $model->Expense_Date = date('Y-m-d');
+         $model->Return_Date = date('Y-m-d');
         
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
@@ -135,13 +137,12 @@ class ClaimlineController extends Controller
 
 
     public function actionUpdate(){
-        $model = new Claimline() ;
+        $model = new Safariline() ;
         $model->isNewRecord = false;
-        $service = Yii::$app->params['ServiceName']['MileageLines'];
+        $service = Yii::$app->params['ServiceName']['safariLine'];
         $filter = [
-            'Claim_No' => Yii::$app->request->get('Claim_No'),
-            'Claim_Type' => Yii::$app->request->get('Claim_Type'),
-            'Travel_To' => Yii::$app->request->get('Travel_To'),
+            'Document_No' => Yii::$app->request->get('Document_No'),
+            'Expense_Date' => Yii::$app->request->get('Expense_Date'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -149,22 +150,26 @@ class ClaimlineController extends Controller
         if(is_array($result)){
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;
-            // Yii::$app->recruitment->printrr($model);
+            
         }else{
             Yii::$app->recruitment->printrr($result);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safariline'],$model) ){
 
             $refresh = Yii::$app->navhelper->getData($service,[
-                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
-                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
-                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
+                'Document_No' => Yii::$app->request->post()['Safariline']['Document_No'],
+                'Expense_Date' => Yii::$app->request->post()['Safariline']['Expense_Date'],
             ]);
-            $model->Key = $refresh[0]->Key;
+
+           if(is_array($refresh)){
+             $model->Key = $refresh[0]->Key;
+           }
+            
 
             $result = Yii::$app->navhelper->updateData($service,$model);
+            // Yii::$app->recruitment->printrr($result);
 
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             if(!is_string($result)){
@@ -174,6 +179,9 @@ class ClaimlineController extends Controller
             }
 
         }
+
+        $model->Expense_Date = ($model->Expense_Date === '0001-01-01')?date('Y-m-d'):$model->Expense_Date;
+        $model->Return_Date = ($model->Return_Date === '0001-01-01')?date('Y-m-d'):$model->Return_Date;
 
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
@@ -195,7 +203,7 @@ class ClaimlineController extends Controller
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['MileageLines'];
+        $service = Yii::$app->params['ServiceName']['safariLine'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -292,6 +300,24 @@ class ClaimlineController extends Controller
     }
 
 
+    public function actionSetfield($field){
+        $service = 'safariLine';     
+        
+
+        $field = [ $field => \Yii::$app->request->post($field)];
+        $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
+        // Keys for this model
+        $filter = [
+            'Document_No' => Yii::$app->request->post('Document_No'),
+            'Expense_Date' => Yii::$app->request->post('Expense_Date')
+        ];
+
+        $result = Yii::$app->navhelper->Commit($service,$field,$filter,$Key);
+        return $result;
+        
+    }
+
+
     
 
 
@@ -336,10 +362,6 @@ class ClaimlineController extends Controller
     }
 
 
-
-
-
-
     public function loadtomodel($obj,$model){
 
         if(!is_object($obj)){
@@ -353,4 +375,10 @@ class ClaimlineController extends Controller
 
         return $model;
     }
+
+
+
+    
+
+
 }

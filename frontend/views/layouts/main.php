@@ -259,12 +259,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             </a>
                             <ul class="nav nav-treeview">
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>leave/create?create=1" class="nav-link <?= currentaction('leave','create')?'active':'' ?> ">
-                                        <i class="fa fa-running nav-icon"></i>
-                                        <p>New Leave Application</p>
-                                    </a>
-                                </li>
+                                
                                 <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>leave/" class="nav-link <?= currentaction('leave','index')?'active':'' ?>">
                                         <i class="fa fa-door-open nav-icon"></i>
@@ -274,12 +269,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
 
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>leave/reportview" class="nav-link <?= currentaction('leave','reportview')?'active':'' ?>">
-                                        <i class="fa fa-file-pdf nav-icon"></i>
-                                        <p>Leave Statement</p>
-                                    </a>
-                                </li>
+                               
 
 
                             </ul>
@@ -292,7 +282,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                         <!--Performance management --->
 
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'menu-open':'menu-close' ?>">
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim','safari'])?'menu-open':'menu-close' ?>">
                             <a href="#" title="Performance Management" class="nav-link <?= Yii::$app->recruitment->currentCtrl(['imprest','surrender','claim'])?'active':'' ?>">
                                 <i class="nav-icon fa fa-coins"></i>
                                 <p>
@@ -324,6 +314,13 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                 </li>
 
                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>safari" class="nav-link <?= Yii::$app->recruitment->currentaction('safari','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p> Safari Requests</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>claim" class="nav-link <?= Yii::$app->recruitment->currentaction('claim','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
                                         <p> Mileage Claims</p>
@@ -336,35 +333,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                         </li>
 
 
-                        <!-- Contract Management -->
-
-                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['contract'])?'menu-open':'' ?>">
-                            <a href="#" class="nav-link <?= currentCtrl(['contract'])?'active':'' ?>">
-                                <i class="nav-icon fas fa-briefcase " ></i>
-                                <p>
-                                    Contract Management
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>contract" class="nav-link <?= currentaction('contract','index')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Contracts List </p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>contract/create" class="nav-link <?= currentaction('contract','create')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>New Contract </p>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
+                      
 
                         <!--Payroll reports -->
                          <li class="nav-item has-treeview <?= currentCtrl(['payslip','p9'])?'menu-open':'' ?>">
@@ -393,186 +362,38 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                             </ul>
                         </li>
+
+
+
+
                         <!--payroll reports-->
 
-                        <li class="nav-item has-treeview <?= currentCtrl('appraisal')?'menu-open':'' ?>">
-                            <a href="#" title="Performance Management" class="nav-link <?= currentCtrl('appraisal')?'active':'' ?>">
-                                <i class="nav-icon fa fa-balance-scale"></i>
+                        
+
+                          <!-- Contract Management -->
+
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['contract'])?'menu-open':'' ?>">
+                            <a href="#" class="nav-link <?= currentCtrl(['contract'])?'active':'' ?>">
+                                <i class="nav-icon fas fa-briefcase " ></i>
                                 <p>
-                                    Perfomance Mgt.
+                                    Contract Management
                                     <i class="fas fa-angle-left right"></i>
                                     <!--<span class="badge badge-info right">6</span>-->
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
 
-
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>appraisal" class="nav-link <?= currentaction('appraisal','index')?'active':'' ?>">
+                                    <a href="<?= $absoluteUrl ?>contract" class="nav-link <?= currentaction('contract','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
-                                        <p> Appraisal List</p>
+                                        <p>Contracts List </p>
                                     </a>
                                 </li>
-                    <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>appraisal/submitted" class="nav-link <?= currentaction('appraisal','submitted')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Submitted Appraisals </p>
-                                    </a>
-                                </li>
-                    <?php endif; ?>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>appraisal/approvedappraisals" class="nav-link <?= currentaction('appraisal','approvedappraisals')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Approved (Appraisee)</p>
-                                    </a>
-                                </li>
-                    <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>appraisal/superapprovedappraisals" class="nav-link <?= currentaction('appraisal','superapprovedappraisals')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Approved (Supervisor) </p>
-                                    </a>
-                                </li>
-                    <?php endif; ?>
 
-                                <!--Mid Year Appraisals-->
-                                <li class="nav-item has-treeview <?= currentCtrl('appraisal')?'menu-open':'' ?>">
-                                    <a href="#" class="nav-link <?= currentCtrl('appraisal')?'active':'' ?>">
-                                        <i class="nav-icon fa fa-balance-scale"></i>
-                                        <p>
-                                            Mid Year Appraisals
-                                            <i class="fas fa-angle-left right"></i>
-                                            <!--<span class="badge badge-info right">6</span>-->
-                                        </p>
-                                    </a>
+                               
 
-                                    <ul class="nav nav-treeview"><!--Mid Year Appraisals Menu-->
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/myappraiseelist" class="nav-link <?= currentaction('appraisal','myappraiseelist')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>M-Y Appraisal (Appraisee) </p>
-                                            </a>
-                                        </li>
-
-                                        <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-
-                                            <li class="nav-item">
-                                                <a href="<?= $absoluteUrl ?>appraisal/mysupervisorlist" class="nav-link <?= currentaction('appraisal','mysupervisorlist')?'active':'' ?>">
-                                                    <i class="fa fa-check-square nav-icon"></i>
-                                                    <p>M-Y Appraisal (Supervisor) </p>
-                                                </a>
-                                            </li>
-
-                                        <?php endif; ?>
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/myapprovedappraiseelist" class="nav-link <?= currentaction('appraisal','myapprovedappraiseelist')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>M-Y Approved (Appraisee) </p>
-                                            </a>
-                                        </li>
-
-                                        <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-
-                                            <li class="nav-item">
-                                                <a href="<?= $absoluteUrl ?>appraisal/myapprovedsupervisorlist" class="nav-link <?= currentaction('appraisal','myapprovedsupervisorlist')?'active':'' ?>">
-                                                    <i class="fa fa-check-square nav-icon"></i>
-                                                    <p>M-Y Approved (Supervisor) </p>
-                                                </a>
-                                            </li>
-
-                                        <?php endif; ?>
-
-
-
-
-                                    </ul><!--End Mid Year Appraisals menu list-->
-
-
-                                </li><!--End Mid Year Child Menu list-->
-
-                                <!--end Year Appraisals -->
-                                <li class="nav-item has-treeview <?= currentCtrl('appraisal')?'menu-open':'' ?>">
-                                    <a href="#" class="nav-link <?= currentCtrl('appraisal')?'active':'' ?>">
-                                        <i class="nav-icon fa fa-balance-scale"></i>
-                                        <p>
-                                            End Year Appraisals
-                                            <i class="fas fa-angle-left right"></i>
-                                            <!--<span class="badge badge-info right">6</span>-->
-                                        </p>
-                                    </a>
-
-                                    <ul class="nav nav-treeview"><!--Mid Year Appraisals Menu-->
-
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/eyappraiseelist" class="nav-link <?= currentaction('appraisal','eyappraiseelist')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>E-Y Appraisals (Appraisee) </p>
-                                            </a>
-                                        </li>
-
-                                        <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-                                            <li class="nav-item">
-                                                <a href="<?= $absoluteUrl ?>appraisal/eysupervisorlist" class="nav-link <?= currentaction('appraisal','eysupervisorlist')?'active':'' ?>">
-                                                    <i class="fa fa-check-square nav-icon"></i>
-                                                    <p>E-Y Appraisals (Supervisor) </p>
-                                                </a>
-                                            </li>
-
-                                        <?php endif; ?>
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/eypeer1list" class="nav-link <?= currentaction('appraisal','eypeer1list')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>E-Y Appraisals (Peer1) </p>
-                                            </a>
-                                        </li>
-
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/eypeer2list" class="nav-link <?= currentaction('appraisal','eypeer2list')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>E-Y Appraisals (Peer2) </p>
-                                            </a>
-                                        </li>
-
-                                        <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-                                            <li class="nav-item">
-                                                <a href="<?= $absoluteUrl ?>appraisal/eyagreementlist" class="nav-link <?= currentaction('appraisal','eyagreementlist')?'active':'' ?>">
-                                                    <i class="fa fa-check-square nav-icon"></i>
-                                                    <p>E-Y Appraisals (Agreement) </p>
-                                                </a>
-                                            </li>
-                                        <?php endif; ?>
-
-                                        <li class="nav-item">
-                                            <a href="<?= $absoluteUrl ?>appraisal/eyappraiseeclosedlist" class="nav-link <?= currentaction('appraisal','eyappraiseeclosedlist')?'active':'' ?>">
-                                                <i class="fa fa-check-square nav-icon"></i>
-                                                <p>E-Y Closed (Appraisee) </p>
-                                            </a>
-                                        </li>
-                                        <?php if(Yii::$app->user->identity->isSupervisor()):  ?>
-                                            <li class="nav-item">
-                                                <a href="<?= $absoluteUrl ?>appraisal/eysupervisorclosedlist" class="nav-link <?= currentaction('appraisal','eysupervisorclosedlist')?'active':'' ?>">
-                                                    <i class="fa fa-check-square nav-icon"></i>
-                                                    <p>E-Y Closed (Superviosr) </p>
-                                                </a>
-                                            </li>
-
-                                        <?php endif; ?>
-
-
-
-
-                                    </ul><!--End Mid Year Appraisals menu list-->
-
-
-                                </li><!--/ End Year Child Menu list-->
-
-
+                            </ul>
+                        </li>
 
 
 

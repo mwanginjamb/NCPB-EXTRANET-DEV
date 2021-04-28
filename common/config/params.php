@@ -155,7 +155,12 @@ return [
         'MileageCard' => 'MileageCard', //50078
         'MileageLines' => 'MileageLines', //50079 
         'Safaris' => 'Safaris', // 50123
-        'safariRequests' => 'safariRequests', //50327 
+        'safariRequests' => 'safariRequests', //50327 --- List
+        'safariCard' => 'safariCard', //50328 --card
+        'safariLine' => 'safariLine', //50329
+        'safariEarnings' => 'safariEarnings', //50330
+        'ApprovedFleetRequests' => 'ApprovedFleetRequests', //50054
+        'categoryTowns' => 'categoryTowns', // 70415
 
 
 

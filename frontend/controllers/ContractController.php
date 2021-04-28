@@ -259,7 +259,7 @@ class ContractController extends Controller
 
             $result['data'][] = [
                 'Code' => $item->Code,
-                'Description' => $item->Description,
+                'Description' => !empty($item->Description)?$item->Description:'',
                 'Total_Value' => !empty($item->Total_Value)?number_format($item->Total_Value):'',
                 'Invoiced_Value' => !empty($item->Invoiced_Value)?number_format($item->Invoiced_Value):'',
                 'Deliverables' => !empty($item->Deliverables)?$item->Deliverables:'',
@@ -268,7 +268,7 @@ class ContractController extends Controller
                 'Status' => $item->Status,
                 'Start_Date' => $item->Start_Date,
                 'End_Date' => $item->End_Date,
-                'Procurement_Method' => $item->Procurement_Method,
+                'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
                 'view' => $Viewlink
             ];
         }

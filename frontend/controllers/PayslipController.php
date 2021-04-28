@@ -75,7 +75,7 @@ class PayslipController extends Controller
         $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         // Yii::$app->recruitment->printrr(ArrayHelper::map($payrollperiods,'Period_Code','desc'));
-        if(Yii::$app->request->post()){
+        if(Yii::$app->request->post() && Yii::$app->request->post('payperiods')){
 
             $data = [
                 'periodCode' =>Yii::$app->request->post('payperiods'),

@@ -55,23 +55,35 @@ if(Yii::$app->session->hasFlash('success')){
                         <div class="col-md-6">
 
 
-                             <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Payroll_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Safari_No')->dropDownList($safariRequests,['prompt' => 'select']) ?>
-                                <?= $form->field($model, 'Full_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Imprest_Account')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            
-                                <?= $form->field($model, 'Total_Claim')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Safari_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Purpose')->textarea(['rows'=> 2, 'maxlength'=> 200]) ?>
+                                <?= $form->field($model, 'Expected_Travel_Date')->textInput(['type' => 'date','required' =>  true]) ?>
+                                <?= $form->field($model, 'Expected_Date_of_Return')->textInput(['type'=> 'date', 'required'=> true]) ?>
+                                <?= $form->field($model, 'Employee_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Imprest_Accoount')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Shortcut_Dimension_1_Code')->dropDownList([$functions,'prompt'=> 'Slect ...', 'required'=>true]) ?>
 
                         </div>
 
                         <div class="col-md-6">
+
+                                <?= $form->field($model, 'Shortcut_Dimension_2_Code')->dropDownList($budgetCenters,['prompt'=> 'Select ...', 'required'=>true]) ?>
+                                <?= $form->field($model, 'Total_Entitlements')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Approvals')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Global_Dimension_1_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Global_Dimension_2_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Document_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Source_Document_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Mode_of_Transport')->dropDownList([
+                                    'Personal_Vehicle' => 'Personal Vehicle',
+                                    'Company_Vehicle' => 'Company Vehicle',
+                                    'Public_Transport_1st_Class' => 'Public Transport 1st Class',
+                                    'Public_Transport_Business' => 'Public Transport Business',
+                                    'Public_Transport_Economy' => 'Public_Transport_Economy',
+
+                                ],['prompt'=> 'Select ...', 'required'=>true]) ?>
+                                <?= $form->field($model, 'Total_KMs')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Employee_Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Department_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Fleet_Request_No')->dropDownList( $fleet, ['prompt'=> 'Select ...', 'required'=>true]) ?>
                                 <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true]) ?>
 
 
@@ -125,7 +137,7 @@ if(Yii::$app->session->hasFlash('success')){
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Claim Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Safari Management</h4>
                 </div>
                 <div class="modal-body">
 
