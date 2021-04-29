@@ -11,7 +11,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-$this->title = 'AAS - Employee Profile'
+$this->title = Yii::$app->params['generalTitle'].' - Employee Profile'
 ?>
 <h2 class="title">Employee : <?= $model->No.' - '. $model->First_Name. ' '. $model->Last_Name?></h2>
 
