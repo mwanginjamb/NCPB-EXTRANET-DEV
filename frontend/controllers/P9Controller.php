@@ -85,12 +85,12 @@ class P9Controller extends Controller
 
             // Yii::$app->recruitment->printrr($path);
 
-            if(!is_file($path['return_value'])){
+            if(!@is_file($path['return_value'])){
               
                 return $this->render('index',[
                     'report' => false,
-                    'p9years' => ArrayHelper::map($p9years,'Year','desc'),
-                    'message' => $path['return_value']
+                    'p9years' => '',
+                    'message' => @$path['return_value']
                 ]);
             }
             $binary = file_get_contents($path['return_value']); //fopen($path['return_value'],'rb');

@@ -581,6 +581,8 @@ class LeaveController extends Controller
 
     public function actionSendForApproval($No)
     {
+
+
         $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
        
         $data = [
@@ -589,6 +591,9 @@ class LeaveController extends Controller
             'uID' => Yii::$app->user->identity->{'User ID'}
             
         ];
+
+       /* print '<pre>';
+        print_r($data); exit;*/
 
 
         $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');

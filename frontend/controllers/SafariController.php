@@ -8,7 +8,7 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Claim;
+use frontend\models\Safari;
 
 use Yii;
 use yii\filters\AccessControl;
@@ -22,7 +22,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
-class ClaimController extends Controller
+class SafariController extends Controller
 {
     public function behaviors()
     {
@@ -70,11 +70,11 @@ class ClaimController extends Controller
 
     public function actionCreate(){
 
-        $model = new Claim();
-        $service = Yii::$app->params['ServiceName']['MileageCard'];
+        $model = new Safari();
+        $service = Yii::$app->params['ServiceName']['safariCard'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave']) && !Yii::$app->request->post()){
+        if(!isset(Yii::$app->request->post()['Safari']) && !Yii::$app->request->post()){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);
@@ -88,23 +88,24 @@ class ClaimController extends Controller
                     'model' => $model,
                     'safariRequests' => $this->safariRequests(),
                     'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters()
+                    'budgetCenters' => $this->getBudgetcenters(),
+                    'fleet' => $this->getApprovedFleet()
                 ]);
             }
         }
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safari'],$model) ){
 
 
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);
             $model->Key = $refresh->Key;
             
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
                 Yii::$app->session->setFlash('success','Claim saved Successfully.' );
-                return $this->redirect(['view','No' => $result->Claim_No]);
+                return $this->redirect(['view','No' => $result->Safari_No]);
 
             }else{
                 Yii::$app->session->setFlash('error','Error  '.$result );
@@ -120,8 +121,9 @@ class ClaimController extends Controller
         return $this->render('create',[
             'model' => $model,
             'safariRequests' => $this->safariRequests(),
-             'functions' => $this->getFunctioncodes(),
-             'budgetCenters' => $this->getBudgetcenters()
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters(),
+            'fleet' => $this->getApprovedFleet()
            
         ]);
     }
@@ -130,36 +132,34 @@ class ClaimController extends Controller
 
 
     public function actionUpdate(){
-        $model = new Claim();
-        $service = Yii::$app->params['ServiceName']['MileageCard'];
+        $model = new Safari();
+        $service = Yii::$app->params['ServiceName']['safariCard'];
         $model->isNewRecord = false;
 
-        $filter = [
-            'Claim_No' => Yii::$app->request->get('No'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+
+
+        $result = Yii::$app->navhelper->findOne($service, 'Safari_No', Yii::$app->request->get('No'));
 
         if(is_array($result)){
             //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
+            $model = Yii::$app->navhelper->loadmodel($result,$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
             Yii::$app->sessiom->setFlash('error', $result);
              return $this->render('update',[
             'model' => $model,
             'safariRequests' => $this->safariRequests(),
             'functions' => $this->getFunctioncodes(),
-            'budgetCenters' => $this->getBudgetcenters()
+            'budgetCenters' => $this->getBudgetcenters(),
+            'fleet' => $this->getApprovedFleet()
 
         ]);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claim'],$model) ){
-            $filter = [
-                'Claim_No' => $model->Claim_No,
-            ];
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safari'],$model) ){
+            
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);;
             $model->Key = $refresh->Key;
 
             $result = Yii::$app->navhelper->updateData($service,$model);
@@ -168,7 +168,7 @@ class ClaimController extends Controller
 
                 Yii::$app->session->setFlash('success','Record Updated Successfully.' );
 
-                return $this->redirect(['view','No' => $result->Application_No]);
+                return $this->redirect(['view','No' => $result->Safari_No]);
 
             }else{
                 Yii::$app->session->setFlash('success','Error Updating Record'.$result );
@@ -176,7 +176,8 @@ class ClaimController extends Controller
                     'model' => $model,
                     'safariRequests' => $this->safariRequests(),
                      'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters()
+                    'budgetCenters' => $this->getBudgetcenters(),
+                    'fleet' => $this->getApprovedFleet()
                 ]);
 
             }
@@ -189,14 +190,19 @@ class ClaimController extends Controller
             return $this->renderAjax('update', [
                 'model' => $model,
                 'safariRequests' => $this->safariRequests(),
-                 'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters()
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters(),
+                'fleet' => $this->getApprovedFleet()
                 
             ]);
         }
 
         return $this->render('update',[
-            'model' => $model,
+                'model' => $model,
+                'safariRequests' => $this->safariRequests(),
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters(),
+                'fleet' => $this->getApprovedFleet()
 
         ]);
     }
@@ -214,10 +220,10 @@ class ClaimController extends Controller
     }
 
     public function actionView($No){
-        $model = new Claim();
-        $service = Yii::$app->params['ServiceName']['MileageCard'];
+        $model = new Safari();
+        $service = Yii::$app->params['ServiceName']['safariCard'];
 
-        $result = Yii::$app->navhelper->findOne($service, 'Claim_No', $No);
+        $result = Yii::$app->navhelper->findOne($service, 'Safari_No', $No);
 
 
         //load nav result to model
@@ -232,34 +238,50 @@ class ClaimController extends Controller
 
     public function actionList(){
 
-        $service = Yii::$app->params['ServiceName']['Mileagelist'];
+        $service = Yii::$app->params['ServiceName']['safariRequests'];
         $filter = [
-            'Payroll_No' => Yii::$app->user->identity->Employee[0]->No,
+            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
         ];
+        $result = [];
         
         $results = \Yii::$app->navhelper->getData($service,$filter);
-        $result = [];
+
+       
+       //Yii::$app->recruitment->printrr($results);
+        
+
+
+
+       
         foreach($results as $item){
+
+            if(empty($item->Safari_No))
+            {
+                continue;
+            }
+
+
+
             $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Claim_No ],['title' => 'View Claim.','class'=>'btn btn-outline-primary btn-xs']);
-            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Claim_No ],['title' => 'Update Claim.','class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Document_Status == 'New'){
-                $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Claim_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Safari_No ],['title' => 'View Claim.','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Safari_No ],['title' => 'Update Claim.','class'=>'btn btn-outline-primary btn-xs']);
+            if($item->Status == 'New'){
+                $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Safari_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
 
             }else if($item->Status == 'Approval_Pending'){
-                $ApprovalLink = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Claim_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
+                $ApprovalLink = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Safari_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
 
             $result['data'][] = [
                 'Key' => $item->Key,
-                'No' => $item->Claim_No,
-                'Employee_No' => !empty($item->Payroll_No)?$item->Payroll_No:'',
-                'Employee_Name' => !empty($item->Full_Name)?$item->Full_Name:'',
-                'Imprest_Account' => !empty($item->Imprest_Account)?$item->Imprest_Account:'',
-                'Total_Imprest_Amount' => !empty($item->Total_Claim)?$item->Total_Claim:'',
-                'Payment_Voucher_No' => !empty($item->Payment_Voucher_No)?$item->Payment_Voucher_No:'',
-                'Requested_On' => !empty($item->Created_On)?$item->Created_On:'',
-                'Status' => $item->Document_Status,
+                'No' => $item->Safari_No,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Purpose' => !empty($item->Purpose)?$item->Purpose:'',
+                'Expected_Travel_Date' => !empty($item->Expected_Travel_Date)?$item->Expected_Travel_Date:'',
+                'Expected_Date_of_Return' => !empty($item->Expected_Date_of_Return)?$item->Expected_Date_of_Return:'',
+                'Imprest_Accoount' => !empty($item->Imprest_Accoount)?$item->Imprest_Accoount:'',
+                'Total_Entitlements' => !empty($item->Total_Entitlements)?$item->Total_Entitlements:'',
+                'Status' => $item->Status,
                 'Actions' => $ApprovalLink.' '.$ViewLink.' '.$updateLink ,
 
             ];
@@ -568,26 +590,26 @@ class ClaimController extends Controller
 
     /* Call Approval Workflow Methods */
 
-    public function actionSendForApproval()
+    public function actionSendForApproval($No)
     {
-        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
-        $No = Yii::$app->request->get('No');
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+       
         $data = [
-            'documentType' => 1,
+            'documentType' => Yii::$app->params['Documents']['Safari'],
             'documentNo' => Yii::$app->request->get('No'),
-            'currentLevel' => '',
-            'sourceId' => ''
+            'uID' => Yii::$app->user->identity->{'User ID'}
+            
         ];
 
 
-        $result = Yii::$app->navhelper->Integration($service,$data,'SendApprovalRequest');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Request Sent to Supervisor Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Sending Request for Approval  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
@@ -597,17 +619,18 @@ class ClaimController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         $data = [
-            'applicationNo' => $No,
+            'documentType' => Yii::$app->params['Documents']['Safari'],
+            'documentNo' =>  Yii::$app->request->get('No'),
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Approval Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
@@ -618,12 +641,10 @@ class ClaimController extends Controller
     }
 
 
+
      public function safariRequests(){
         $service = Yii::$app->params['ServiceName']['safariRequests'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'}
-        ];
-        $result = \Yii::$app->navhelper->getData($service, $filter);
+        $result = \Yii::$app->navhelper->getData($service, []);
         return Yii::$app->navhelper->refactorArray($result,'Safari_No','Purpose');
     }
 
@@ -646,6 +667,18 @@ class ClaimController extends Controller
 
     }
 
+    /*Get Approved Fleet Requests*/
+
+     public function getApprovedFleet(){
+        $service = Yii::$app->params['ServiceName']['ApprovedFleetRequests'];
+        $filter = [];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Document_No','Description');
+
+    }
+
+
+
 
     public function actionSetfield($field){
         $service = 'MileageCard';
@@ -656,6 +689,7 @@ class ClaimController extends Controller
         $result = Yii::$app->navhelper->Commit($service,$field,$value,$filterKey,$filterValue);
         Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
         return $result;
+      
         
     }
 

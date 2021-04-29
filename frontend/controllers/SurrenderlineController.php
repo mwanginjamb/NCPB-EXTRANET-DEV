@@ -276,7 +276,8 @@ class SurrenderlineController extends Controller
         $service = Yii::$app->params['ServiceName']['Dimensions'];
         $filter = ['Global_Dimension_No' => 1 ];
         $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
+        //return ArrayHelper::map($result,'Code','Name');
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
 
 
     }
@@ -287,7 +288,8 @@ class SurrenderlineController extends Controller
         $service = Yii::$app->params['ServiceName']['Dimensions'];
         $filter = ['Global_Dimension_No' => 2];
         $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
+        // return ArrayHelper::map($result,'Code','Name');
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
 
 
     }
@@ -298,18 +300,16 @@ class SurrenderlineController extends Controller
         $service = Yii::$app->params['ServiceName']['Currencies'];
         $filter = ['Description' => '<> " "'];
         $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Description');
+        // return ArrayHelper::map($result,'Code','Description');
+        return Yii::$app->navhelper->refactorArray($result,'Code','Description');
     }
 
     /* Get expense locations */
 
     public function getLocations(){
-        $service = Yii::$app->params['ServiceName']['PostCodes'];
-        $filter = ['City' => '<> " "'];
-        $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','City');
-
-
+        $service = Yii::$app->params['ServiceName']['categoryTowns'];
+        $result = \Yii::$app->navhelper->getData($service, []);
+        return Yii::$app->navhelper->refactorArray($result,'Town_Code','Town_Name');
     }
 
     /* Get GL Accounts */
@@ -319,7 +319,9 @@ class SurrenderlineController extends Controller
         $filter = [];
         $result = \Yii::$app->navhelper->getData($service, $filter);
 
-        return  ArrayHelper::map($result,'No','Name');
+       //  return  ArrayHelper::map($result,'No','Name');
+
+        return Yii::$app->navhelper->refactorArray($result,'No','Name');
 
     }
 
