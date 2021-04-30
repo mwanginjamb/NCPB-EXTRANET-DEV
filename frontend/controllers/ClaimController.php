@@ -168,7 +168,7 @@ class ClaimController extends Controller
 
                 Yii::$app->session->setFlash('success','Record Updated Successfully.' );
 
-                return $this->redirect(['view','No' => $result->Application_No]);
+                return $this->redirect(['view','No' => $result->Claim_No]);
 
             }else{
                 Yii::$app->session->setFlash('success','Error Updating Record'.$result );
@@ -189,14 +189,17 @@ class ClaimController extends Controller
             return $this->renderAjax('update', [
                 'model' => $model,
                 'safariRequests' => $this->safariRequests(),
-                 'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters()
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters()
                 
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
+            'safariRequests' => $this->safariRequests(),
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters()
 
         ]);
     }
@@ -570,25 +573,25 @@ class ClaimController extends Controller
 
     public function actionSendForApproval()
     {
-        $service = Yii::$app->params['ServiceName']['IntegrationFuctions'];
-        $No = Yii::$app->request->get('No');
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+       
         $data = [
-            'documentType' => 1,
+            'documentType' => Yii::$app->params['Documents']['Claim'],
             'documentNo' => Yii::$app->request->get('No'),
-            'currentLevel' => '',
-            'sourceId' => ''
+            'uID' => Yii::$app->user->identity->{'User ID'}
+            
         ];
 
 
-        $result = Yii::$app->navhelper->Integration($service,$data,'SendApprovalRequest');
+         $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
-            return $this->redirect(['view','No' => $No]);
+            Yii::$app->session->setFlash('success', ' Request Sent to Supervisor Successfully.', true);
+            return $this->redirect(['index']);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
-            return $this->redirect(['view','No' => $No]);
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['index']);
 
         }
     }
@@ -597,21 +600,22 @@ class ClaimController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+         $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         $data = [
-            'applicationNo' => $No,
+            'documentType' => Yii::$app->params['Documents']['Claim'],
+            'documentNo' =>  Yii::$app->request->get('No'),
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }

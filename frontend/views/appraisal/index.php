@@ -10,10 +10,23 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'HRMIS - NCPB Appraisal List';
-$this->params['breadcrumbs'][] = ['label' => 'Performance Management', 'url' => ['index']];
+$this->title = Yii::$app->params['generalTitle'].' Performance Appraisal';
 $this->params['breadcrumbs'][] = ['label' => 'Appraisal List', 'url' => ['index']];
+$this->params['breadcrumbs'][] = '';
+$url = \yii\helpers\Url::home(true);
 ?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-info mx-1 py-2', 'data' => [
+            'confirm' => 'Are you sure you want to create a new Appraisal?',
+            'method' => 'get',
+        ],]) ?>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <?php
@@ -26,8 +39,7 @@ if(Yii::$app->session->hasFlash('success')){
     print '</div>';
 }else if(Yii::$app->session->hasFlash('error')){
     print ' <div class="alert alert-danger alert-dismissable">
- 
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                     <h5><i class="icon fas fa-check"></i> Error!</h5>
                                 ';
     echo Yii::$app->session->getFlash('error');
@@ -36,64 +48,72 @@ if(Yii::$app->session->hasFlash('success')){
 ?>
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-success">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">My Appraisal List</h3>
+                <h3 class="card-title">Performance Appraisal List</h3>
+
+
+
+
+
+
             </div>
             <div class="card-body">
-                <table class="table table-bordered dt-responsive table-hover" id="appraisal">
+                <div class="table-responsive">
+                <table class="table table-bordered dt-responsive table-hover" id="table">
                 </table>
+            </div>
             </div>
         </div>
     </div>
 </div>
-<input type="hidden" name="absolute" value="<?= Yii::$app->recruitment->absoluteUrl() ?>">
+
+    <input type="hidden" value="<?= $url ?>" id="url" />
 <?php
 
 $script = <<<JS
 
     $(function(){
-        var absolute = $('input[name=absolute]').val();
          /*Data Tables*/
          
-         //$.fn.dataTable.ext.errMode = 'throw';
-        
+        $.fn.dataTable.ext.errMode = 'throw';
+        const url = $('#url').val();
     
-          $('#appraisal').DataTable({
+          $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: absolute+'appraisal/list',
+            ajax: url+'appraisal/list',
             paging: true,
             columns: [
-                { title: 'Appraisal No' ,data: 'No'},
+                { title: 'No' ,data: 'No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
                 { title: 'Department' ,data: 'Department'},
                 { title: 'Appraisal Start Date' ,data: 'Appraisal_Start_Date'},
+                               
                 { title: 'Appraisal End Date' ,data: 'Appraisal_End_Date'},
-                { title: 'Remaining Days' ,data: 'Remaining_Days'},
-                { title: 'Total KPIs' ,data: 'Total_KPI_x0027_s'},
-                { title: 'Created By' ,data: 'Created_By'},
-                { title: 'Created On' ,data: 'Created_On'},
-                { title: 'Action', data: 'Action' },
-                
+                { title: 'Remaining Days', data: 'Remaining_Days' },
+                { title: 'Total KPIs', data: 'Total_KPI_x0027_s' },
+                { title: 'Created By', data: 'Created_By' },
+                { title: 'Created On', data: 'Created_On' },
+                { title: 'Actions', data: 'Actions' },
                
             ] ,                              
            language: {
-                "zeroRecords": "No Appraisals to display"
+                "zeroRecords": "No Records to display"
             },
             
-            order : [[ 6, "desc" ]]
+            order : [[ 0, "desc" ]]
             
            
        });
         
        //Hidding some 
-       var table = $('#appraisal').DataTable();
-       //table.columns([0,6]).visible(false);
+       var table = $('#table').DataTable();
+      // table.columns([0,6]).visible(false);
     
     /*End Data tables*/
-        $('#appraisal').on('click','tr', function(){
+        $('#table').on('click','tr', function(){
             
         });
     });
@@ -101,6 +121,15 @@ $script = <<<JS
 JS;
 
 $this->registerJs($script);
+
+$style = <<<CSS
+    table td:nth-child(7), td:nth-child(8), td:nth-child(9) {
+        text-align: center;
+    }
+CSS;
+
+$this->registerCss($style);
+
 
 
 

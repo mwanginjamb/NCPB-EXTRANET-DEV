@@ -7,15 +7,9 @@
  */
 
 namespace frontend\controllers;
-use frontend\models\Appraisalcard;
-use frontend\models\Careerdevelopmentstrength;
-use frontend\models\Employeeappraisalkra;
-use frontend\models\Experience;
-use frontend\models\Imprestcard;
-use frontend\models\Imprestline;
-use frontend\models\Imprestsurrendercard;
-use frontend\models\Leaveplancard;
-use frontend\models\Trainingplan;
+
+use frontend\models\Appraisal;
+
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -25,7 +19,6 @@ use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\BadRequestHttpException;
 
-use frontend\models\Leave;
 use yii\web\Response;
 use kartik\mpdf\Pdf;
 
@@ -36,7 +29,7 @@ class AppraisalController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','signup','index','list'],
+                'only' => ['logout','signup','index','list','create','update','delete','view'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -44,7 +37,7 @@ class AppraisalController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index','list'],
+                        'actions' => ['logout','index','list','create','update','delete','view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -74,67 +67,47 @@ class AppraisalController extends Controller
 
     }
 
-    public function actionSurrenderlist(){
-
-        return $this->render('surrenderlist');
-
-    }
 
     public function actionCreate(){
 
-        $model = new Imprestcard() ;
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
-        $request = '';
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
+
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Imprestcard'])){
+        if(!isset(Yii::$app->request->post()['Leave']) && !Yii::$app->request->post()){
+
+
             $request = Yii::$app->navhelper->postData($service,$model);
-            $filter = [];
+            //Yii::$app->recruitment->printrr($request);
             if(is_object($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
-
-                // Update Request for
-
-                $model->Key = $request->Key;
-
-                $request = Yii::$app->navhelper->updateData($service, $model);
-
-                $model = Yii::$app->navhelper->loadmodel($request,$model);
-                if(is_string($request)){
-                    Yii::$app->recruitment->printrr($request);
-                }
-
+            }else{
+                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
+                return $this->render('create',[
+                    'model' => $model,
+                    'safariRequests' => $this->safariRequests(),
+                    'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters()
+                ]);
             }
         }
 
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
 
 
-
-
-
-        // Yii::$app->recruitment->printrr(Yii::$app->request->post());
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
-            //Yii::$app->recruitment->printrr(Yii::$app->request->post()['Imprestcard']);
-            $filter = [
-                'Imprest_No' => $model->Imprest_No,
-            ];
-
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
-            $model->Key = $refresh[0]->Key;
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
-
+            /*Read the card again to refresh Key in case it changed*/
+            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $model->Key = $refresh->Key;
+            
             $result = Yii::$app->navhelper->updateData($service,$model);
-
-
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
-
-                // Yii::$app->recruitment->printrr($result);
-                return $this->redirect(['view','No' => $result->Imprest_No]);
+                Yii::$app->session->setFlash('success','Claim saved Successfully.' );
+                return $this->redirect(['view','No' => $result->Claim_No]);
 
             }else{
-                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                Yii::$app->session->setFlash('error','Error  '.$result );
                 return $this->redirect(['index']);
 
             }
@@ -146,92 +119,23 @@ class AppraisalController extends Controller
 
         return $this->render('create',[
             'model' => $model,
-            'employees' => $this->getEmployees(),
-            'programs' =>[],
-            'departments' => [],
-            'currencies' => [],
-            'paymentMethods' => $this->getPaymentmethods()
+            'safariRequests' => $this->safariRequests(),
+             'functions' => $this->getFunctioncodes(),
+             'budgetCenters' => $this->getBudgetcenters()
+           
         ]);
     }
 
 
-    public function actionCreateSurrender(){
-        // Yii::$app->recruitment->printrr(Yii::$app->request->get('requestfor'));
-        $model = new Imprestsurrendercard();
-        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCardPortal'];
-
-        /*Do initial request */
-        $request = Yii::$app->navhelper->postData($service,[]);
-
-        if(is_object($request) )
-        {
-            Yii::$app->navhelper->loadmodel($request,$model);
-
-            // Update Request for
-            $model->Request_For = Yii::$app->request->get('requestfor');
-            $model->Key = $request->Key;
-            $request = Yii::$app->navhelper->updateData($service, $model);
-
-            if(is_string($request)){
-                Yii::$app->recruitment->printrr($request);
-            }
-
-
-        }
-
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestsurrendercard'],$model) ){
-
-            $filter = [
-                'No' => $model->No,
-            ];
-
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
-
-            $result = Yii::$app->navhelper->updateData($service,$model);
-
-
-            if(!is_string($result)){
-                //Yii::$app->recruitment->printrr($result);
-                Yii::$app->session->setFlash('success','Imprest Request Created Successfully.' );
-
-                return $this->redirect(['view-surrender','No' => $result->No]);
-
-            }else{
-                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
-                return $this->render('createsurrender',[
-                    'model' => $model,
-                    'employees' => $this->getEmployees(),
-                    'programs' => $this->getPrograms(),
-                    'departments' => $this->getDepartments(),
-                    'currencies' => $this->getCurrencies(),
-                    'imprests' => $this->getmyimprests(),
-                    'receipts' => $this->getimprestreceipts($model->No)
-                ]);
-
-            }
-
-        }
-
-        return $this->render('createsurrender',[
-            'model' => $model,
-            'employees' => $this->getEmployees(),
-            'programs' => $this->getPrograms(),
-            'departments' => $this->getDepartments(),
-            'currencies' => $this->getCurrencies(),
-            'imprests' => $this->getmyimprests(),
-            'receipts' => $this->getimprestreceipts($model->No)
-        ]);
-    }
 
 
     public function actionUpdate(){
-        $model = new Imprestcard() ;
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
         $model->isNewRecord = false;
 
         $filter = [
-            'No' => Yii::$app->request->get('No'),
+            'Claim_No' => Yii::$app->request->get('No'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -239,36 +143,42 @@ class AppraisalController extends Controller
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
-            Yii::$app->recruitment->printrr($result);
+            Yii::$app->sessiom->setFlash('error', $result);
+             return $this->render('update',[
+            'model' => $model,
+            'safariRequests' => $this->safariRequests(),
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters()
+
+        ]);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Imprestcard'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claim'],$model) ){
+            $filter = [
+                'Claim_No' => $model->Claim_No,
+            ];
+            /*Read the card again to refresh Key in case it changed*/
+            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
+            $model->Key = $refresh->Key;
+
             $result = Yii::$app->navhelper->updateData($service,$model);
-            if(!empty($result)){
 
-                Yii::$app->session->setFlash('success','Imprest Request Updated Successfully.' );
+            if(!is_string($result)){
 
-                return $this->render('update',[
-                    'model' => $model,
-                    'employees' => $this->getEmployees(),
-                    'programs' => [],
-                    'departments' => [],
-                    'currencies' => [],
-                    'paymentMethods' => $this->getPaymentmethods()
-                ]);
+                Yii::$app->session->setFlash('success','Record Updated Successfully.' );
+
+                return $this->redirect(['view','No' => $result->Claim_No]);
 
             }else{
-
-                Yii::$app->session->setFlash('success','Error Creating Imprest Request '.$result );
+                Yii::$app->session->setFlash('success','Error Updating Record'.$result );
                 return $this->render('update',[
                     'model' => $model,
-                    'employees' => $this->getEmployees(),
-                    'programs' => [],
-                    'departments' => [],
-                    'currencies' => [],
-                    'paymentMethods' => $this->getPaymentmethods()
+                    'safariRequests' => $this->safariRequests(),
+                     'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters()
                 ]);
+
             }
 
         }
@@ -278,25 +188,24 @@ class AppraisalController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'employees' => $this->getEmployees(),
-                'programs' => $this->getPrograms(),
-                'departments' => $this->getDepartments(),
-                'currencies' => $this->getCurrencies()
-
+                'safariRequests' => $this->safariRequests(),
+                'functions' => $this->getFunctioncodes(),
+                'budgetCenters' => $this->getBudgetcenters()
+                
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'employees' => $this->getEmployees(),
-            'programs' => $this->getPrograms(),
-            'departments' => $this->getDepartments(),
-            'currencies' => $this->getCurrencies()
+            'safariRequests' => $this->safariRequests(),
+            'functions' => $this->getFunctioncodes(),
+            'budgetCenters' => $this->getBudgetcenters()
+
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['CareerDevStrengths'];
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -308,64 +217,44 @@ class AppraisalController extends Controller
     }
 
     public function actionView($No){
-        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
+        $model = new Claim();
+        $service = Yii::$app->params['ServiceName']['MileageCard'];
 
-        $filter = [
-            'Appraisal_Code' => $No
-        ];
+        $result = Yii::$app->navhelper->findOne($service, 'Claim_No', $No);
 
-        $result = Yii::$app->navhelper->getData($service, $filter);
 
         //load nav result to model
-        $model = $this->loadtomodel($result[0], new Appraisalcard());
-
-        if(!empty($result[0 ]->Employee_Appraisal_KRAs)){
-            $model->Employee_Appraisal_KRAs = $result[0]->Employee_Appraisal_KRAs->Employee_Appraisal_KRAs;
-        }
-
-        // Yii::$app->recruitment->printrr($model);
+        $model = $this->loadtomodel($result, $model);
 
         return $this->render('view',[
             'model' => $model,
         ]);
     }
 
-    /*Imprest surrender card view*/
 
-    public function actionViewSurrender($No){
-        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCard'];
-
-        $filter = [
-            'No' => $No
-        ];
-
-        $result = Yii::$app->navhelper->getData($service, $filter);
-        //load nav result to model
-        $model = $this->loadtomodel($result[0], new Imprestsurrendercard());
-
-        return $this->render('viewsurrender',[
-            'model' => $model,
-            'employees' => $this->getEmployees(),
-            'programs' => $this->getPrograms(),
-            'departments' => $this->getDepartments(),
-            'currencies' => $this->getCurrencies()
-        ]);
-    }
-
-    // Get Appriasal list
 
     public function actionList(){
+
         $service = Yii::$app->params['ServiceName']['AppraisalList'];
         $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
+            //'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
         ];
-       // Yii::$app->recruitment->printrr( $filter);
-        $results = Yii::$app->navhelper->getData($service,$filter);
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
         $result = [];
-
         foreach($results as $item){
 
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
 
             $result['data'][] = [
                 'Key' => $item->Key,
@@ -373,13 +262,13 @@ class AppraisalController extends Controller
                 'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
                 'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
                 'Department' => !empty($item->Department)?$item->Department:'',
-                'Appraisal_Start_Date' => !empty($item->Appraisal_Start_Date)?$item->Appraisal_Start_Date:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
                 'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
                 'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
                 'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
-                'Created_By' => $item->Created_By,
-                'Created_On' => $item->Created_On,
-                'Action' => $ViewLink ,
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
 
             ];
         }
@@ -426,11 +315,25 @@ class AppraisalController extends Controller
     }
 
 
-    public function getEmployees(){
-        $service = Yii::$app->params['ServiceName']['EmployeeList'];
+    public function getCovertypes(){
+        $service = Yii::$app->params['ServiceName']['MedicalCoverTypes'];
 
-        $employees = \Yii::$app->navhelper->getData($service);
-        return ArrayHelper::map($employees,'No','FullName');
+        $results = \Yii::$app->navhelper->getData($service);
+        $result = [];
+        $i = 0;
+        if(is_array($results)){
+            foreach($results as $res){
+                if(!empty($res->Code) && !empty($res->Description)){
+                    $result[$i] =[
+                        'Code' => $res->Code,
+                        'Description' => $res->Description
+                    ];
+                    $i++;
+                }
+
+            }
+        }
+        return ArrayHelper::map($result,'Code','Description');
     }
 
     /* My Imprests*/
@@ -459,13 +362,22 @@ class AppraisalController extends Controller
         return ArrayHelper::map($result,'No','detail');
     }
 
+    /*Get Staff Loans */
+
+    public function getLoans(){
+        $service = Yii::$app->params['ServiceName']['StaffLoans'];
+
+        $results = \Yii::$app->navhelper->getData($service);
+        return ArrayHelper::map($results,'Code','Loan_Name');
+    }
+
     /* Get My Posted Imprest Receipts */
 
     public function getimprestreceipts($imprestNo){
         $service = Yii::$app->params['ServiceName']['PostedReceiptsList'];
         $filter = [
             'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
-            'Appraisal_Code' => $imprestNo,
+            'Imprest_No' => $imprestNo,
         ];
 
         $results = \Yii::$app->navhelper->getData($service,$filter);
@@ -485,54 +397,58 @@ class AppraisalController extends Controller
         return ArrayHelper::map($result,'No','detail');
     }
 
-    /*Get Programs */
-
-    public function getPrograms(){
-        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
-
+    public function getLeaveTypes($gender = ''){
+        $service = Yii::$app->params['ServiceName']['LeaveTypesSetup']; //['leaveTypes'];
         $filter = [
-            'Global_Dimension_No' => 1
+            // 'Gender' => $gender,
+            //'Gender' => !empty(Yii::$app->user->identity->Employee[0]->Gender)?Yii::$app->user->identity->Employee[0]->Gender:'Both'
         ];
 
-        $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
-    }
-
-    /* Get Department*/
-
-    public function getDepartments(){
-        $service = Yii::$app->params['ServiceName']['DimensionValueList'];
-
-        $filter = [
-            'Global_Dimension_No' => 2
-        ];
-        $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
-    }
-
-
-    // Get Currencies
-
-    public function getCurrencies(){
-        $service = Yii::$app->params['ServiceName']['Currencies'];
-
-        $result = \Yii::$app->navhelper->getData($service, []);
+        $result = \Yii::$app->navhelper->getData($service,$filter);
         return ArrayHelper::map($result,'Code','Description');
     }
 
-    public function actionSetemployee(){
-        $model = new Imprestcard();
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+    public function getEmployees(){
+        $service = Yii::$app->params['ServiceName']['EmployeeList'];
+
+        $employees = \Yii::$app->navhelper->getData($service);
+        // Yii::$app->recruitment->printrr($employees);
+        $data = [];
+        $i = 0;
+        if(is_array($employees)){
+
+            foreach($employees as  $emp){
+                $i++;
+                if(!empty($emp->FullName) && !empty($emp->No)){
+                    $data[$i] = [
+                        'No' => $emp->No,
+                        'Full_Name' => $emp->FullName
+                    ];
+                }
+
+            }
+
+        }
+
+        return ArrayHelper::map($data,'No','Full_Name');
+    }
+
+
+
+
+    public function actionSetleavetype(){
+        $model = new Leave();
+        $service = Yii::$app->params['ServiceName']['LeaveCard'];
 
         $filter = [
-            'No' => Yii::$app->request->post('No')
+            'Application_No' => Yii::$app->request->post('No')
         ];
         $request = Yii::$app->navhelper->getData($service, $filter);
 
         if(is_array($request)){
             Yii::$app->navhelper->loadmodel($request[0],$model);
             $model->Key = $request[0]->Key;
-            $model->Employee_No = Yii::$app->request->post('Employee_No');
+            $model->Leave_Code = Yii::$app->request->post('Leave_Code');
         }
 
 
@@ -544,21 +460,45 @@ class AppraisalController extends Controller
 
     }
 
-    public function actionSetdimension($dimension){
-        $model = new Imprestcard();
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+    /*Set Receipt Amount */
+    public function actionSetdays(){
+        $model = new Leave();
+        $service = Yii::$app->params['ServiceName']['LeaveCard'];
 
         $filter = [
-            'No' => Yii::$app->request->post('No')
+            'Application_No' => Yii::$app->request->post('No')
         ];
         $request = Yii::$app->navhelper->getData($service, $filter);
 
         if(is_array($request)){
             Yii::$app->navhelper->loadmodel($request[0],$model);
             $model->Key = $request[0]->Key;
-            $model->{$dimension} = Yii::$app->request->post('dimension');
+            $model->Days_To_Go_on_Leave = Yii::$app->request->post('Days_To_Go_on_Leave');
         }
 
+        $result = Yii::$app->navhelper->updateData($service,$model);
+
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+
+        return $result;
+
+    }
+
+    /*Set Start Date */
+    public function actionSetstartdate(){
+        $model = new Leave();
+        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+
+        $filter = [
+            'Application_No' => Yii::$app->request->post('No')
+        ];
+        $request = Yii::$app->navhelper->getData($service, $filter);
+
+        if(is_array($request)){
+            Yii::$app->navhelper->loadmodel($request[0],$model);
+            $model->Key = $request[0]->Key;
+            $model->Start_Date = Yii::$app->request->post('Start_Date');
+        }
 
         $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -620,27 +560,6 @@ class AppraisalController extends Controller
 
     }
 
-    // Get Payment Methods
-
-    public function getPaymentmethods(){
-        $service = Yii::$app->params['ServiceName']['PaymentMethods'];
-        $results = \Yii::$app->navhelper->getData($service);
-        $data = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as  $res){
-                $i++;
-                if(!empty($res->Code) && !empty($res->Description)){
-                    $data[$i] = [
-                        'Code' => $res->Code,
-                        'Description' => $res->Description
-                    ];
-                }
-            }
-        }
-        return ArrayHelper::map($data,'Code','Description');
-    }
-
     public function loadtomodel($obj,$model){
 
         if(!is_object($obj)){
@@ -657,26 +576,27 @@ class AppraisalController extends Controller
 
     /* Call Approval Workflow Methods */
 
-    public function actionSendForApproval($No)
+    public function actionSendForApproval()
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
-
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+       
         $data = [
-            'applicationNo' => $No,
-            'sendMail' => 1,
-            'approvalUrl' => '',
+            'documentType' => Yii::$app->params['Documents']['Claim'],
+            'documentNo' => Yii::$app->request->get('No'),
+            'uID' => Yii::$app->user->identity->{'User ID'}
+            
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanSendImprestForApproval');
+         $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
-            return $this->redirect(['view','No' => $No]);
+            Yii::$app->session->setFlash('success', ' Request Sent to Supervisor Successfully.', true);
+            return $this->redirect(['index']);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
-            return $this->redirect(['view','No' => $No]);
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['index']);
 
         }
     }
@@ -685,24 +605,67 @@ class AppraisalController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+         $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         $data = [
-            'applicationNo' => $No,
+            'documentType' => Yii::$app->params['Documents']['Claim'],
+            'documentNo' =>  Yii::$app->request->get('No'),
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
+    }
+
+
+     public function safariRequests(){
+        $service = Yii::$app->params['ServiceName']['safariRequests'];
+        $filter = [
+            'Employee_No' => Yii::$app->user->identity->{'Employee No_'}
+        ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Safari_No','Purpose');
+    }
+
+     public function getFunctioncodes(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 1 ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
+
+    }
+
+    /* Get Budget Centers*/
+
+    public function getBudgetcenters(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 2];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
+    }
+
+
+    public function actionSetfield($field){
+        $service = 'MileageCard';
+        $value = Yii::$app->request->post($field);
+        $filterValue =Yii::$app->request->post('No'); 
+        $filterKey = 'Claim_No';
+
+        $result = Yii::$app->navhelper->Commit($service,$field,$value,$filterKey,$filterValue);
+        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+        return $result;
+        
     }
 
 

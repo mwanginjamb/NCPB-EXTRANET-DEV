@@ -42,7 +42,7 @@ if(Yii::$app->session->hasFlash('error')){
                 <div class="form-group">
                     <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
 
-                    <?= Html::a('signup', ['/site/signup'],['class' => 'btn btn-warning']) ?>
+                    <?php Html::a('signup', ['/site/signup'],['class' => 'btn btn-warning']) ?>
                 </div>
 
     <?php ActiveForm::end(); ?>

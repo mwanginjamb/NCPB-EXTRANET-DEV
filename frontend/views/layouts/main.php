@@ -40,8 +40,6 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
     
     <!-- / PWA SHIT -->
 
-
-    <link rel="manifest" href="manifest.json">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>

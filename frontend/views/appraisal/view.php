@@ -9,61 +9,74 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Performance Appraisal - '.$model->Appraisal_Code;
-$this->params['breadcrumbs'][] = ['label' => 'Performance Management', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'Appraisal View', 'url' => ['view','No'=> $model->Appraisal_Code]];
+$this->title = 'Claim - '.$model->Claim_No;
+$this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['Claim']];
+$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Claim_No]];
 /** Status Sessions */
-
 
 ?>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card-warning">
-            <div class="card-header">
-                <h3>Performance Appraisal Card </h3>
-            </div>
-            
-            <div class="card-body info-box">
+    <div class="row">
+        <div class="col-md-4">
 
-                <div class="row">
+            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Send Approval Req',['send-for-approval'],['class' => 'btn btn-app submitforapproval',
+                'data' => [
+                    'confirm' => 'Are you sure you want to send this document for approval?',
+                    'params'=>[
+                        'No'=> $model->Claim_No ,
+                        //'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
+                    ],
+                    'method' => 'get',
+                ],
+                'title' => 'Submit Imprest Approval'
 
-
-                    <div class="col-md-4">
-
-                        <?= Html::a('<i class="fas fa-forward"></i> submit',['submit'],['class' => 'btn btn-app submitforapproval','data' => [
-                                'confirm' => 'Are you sure you want to submit this appraisal?',
-                                'method' => 'post',
-                            ],
-                            'title' => 'Submit Goals for Approval'
-
-                        ]) ?>
-                    </div>
+            ]):'' ?>
 
 
+            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
+                'data' => [
+                    'confirm' => 'Are you sure you want to cancel imprest approval request?',
+                    'params'=>[
+                        'No'=> $model->Claim_No,
+                    ],
+                    'method' => 'get',
+                ],
+                'title' => 'Cancel Imprest Approval Request'
 
-
-
-                </div>
-
-            </div>
-           
+            ]):'' ?>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-success">
-            <div class="card-header">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-info">
+                <div class="card-header">
+                    <h3>Claim Card </h3>
+                </div>
 
-                <h3 class="card-title">Appraisal : <?= $model->Appraisal_Code ?></h3>
 
-                <?php
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+
+
+
+
+                    <h3 class="card-title">Claim No : <?= $model->Claim_No ?></h3>
+
+
+
+                    <?php
                     if(Yii::$app->session->hasFlash('success')){
                         print ' <div class="alert alert-success alert-dismissable">
                                  ';
-                                    echo Yii::$app->session->getFlash('success');
+                        echo Yii::$app->session->getFlash('success');
                         print '</div>';
                     }else if(Yii::$app->session->hasFlash('error')){
                         print ' <div class="alert alert-danger alert-dismissable">
@@ -71,158 +84,153 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal View', 'url' => ['view',
                         echo Yii::$app->session->getFlash('error');
                         print '</div>';
                     }
-                ?>
-            </div>
-            <div class="card-body">
+                    ?>
+                </div>
+                <div class="card-body">
 
 
-               <?php $form = ActiveForm::begin(); ?>
+                    <?php $form = ActiveForm::begin(); ?>
 
 
-               <div class="row">
-                   <div class=" row col-md-12">
-                       <div class="col-md-6">
+                    <div class="row">
+                        <div class=" row col-md-12">
+                            <div class="col-md-6">
 
-                           <?= $form->field($model, 'Appraisal_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                           <?= $form->field($model, 'Employee_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                           <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-
-                           <p class="parent"><span>+</span>
-                               <?= $form->field($model, 'Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                               <?= $form->field($model, 'Calender_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                               <?= $form->field($model, 'Appraisal_Start_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-
-                           </p>
-
-
-                       </div>
-                       <div class="col-md-6">
-
-                           <?= $form->field($model, 'Appraisal_End_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                           <?= $form->field($model, 'Total_KPI_x0027_s')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                           <?= $form->field($model, 'Deparrtment_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-
-                           <p class="parent"><span>+</span>
-
-                               <?= $form->field($model, 'Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                               <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-
-
-                           </p>
+                                <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Payroll_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Safari_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Full_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Imprest_Account')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            
+                                <?= $form->field($model, 'Total_Claim')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
 
 
 
-                       </div>
-                   </div>
-               </div>
+
+                                <p class="parent"><span>+</span>
 
 
 
-               <?php ActiveForm::end(); ?>
+
+                                </p>
+
+
+                            </div>
+                            <div class="col-md-6">
+                            
+                                <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Approvals')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Global_Dimension_1_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Global_Dimension_2_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Document_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Source_Document_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
+
+                                <p class="parent"><span>+</span>
 
 
 
-            </div>
-        </div><!--end details card-->
+                                </p>
 
-        <!--KRA CARD -->
-        <div class="card-success">
-            <div class="card-header">
-                <h4 class="card-title">Employee Appraisal KRA</h4>
-            </div>
-            <div class="card-body">
 
-                    <table class="table table-bordered">
-                        <thead>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <?php ActiveForm::end(); ?>
+
+
+
+                </div>
+            </div><!--end details card-->
+
+
+            <!--Objectives card -->
+
+            <?php // Yii::$app->recruitment->printrr($model->getLines($model->Application_No)) ?>
+
+
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">   <?= ($model->Document_Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['claimline/create','No'=>$model->Claim_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
+                </div>
+
+
+
+                <div class="card-body">
+
+
+
+
+
+                    <?php
+                    if(is_array($model->getLines())){ //show Lines ?>
+                        <table class="table table-bordered">
+                            <thead>
                             <tr>
-                                <td><?= Html::a('<i class="fa fa-plus"></i>',['appraisalkra/create','Appraisal_Code' => $model->Appraisal_Code,'Calender_Code' => $model->Calender_Code ],['class' => 'add-kra btn btn-sm btn-success', 'title' => 'Add Key Result Area'])?></td>
-                                <th>KRA CODE.</th>
-                                <th>Objective</th>
-                                <th>Objective_Description</th>
-                                <th>Total KPIs</th>
+                                <td><b>Travel_From</b></td>
+                                <td><b>Travel_To</b></td>
+                                <td><b>Claim_Type</b></td>
+                                <td><b>Description</b></td>
+                                <td><b>Date</b></td>
+                                <td><b>Distance</b></td>
+                                <td><b>Days</b></td>
+                                <td><b>Nights_Spent</b></td>
+                                <td><b>Reason_For_Claim</b></td>
+                                <td><b>Rate</b></td>
+                                <td><b>Total_Amount</b></td>
+                                <td><b>Function Code</b></td>
+                                <td><b>Budget Center Code</b></td>
+                                <td><b>Actions</b></td>
 
-                                <th>Action</th>
+
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             <?php
+                            // print '<pre>'; print_r($model->getObjectives()); exit;
 
-                            foreach($model->Employee_Appraisal_KRAs as $k){ ?>
+                            foreach($model->lines as $obj):
+                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['claimline/update',
+                                    'Claim_No'=> $obj->Claim_No,
+                                    'Claim_Type' => $obj->Claim_Type,
+                                    'Travel_To' => $obj->Travel_To
+                                ],
+                                    ['class' => 'update-objective btn btn-outline-info btn-xs','title' => 'update line']);
+                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['claimline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
+                                ?>
+                                <tr>
 
-                                <tr class="parent">
+                                    <td><?= !empty($obj->Travel_From)?$obj->Travel_From:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Travel_To)?$obj->Travel_To:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Claim_Type)?$obj->Claim_Type:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Description)?$obj->Description:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Date)?$obj->Date:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Nights_Spent)?$obj->Nights_Spent:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Reason_For_Claim)?$obj->Reason_For_Claim:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Rate)?$obj->Rate:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Total_Amount)?$obj->Total_Amount:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Global_Dimension_1_Code)?$obj->Global_Dimension_1_Code:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Global_Dimension_2_Code)?$obj->Global_Dimension_2_Code:'Not Set' ?></td>
 
-                                    <td><span>+</span></td>
-                                    <td><?= !empty($k->KRA_Code)?$k->KRA_Code:'' ?></td>
-                                    <td><?= !empty($k->Objective)?$k->Objective: 'Not Set' ?></td>
-                                    <td><?= !empty($k->Objective_Description)?$k->Objective_Description: 'Not Set' ?></td>
-                                    <td><?= !empty($k->Total_KPI_x0027_s)?$k->Total_KPI_x0027_s: 'Not Set' ?></td>
-                                    <td><?= Html::a('Remove',['appraisalkra/delete','Key'=> $k->Key],['class' => 'delete btn btn-outline-danger btn-xs'])?></td>
+                                    <td><?= ($model->Document_Status == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
                                 </tr>
-                                <tr class="child">
-                                    <td colspan="11" >
-                                    <table class="table table-hover table-borderless table-info">
-                                        <thead>
-                                            <tr>
-                                                <td><?= Html::a('<i class="fa fa-plus"></i>',['kpi/create','Appraisal_Code' => $model->Appraisal_Code,'KRA_Code' => $k->KRA_Code ],['class' => 'add-kra btn btn-sm btn-warning', 'title' => 'Add Key Performance Indicator'])?></td>
-                                                <td colspan="10" align="center"><b>Employee KPIs</b></td>
-                                            </tr>
-                                            <tr >
-                                                <th>Key Performance Indicator</th>
-                                                <th>Activity</th>
-                                                <th>Target</th>
-                                                <th>Maximum Weight</th>
-                                                <th>Target Achieved</th>
-                                                <th>Self Assesment</th>
-                                                <th>Self Comments</th>
-                                                <th>Supervisor Comments</th>
-                                                <th>Joint Assesment</th>
-                                                <th>Weighted Rating</th>
-                                                <th>Hr Comments</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        <?php
-                                        if(!empty($k->KRA_Code)) {
-                                            foreach ($model->getKPI($k->KRA_Code) as $kpi):
-                                                if(!empty($kpi->KPI_Code)) {
-                                                    ?>
-                                                    <tr>
-                                                        <td><?= !empty($kpi->KPI_Code) ? $kpi->KPI_Code : 'Notr Set' ?></td>
-                                                        <td><?= !empty($kpi->Activity) ? $kpi->Activity : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Target) ? $kpi->Target : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Maximum_Weight) ? $kpi->Maximum_Weight : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Target_Achieved) ? $kpi->Target_Achieved : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Self_Assesment) ? $kpi->Self_Assesment : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Self_Comments) ? $kpi->Self_Comments : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Supervisor_Comments) ? $kpi->Supervisor_Comments : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Joint_Assesment) ? $kpi->Joint_Assesment : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Weighted_Rating) ? $kpi->Weighted_Rating : 'Not Set' ?></td>
-                                                        <td><?= !empty($kpi->Hr_Comments) ? $kpi->Hr_Comments : 'Not Set' ?></td>
-                                                        <td><?= Html::a('<i class="fa fa-trash"></i>',['kpi/delete','Key'=> $k->Key],['class' => 'delete btn btn-outline-danger btn-xs'])?> </td>
-                                                    </tr>
-                                                    <?php
-                                                }
-
-                                            endforeach;
-                                        }
-
-                                    ?>
-                                        </tbody>
-                                    </table>
-                                    </td>
-                                </tr>
-
-                            <?php } ?>
-                        </tbody>
-                    </table>
-
-
-
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } ?>
+                </div>
             </div>
-        </div>
 
-        <!--ENF KRA CARD -->
+            <!--objectives card -->
+
+
 
 
 
@@ -231,30 +239,29 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal View', 'url' => ['view',
 
 
     </div>
-</div>
 
-<!--My Bs Modal template  --->
+    <!--My Bs Modal template  --->
 
-<div class="modal fade bs-example-modal-lg bs-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal fade bs-example-modal-lg bs-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
 
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel" style="position: absolute">Performance Appraisal</h4>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Leave Management</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+
             </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <!--<button type="button" class="btn btn-outline-warning">Save changes</button>-->
-            </div>
-
         </div>
     </div>
-</div>
 
 
 <?php
@@ -263,7 +270,8 @@ $script = <<<JS
 
     $(function(){
       
-      /*Deleting Records*/
+        
+     /*Deleting Records*/
      
      $('.delete, .delete-objective').on('click',function(e){
          e.preventDefault();
@@ -273,26 +281,82 @@ $script = <<<JS
            }
            
          var url = $(this).attr('href');
-         $.post(url).done(function(msg){
+         $.get(url).done(function(msg){
              $('.modal').modal('show')
                     .find('.modal-body')
                     .html(msg.note);
          },'json');
-     });  
+     });
       
     
-    /* KRAs*/
-        $('.evalkra,.add-kra').on('click', function(e){
+    /*Evaluate KRA*/
+        $('.evalkra').on('click', function(e){
              e.preventDefault();
             var url = $(this).attr('href');
+            console.log('clicking...');
             $('.modal').modal('show')
                             .find('.modal-body')
                             .load(url); 
 
         });
         
-    
         
+      //Add a training plan
+    
+     $('.add-objective, .update-objective').on('click',function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        console.log('clicking...');
+        $('.modal').modal('show')
+                        .find('.modal-body')
+                        .load(url); 
+
+     });
+     
+     
+     //Update a training plan
+    
+     $('.update-trainingplan').on('click',function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        console.log('clicking...');
+        $('.modal').modal('show')
+                        .find('.modal-body')
+                        .load(url); 
+
+     });
+     
+     
+     //Update/ Evalute Employeeappraisal behaviour -- evalbehaviour
+     
+      $('.evalbehaviour').on('click',function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        console.log('clicking...');
+        $('.modal').modal('show')
+                        .find('.modal-body')
+                        .load(url); 
+
+     });
+      
+      /*Add learning assessment competence-----> add-learning-assessment */
+      
+      
+      $('.add-learning-assessment').on('click',function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        console.log('clicking...');
+        $('.modal').modal('show')
+                        .find('.modal-body')
+                        .load(url); 
+
+     });
+      
+      
+     
+      
+      
+      
     
     /*Handle modal dismissal event  */
     $('.modal').on('hidden.bs.modal',function(){
@@ -319,8 +383,92 @@ $script = <<<JS
             $(this).find('span').text(function(_, value){return value=='-'?'+':'-'}); //to disregard an argument -event- on a function use an underscore in the parameter               
             $(this).nextUntil('p.parent').slideToggle(100, function(){});
      });
-                  
+    
+        //Add Career Development Plan
+        
+        $('.add-cdp').on('click',function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+           
+            
+            console.log('clicking...');
+            $('.modal').modal('show')
+                            .find('.modal-body')
+                            .load(url); 
+            
+         });//End Adding career development plan
          
+         /*Add Career development Strength*/
+         
+         
+        $('.add-cds').on('click',function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+            
+            $('.modal').modal('show')
+                            .find('.modal-body')
+                            .load(url); 
+            
+         });
+         
+         /*End Add Career development Strength*/
+         
+         
+         /* Add further development Areas */
+         
+            $('.add-fda').on('click',function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+                       
+            console.log('clicking...');
+            $('.modal').modal('show')
+                            .find('.modal-body')
+                            .load(url); 
+            
+         });
+         
+         /* End Add further development Areas */
+         
+         /*Add Weakness Development Plan*/
+             $('.add-wdp').on('click',function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+                       
+            console.log('clicking...');
+            $('.modal').modal('show')
+                            .find('.modal-body')
+                            .load(url); 
+            
+         });
+         /*End Add Weakness Development Plan*/
+
+         //Change Action taken
+
+         $('select#probation-action_taken').on('change',(e) => {
+
+            const key = $('input[id=Key]').val();
+            const Employee_No = $('input[id=Employee_No]').val();
+            const Appraisal_No = $('input[id=Appraisal_No]').val();
+            const Action_Taken = $('#probation-action_taken option:selected').val();
+           
+              
+
+            /* var data = {
+                "Action_Taken": Action_Taken,
+                "Appraisal_No": Appraisal_No,
+                "Employee_No": Employee_No,
+                "Key": key
+
+             } 
+            */
+            $.get('./takeaction', {"Key":key,"Appraisal_No":Appraisal_No, "Action_Taken": Action_Taken,"Employee_No": Employee_No}).done(function(msg){
+                 $('.modal').modal('show')
+                    .find('.modal-body')
+                    .html(msg.note);
+                });
+
+
+            });
     
         
     });//end jquery
@@ -332,3 +480,42 @@ JS;
 
 $this->registerJs($script);
 
+$style = <<<CSS
+    p span {
+        margin-right: 50%;
+        font-weight: bold;
+    }
+
+    table td:nth-child(11), td:nth-child(12) {
+                text-align: center;
+    }
+    
+    /* Table Media Queries */
+    
+     @media (max-width: 500px) {
+          table td:nth-child(2),td:nth-child(3),td:nth-child(6),td:nth-child(7),td:nth-child(8),td:nth-child(9),td:nth-child(10), td:nth-child(11) {
+                display: none;
+        }
+    }
+    
+     @media (max-width: 550px) {
+          table td:nth-child(2),td:nth-child(6),td:nth-child(7),td:nth-child(8),td:nth-child(9),td:nth-child(10), td:nth-child(11) {
+                display: none;
+        }
+    }
+    
+    @media (max-width: 650px) {
+          table td:nth-child(2),td:nth-child(6),td:nth-child(7),td:nth-child(8),td:nth-child(9),td:nth-child(10), td:nth-child(11) {
+                display: none;
+        }
+    }
+
+
+    @media (max-width: 1500px) {
+          table td:nth-child(2),td:nth-child(7),td:nth-child(8),td:nth-child(9),td:nth-child(10), td:nth-child(11) {
+                display: none;
+        }
+    }
+CSS;
+
+$this->registerCss($style);
