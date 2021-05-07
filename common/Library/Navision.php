@@ -112,6 +112,42 @@ class Navision extends Component
     }
 
 
+    // Get Record Id from Key
+
+      public function getRecordID($credentials, $soapWsdl,$Key)
+    {
+        $client = $this->createClient($credentials, $soapWsdl);
+        try {
+            $result = $client->GetRecIdFromKey(['Key' => $Key]);
+            return $result;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+
+    // ReaD By RecordId
+
+
+     public function readByRecID($credentials, $soapWsdl,$Key)
+    {
+
+        $RecordId = $this->getRecordID($credentials, $soapWsdl, $Key);
+
+        //Yii::$app->recruitment->printrr($RecordId);
+
+        $client = $this->createClient($credentials, $soapWsdl);
+        try {
+            $result = $client->ReadByRecId(['recId' => $RecordId->GetRecIdFromKey_Result]);
+            return $result;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+
+
+
    // General Code Unit Invocation method
 
      public function Codeunit($credentials, $soapWsdl, $Entry,$method)

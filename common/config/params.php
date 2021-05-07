@@ -3,9 +3,9 @@ return [
     'adminEmail' => 'admin@example.com',
     'supportEmail' => 'customer@softeboard.com',
     'senderEmail' => 'customer@softeboard.com',
-    'senderName' => 'HRMIS mailer',
+    'senderName' => 'NCPB Mailer',
     'user.passwordResetTokenExpire' => 3600,
-    'powered' => 'Iansoft Ltd',
+    'powered' => 'Iansoft Technologies Ltd.',
     'NavisionUsername'=>'Administrator',
     'NavisionPassword'=>'Ncpb&admin&',
     'generalTitle' => 'NCPB EXTRANET ',
@@ -14,7 +14,7 @@ return [
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'application.cereals',//'app-svr-dev.rbss.com',//Navision Server
+    'server'=>'application.cereals',
     'WebServicePort'=>'7050',//Nav server Port
     'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
     'ServiceCompanyName'=>'NCPB',//Nav Company,
@@ -63,7 +63,7 @@ return [
 
         /******************************END NCPB LEAVE************************************/
 
-        'RequestsToApprove' => 'RequestsToApprove', //654---------------duplicated
+        'DocumentApprovals' => 'DocumentApprovals', //50091-- > NCPB CUSTOM
         'ApprovalComments' => 'ApprovalComments', //660
         'RejectedApprovalEntries' => 'RejectedApprovalEntries', //50003
 

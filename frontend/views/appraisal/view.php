@@ -9,49 +9,28 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Claim - '.$model->Claim_No;
-$this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['Claim']];
-$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Claim_No]];
+$this->title = 'Appraisal - '.$model->Appraisal_Code;
+$this->params['breadcrumbs'][] = ['label' => 'Appraisal', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Appraisal Card', 'url' => ['view','No'=> $model->Appraisal_Code]];
+
+
+$absoluteUrl = \yii\helpers\Url::home(true);
+
 /** Status Sessions */
+
+Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
 ?>
 
     <div class="row">
-        <div class="col-md-4">
-
-            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-paper-plane"></i> Send Approval Req',['send-for-approval'],['class' => 'btn btn-app submitforapproval',
-                'data' => [
-                    'confirm' => 'Are you sure you want to send this document for approval?',
-                    'params'=>[
-                        'No'=> $model->Claim_No ,
-                        //'employeeNo' => Yii::$app->user->identity->{'Employee No_'},
-                    ],
-                    'method' => 'get',
-                ],
-                'title' => 'Submit Imprest Approval'
-
-            ]):'' ?>
-
-
-            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
-                'data' => [
-                    'confirm' => 'Are you sure you want to cancel imprest approval request?',
-                    'params'=>[
-                        'No'=> $model->Claim_No,
-                    ],
-                    'method' => 'get',
-                ],
-                'title' => 'Cancel Imprest Approval Request'
-
-            ]):'' ?>
-        </div>
+        <!-- Add action buttons here -->
     </div>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card-info">
                 <div class="card-header">
-                    <h3>Claim Card </h3>
+                    <h3>Appraisal  Card </h3>
                 </div>
 
 
@@ -68,23 +47,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
 
 
-                    <h3 class="card-title">Claim No : <?= $model->Claim_No ?></h3>
+                    <h3 class="card-title">Appraisal No : <?= $model->Appraisal_Code ?></h3>
 
 
 
-                    <?php
-                    if(Yii::$app->session->hasFlash('success')){
-                        print ' <div class="alert alert-success alert-dismissable">
-                                 ';
-                        echo Yii::$app->session->getFlash('success');
-                        print '</div>';
-                    }else if(Yii::$app->session->hasFlash('error')){
-                        print ' <div class="alert alert-danger alert-dismissable">
-                                 ';
-                        echo Yii::$app->session->getFlash('error');
-                        print '</div>';
-                    }
-                    ?>
                 </div>
                 <div class="card-body">
 
@@ -96,13 +62,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                         <div class=" row col-md-12">
                             <div class="col-md-6">
 
-                                <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Payroll_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Safari_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Full_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Imprest_Account')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Appraisal_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Employee_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Employee_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                
                             
-                                <?= $form->field($model, 'Total_Claim')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Appraisal_Start_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 
 
 
@@ -110,7 +76,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
                                 <p class="parent"><span>+</span>
 
-
+                                    <?= $form->field($model, 'Calender_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
 
                                 </p>
@@ -119,12 +85,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                             </div>
                             <div class="col-md-6">
                             
+                                <?= $form->field($model, 'Appraisal_End_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Total_KPI_x0027_s')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Deparrtment_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Approvals')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Global_Dimension_1_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Global_Dimension_2_Code')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Document_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Source_Document_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                               
                                 
 
                                 <p class="parent"><span>+</span>
@@ -158,73 +124,123 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">   <?= ($model->Document_Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['claimline/create','No'=>$model->Claim_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
+                    <div class="card-title"> Employee Key Result Areas</div>
                 </div>
 
 
 
                 <div class="card-body">
 
+                   <?php if(is_array($model->KRA)){ //show Objectives ?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                             <td>#</td>
+                            <td><b>Objective Code</b></td>
+                            <td><b>Objective</b></td>
+                            <td><b>Objective Description</b></td>
+                            <td><b>Total KPIs</b></td>
+                            <td><b>Action</b></td>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            // print '<pre>'; print_r($model->KRA); exit;
+
+                         foreach($model->KRA as $obj):
 
 
+                            if(empty($obj->KRA_Code))
+                            {
+                                continue;
+                            }
 
 
-                    <?php
-                    if(is_array($model->getLines())){ //show Lines ?>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <td><b>Travel_From</b></td>
-                                <td><b>Travel_To</b></td>
-                                <td><b>Claim_Type</b></td>
-                                <td><b>Description</b></td>
-                                <td><b>Date</b></td>
-                                <td><b>Distance</b></td>
-                                <td><b>Days</b></td>
-                                <td><b>Nights_Spent</b></td>
-                                <td><b>Reason_For_Claim</b></td>
-                                <td><b>Rate</b></td>
-                                <td><b>Total_Amount</b></td>
-                                <td><b>Function Code</b></td>
-                                <td><b>Budget Center Code</b></td>
-                                <td><b>Actions</b></td>
-
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            // print '<pre>'; print_r($model->getObjectives()); exit;
-
-                            foreach($model->lines as $obj):
-                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['claimline/update',
-                                    'Claim_No'=> $obj->Claim_No,
-                                    'Claim_Type' => $obj->Claim_Type,
-                                    'Travel_To' => $obj->Travel_To
-                                ],
-                                    ['class' => 'update-objective btn btn-outline-info btn-xs','title' => 'update line']);
-                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['claimline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
-                                ?>
-                                <tr>
-
-                                    <td><?= !empty($obj->Travel_From)?$obj->Travel_From:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Travel_To)?$obj->Travel_To:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Claim_Type)?$obj->Claim_Type:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Description)?$obj->Description:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Date)?$obj->Date:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Nights_Spent)?$obj->Nights_Spent:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Reason_For_Claim)?$obj->Reason_For_Claim:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Rate)?$obj->Rate:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Total_Amount)?$obj->Total_Amount:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Global_Dimension_1_Code)?$obj->Global_Dimension_1_Code:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Global_Dimension_2_Code)?$obj->Global_Dimension_2_Code:'Not Set' ?></td>
-
-                                    <td><?= ($model->Document_Status == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
+                            $updateLink = Html::a('<i class="fa fa-edit"></i>',['objective/update','Key'=> $obj->Key],['class' => 'mx-1 update-objective btn btn-xs btn-outline-info', 'title' => 'Update Key Result Area']);
+                             $deleteLink = Html::a('<i class="fa fa-trash"></i>',['objective/delete','Key'=> $obj->Key ],['class'=>'mx-1 delete btn btn-danger btn-xs', 'title' => 'Delete Key Result Area']);
+                             $addKpi = Html::a('<i class="fa fa-plus-square"></i>',['probation-kpi/create','Employee_No'=>$model->Employee_No,'Appraisal_No' => $model->Appraisal_Code,'KRA_Code' => $obj->KRA_Code  ],['class'=>'mx-1 add btn btn-success btn-xs','title' => 'Add a Key Performance Indicator']);
+                         ?>
+                                <tr class="parent">
+                                     <td><span>+</span></td>
+                                    <td><?= !empty($obj->KRA_Code)?$obj->KRA_Code:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Objective)?$obj->Objective:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Objective_Description)?$obj->Objective_Description:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Total_KPI_x0027_s)?$obj->Total_KPI_x0027_s:'Not Set' ?></td>
+                                    <td><?= $updateLink.$deleteLink.$addKpi ?></td>
                                 </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    <?php } ?>
+                                <tr class="child">
+                                    <td colspan="6" >
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-borderless table-info">
+                                                <thead>
+                                                <tr >
+                                                    <td><b>KPI</b></td>
+                                                    <td><b>Activity / Initiative</b></td>
+                                                    <td><b>Target</b></td>
+                                                    <td><b>Maximum Weight</b></td>
+                                                    <td><b>Target Achieved</b></td>
+                                                    <td><b>Self Assesment</b></td>
+                                                    <td><b>Self Comments</b></td>
+                                                    <td><b>Joint Assesment</b></td>
+                                                    <td><b>Supervisor Comments</b></td>
+                                                    <td><b>Weighted Rating</b></td>
+                                                    <td><b>Hr Comments</b></td>
+                                                    
+
+                                                    <th><b>Action</b></th>
+
+                                                   
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php if(is_array($model->getKPI($obj->KRA_Code))){
+
+                                                    foreach($model->getKPI($obj->KRA_Code) as $kpi):
+
+                                                        if(empty($kpi->KPI_Code)){
+                                                            continue;
+                                                        }
+
+                             $updateLink = Html::a('<i class="fa fa-edit"></i>',['probation-kpi/update','Key'=> $kpi->Key],['class' => 'mx-1 update-objective btn btn-xs btn-outline-info', 'title' => 'Update Key Result Area']);
+                             $deleteLink = Html::a('<i class="fa fa-trash"></i>',['probation-kpi/delete','Key'=> $kpi->Key ],['class'=>'mx-1 delete btn btn-danger btn-xs', 'title' => 'Delete Key Result Area']);
+
+
+                                                      ?>
+                                            <tr>
+                                                <td><?= !empty($kpi->KPI_Code)?$kpi->KPI_Code:' Not Set' ?></td>           
+                                                <td><?= !empty($kpi->Activity)?$kpi->Activity:' Not Set' ?></td>
+                                                <td><?= !empty($kpi->Target)?$kpi->Target:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Maximum_Weight)?$kpi->Maximum_Weight:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Target_Achieved)?$kpi->Target_Achieved:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Self_Assesment)?$kpi->Self_Assesment:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Self_Comments)?$kpi->Self_Comments:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Joint_Assesment)?$kpi->Joint_Assesment:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Supervisor_Comments)?$kpi->Supervisor_Comments:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Weighted_Rating)?$kpi->Weighted_Rating:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Hr_Comments)?$kpi->Hr_Comments:'Not Set' ?></td>
+                                                
+
+                                
+
+                                                <td><?= $updateLink.$deleteLink ?></td>
+
+                                            </tr>
+                                                <?php
+                                                    endforeach;
+                                                }
+                                                ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        </td>
+                                </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+
+
                 </div>
             </div>
 
@@ -249,7 +265,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Leave Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Performance Appraisal Management</h4>
                 </div>
                 <div class="modal-body">
 
@@ -448,7 +464,7 @@ $script = <<<JS
 
             const key = $('input[id=Key]').val();
             const Employee_No = $('input[id=Employee_No]').val();
-            const Appraisal_No = $('input[id=Appraisal_No]').val();
+            const Appraisal_Code = $('input[id=Appraisal_No]').val();
             const Action_Taken = $('#probation-action_taken option:selected').val();
            
               

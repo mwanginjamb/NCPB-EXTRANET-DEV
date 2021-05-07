@@ -48,6 +48,7 @@ class Navhelper extends Component{
 
     }
 
+    /*Get A single Record */
     public function findOne($service,$filterKey, $filterValue){
 
         $url  =  new Services($service);
@@ -75,6 +76,41 @@ class Navhelper extends Component{
         }
         
     }
+
+
+
+    /*Read a single Record By Key*/
+
+
+    public function readByKey($service,$Key){
+
+        $url  =  new Services($service);
+        $wsdl = $url->getUrl();
+        $username = (!Yii::$app->user->isGuest)? Yii::$app->user->identity->{'User ID'} : Yii::$app->params['NavisionUsername'];
+        $password = Yii::$app->session->has('IdentityPassword')? Yii::$app->session->get('IdentityPassword'):Yii::$app->params['NavisionPassword'];
+
+        $creds = (object)[];
+        $creds->UserName = $username;
+        $creds->PassWord = $password;
+
+        if(!Yii::$app->navision->isUp($wsdl,$creds)) {
+
+            return ['error' => 'Service unavailable.'];
+
+        }
+
+
+        $res = (array)$result = Yii::$app->navision->readByRecID($creds, $wsdl, $Key);
+
+        if(count($res)){
+            return $res[$service];
+        }else{
+            return false;
+        }
+        
+    }
+
+
 
     //create record(s)-----> post data
     public function postData($service,$data){

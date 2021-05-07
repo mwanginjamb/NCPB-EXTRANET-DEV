@@ -43,6 +43,18 @@ public $Employee_Appraisal_KRAs;
         ];
     }
 
+
+     public function getKRA(){
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
+        $filter = [
+            'Appraisal_Code' => $this->Appraisal_Code,
+            'Employee_No' => $this->Employee_No,
+        ];
+
+        $results = Yii::$app->navhelper->getData($service, $filter);
+        return $results;
+    }
+
     public function getKPI($KRA_Code){
         $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
         $filter = [
@@ -51,8 +63,8 @@ public $Employee_Appraisal_KRAs;
             'KRA_Code' => $KRA_Code
         ];
 
-        $kpas = Yii::$app->navhelper->getData($service, $filter);
-        return $kpas;
+        $results = Yii::$app->navhelper->getData($service, $filter);
+        return $results;
     }
 
 

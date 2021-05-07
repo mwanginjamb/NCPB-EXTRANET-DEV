@@ -8,7 +8,7 @@
 
 namespace frontend\controllers;
 
-use frontend\models\Appraisal;
+
 
 use Yii;
 use yii\filters\AccessControl;
@@ -21,6 +21,8 @@ use yii\web\BadRequestHttpException;
 
 use yii\web\Response;
 use kartik\mpdf\Pdf;
+
+use frontend\models\Appraisalcard;
 
 class AppraisalController extends Controller
 {
@@ -217,10 +219,10 @@ class AppraisalController extends Controller
     }
 
     public function actionView($No){
-        $model = new Claim();
-        $service = Yii::$app->params['ServiceName']['MileageCard'];
+        $model = new Appraisalcard();
+        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
 
-        $result = Yii::$app->navhelper->findOne($service, 'Claim_No', $No);
+        $result = Yii::$app->navhelper->findOne($service, 'Appraisal_Code', $No);
 
 
         //load nav result to model

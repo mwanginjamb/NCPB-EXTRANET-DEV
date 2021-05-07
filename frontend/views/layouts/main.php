@@ -379,7 +379,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                         
 
-                          <!-- Contract Management -->
+                        <!-- Contract Management -->
 
                         <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['contract'])?'menu-open':'' ?>">
                             <a href="#" class="nav-link <?= currentCtrl(['contract'])?'active':'' ?>">
@@ -396,6 +396,32 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     <a href="<?= $absoluteUrl ?>contract" class="nav-link <?= currentaction('contract','index')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
                                         <p>Contracts List </p>
+                                    </a>
+                                </li>
+
+                               
+
+                            </ul>
+                        </li>
+
+
+                         <!-- Performance Appraisal Management -->
+
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['appraisal'])?'menu-open':'' ?>">
+                            <a href="#" class="nav-link <?= currentCtrl(['appraisal'])?'active':'' ?>">
+                                <i class="nav-icon fas fa-briefcase " ></i>
+                                <p>
+                                    Performance Appraisal
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal" class="nav-link <?= currentaction('appraisal','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Appraisal List </p>
                                     </a>
                                 </li>
 

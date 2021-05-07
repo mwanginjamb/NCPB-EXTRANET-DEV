@@ -108,33 +108,34 @@ $script = <<<JS
           $('#approvals').DataTable({
            
             //serverSide: true,  
-            ajax: absolute +'approvals/getapprovals',
+            ajax: absolute +'approvals/list',
             paging: true,
             columns: [
-                //{ title: 'ToApprove' ,data: 'ToApprove'},
+                
                 { title: 'Details' ,data: 'Details'},
-                { title: 'Comment' ,data: 'Comment'},
                 { title: 'Sender ID' ,data: 'Sender_ID'},
-                { title: 'Due Date' ,data: 'Due_Date'},
+                { title: 'Action_ID' ,data: 'Action_ID'},
+                { title: 'Submitted On' ,data: 'Submitted_On'},
+                { title: 'Action Time' ,data: 'Action_Time'},
                 { title: 'Status' ,data: 'Status'},
-                { title: 'Document No' ,data: 'Document_No'},
-                { title: 'Approve' ,data: 'Approvelink'},
-                { title: 'Reject' ,data: 'Rejectlink'},
-                { title: 'Details' ,data: 'details'},
+                { title: 'Document_No' ,data: 'Document_No'},
+                { title: 'Approvelink' ,data: 'Approvelink'},
+                { title: 'Rejectlink' ,data: 'Rejectlink'},
+                { title: 'details' ,data: 'details'},
                 
                
             ] ,                              
            language: {
-                "zeroRecords": "No Requests to Approve for now."
+                "zeroRecords": "No Approval Requests yet."
             },
             
-            order : [[ 6, "desc" ]]
+            // order : [[ 6, "desc" ]]
            
        });
         
        //Hidding some 
        var table = $('#approvals').DataTable();
-       table.columns([1,5]).visible(false);
+       // table.columns([1,5]).visible(false);
     
     /*End Data tables*/
     
