@@ -41,9 +41,10 @@ return [
         'employeerequisition'
     ],
     'codeUnits' => [
-       'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005 ---- philip to rewrite
+       'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005
        'AppraisalStatusChange' => 'AppraisalStatusChange', //50020 
        'AppraisalManagement' => 'AppraisalManagement', // 60000 Appraisal Mgt
+       'JobApplicationManagement' => 'JobApplicationManagement', // 50600
     ],
     'ServiceName'=>[
 
@@ -161,6 +162,26 @@ return [
         'safariEarnings' => 'safariEarnings', //50330
         'ApprovedFleetRequests' => 'ApprovedFleetRequests', //50054
         'categoryTowns' => 'categoryTowns', // 70415
+
+
+        /*************Recruitment***************************/
+
+        'JobsList' => 'JobsList',//55057 --> Approved Requisitions
+        'JobsCard' => 'JobsCard',//55055
+        'RequirementSpecification'=> 'RequirementSpecification', //55049
+        'ResponsibilitySpecification' => 'ResponsibilitySpecification', //55048
+        'JobApplicantProfile' => 'JobApplicantProfile', //55081
+        'referees' => 'referees',//55060
+        'applicantLanguages' => 'applicantLanguages', //55061
+        'experience' => 'experience', //55062
+        'hobbies' => 'hobbies', //55063
+        'qualifications' => 'qualifications',//55064
+        'HRqualifications' => 'HRqualifications', //5205
+        'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
+        'HRJobApplicationsList' => 'HRJobApplicationsList', //55058
+        'HRJobApplicationsCard'=>'HRJobApplicationsCard',//55059
+
+        'JobApplicationManagement' => 'JobApplicationManagement', // 50600 - Application Code Unit
 
 
 
