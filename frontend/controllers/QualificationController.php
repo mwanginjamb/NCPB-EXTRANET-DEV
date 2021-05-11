@@ -84,6 +84,7 @@ class QualificationController extends Controller
             list($code, $desc) = explode(' - ',Yii::$app->request->post()['Qualification']['Qualification_Code']);
             $model->Qualification_Code = $code;
             $model->Description = $desc;
+            $model->Type = 'Academic';
 
             $model->Employee_No = Yii::$app->recruitment->getProfileID();
 
@@ -139,6 +140,7 @@ class QualificationController extends Controller
             list($code, $desc) = explode(' - ',Yii::$app->request->post()['Qualification']['Qualification_Code']);
             $model->Qualification_Code = $code;
             $model->Description =  $desc;
+             $model->Type = 'Professional';
 
             $model->Employee_No = Yii::$app->recruitment->getProfileID();
              if(!empty($_FILES['Qualification']['name']['imageFile'])){
@@ -180,15 +182,13 @@ class QualificationController extends Controller
         ]);
     }
 
-    public function actionUpdate(){
+    public function actionUpdate($Key){
         $service = Yii::$app->params['ServiceName']['qualifications'];
-        $filter = [
-            'Line_No' => Yii::$app->request->get('Line'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+       
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
         $Expmodel = new Qualification();
         //load nav result to model
-        $model = $this->loadtomodel($result[0],$Expmodel);
+        $model = $this->loadtomodel($result,$Expmodel);
 
         
 
@@ -198,6 +198,7 @@ class QualificationController extends Controller
             list($code, $desc) = explode(' - ',Yii::$app->request->post()['Qualification']['Qualification_Code']);
             $model->Qualification_Code = $code;
             $model->Description =  $desc;
+            $model->Type = 'Academic';
 
              if(!empty($_FILES['Qualification']['name']['imageFile'])){
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
@@ -231,15 +232,13 @@ class QualificationController extends Controller
     }
 
 
-     public function actionUpdateprofessional(){
+     public function actionUpdateprofessional($Key){
         $service = Yii::$app->params['ServiceName']['qualifications'];
-        $filter = [
-            'Line_No' => Yii::$app->request->get('Line'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+        
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
         $Expmodel = new Qualification();
         //load nav result to model
-        $model = $this->loadtomodel($result[0],$Expmodel);
+        $model = $this->loadtomodel($result,$Expmodel);
 
         
 
@@ -248,6 +247,7 @@ class QualificationController extends Controller
             list($code, $desc) = explode(' - ',Yii::$app->request->post()['Qualification']['Qualification_Code']);
             $model->Qualification_Code = $code;
             $model->Description = $desc;
+            $model->Type = 'Professional';
 
              if(!empty($_FILES['Qualification']['name']['imageFile'])){
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
@@ -364,9 +364,12 @@ class QualificationController extends Controller
         $service = Yii::$app->params['ServiceName']['qualifications'];
 
         $filter = [
-            'Qualification_Code' => 'ACADEMIC'
+            'Employee_No' => Yii::$app->recruitment->getProfileID(),
+            'Type' => 'Academic'
         ];
         $qualifications = \Yii::$app->navhelper->getData($service,$filter);
+
+        // Yii::$app->recruitment->printrr($qualifications);
 
         $result = [];
         $count = 0;
@@ -376,7 +379,7 @@ class QualificationController extends Controller
             $link = $updateLink =  '';
 
 
-            $updateLink = Html::a('<i class="fa fa-edit"></i>',['update','Line'=> $quali->Line_No ],['class'=>'update btn btn-outline-info btn-xs','title' => 'Update Qualification']);
+            $updateLink = Html::a('<i class="fa fa-edit"></i>',['update','Key'=> $quali->Key ],['class'=>'update btn btn-outline-info btn-xs','title' => 'Update Qualification']);
 
             if(!empty($quali->Attachement_path)){
                 $deletelink = Html::a('<i class="fa fa-trash"></i>',['delete','Key'=> $quali->Key,'path' => $quali->Attachement_path ],['class'=>'btn btn-outline-warning btn-xs','title' => 'Remove Qualification','data' => [
@@ -418,7 +421,8 @@ class QualificationController extends Controller
         $service = Yii::$app->params['ServiceName']['qualifications'];
 
         $filter = [
-            'Qualification_Code' => 'PROFESSIONAL'
+            'Employee_No' => Yii::$app->recruitment->getProfileID(),
+            'Type' => 'Professional'
         ];
         $qualifications = \Yii::$app->navhelper->getData($service,$filter);
 
@@ -433,7 +437,7 @@ class QualificationController extends Controller
             $link = $updateLink =  '';
 
 
-            $updateLink = Html::a('<i class="fa fa-edit"></i>',['updateprofessional','Line'=> $quali->Line_No ],['class'=>'update btn btn-outline-info btn-xs']);
+            $updateLink = Html::a('<i class="fa fa-edit"></i>',['updateprofessional','Key'=> $quali->Key ],['class'=>'update btn btn-outline-info btn-xs']);
 
             $link = Html::a('<i class="fa fa-trash"></i>',['delete','Key'=> $quali->Key ],['class'=>'btn btn-outline-warning btn-xs','data' => [
                 'confirm' => 'Are you sure you want to delete this qualification?',
@@ -469,7 +473,7 @@ class QualificationController extends Controller
 
     public function getQualificationsList(){
         $service = Yii::$app->params['ServiceName']['HRqualifications'];
-        $filter = ['Code' => 'Academic'];
+        $filter = ['Qualification_Type' => 'Academic'];
 
         $qualifications = \Yii::$app->navhelper->getData($service,$filter);
 
@@ -490,7 +494,7 @@ class QualificationController extends Controller
 
     public function getProfessionalQualificationsList(){
         $service = Yii::$app->params['ServiceName']['HRqualifications'];
-        $filter = ['Code' => 'PROFESSIONAL'];
+        $filter = ['Qualification_Type' => 'Certification'];
 
         $qualifications = \Yii::$app->navhelper->getData($service,$filter);
 
@@ -575,7 +579,7 @@ class QualificationController extends Controller
 
     public function actionDownload($path){
         $base = basename($path);
-        $ctx = Yii::$app->recruitment->connectWithAppOnlyToken(
+        /*$ctx = Yii::$app->recruitment->connectWithAppOnlyToken(
             Yii::$app->params['sharepointUrl'],
             Yii::$app->params['clientID'],
             Yii::$app->params['clientSecret']
@@ -583,6 +587,13 @@ class QualificationController extends Controller
         $fileUrl = '/Mydocs/'.$base;
         $targetFilePath = './qualifications/download.pdf';
         $resource = Yii::$app->recruitment->downloadFile($ctx,$fileUrl,$targetFilePath);
+        */
+        $path = Yii::getAlias('@frontend').'\\web\\qualifications\\'.$base;
+        $path =  str_replace('/', '\\', $path); // Normalize the damn path
+        $resource = base64_encode(file_get_contents($path));
+
+
+        // Yii::$app->recruitment->printrr($resource);
 
         return $this->render('readsharepoint',[
             'content' => $resource

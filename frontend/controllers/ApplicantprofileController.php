@@ -66,6 +66,7 @@ class ApplicantprofileController extends Controller
     public function actionIndex(){
 
 
+
         return $this->render('index');
 
     }
@@ -73,27 +74,46 @@ class ApplicantprofileController extends Controller
     public function actionCreate(){
 
 
+        //Yii::$app->recruitment->printrr(Yii::$app->session->get('HRUSER'));
+        if(Yii::$app->session->has('mode') || Yii::$app->session->get('mode') == 'external' || Yii::$app->session->has('HRUSER')){
+            $this->layout = 'external';
+
+            if(!Yii::$app->session->has('HRUSER')){
+               return $this->redirect(['./recruitment/login']);
+           }
+        }
+
+        if(Yii::$app->session->has('ProfileID') || Yii::$app->recruitment->hasProfile(Yii::$app->session->get('ProfileID')))
+        {
+            return $this->redirect(['update','No' =>Yii::$app->session->get('ProfileID') ]);
+        }
         $model = new Applicantprofile();
 
-        if(!Yii::$app->user->isGuest){//If it's an employee making an application , populate profile form with their employee data where relevant
+        if(!Yii::$app->user->isGuest && !Yii::$app->session->has('HRUSER')){//If it's an employee making an application , populate profile form with their employee data where relevant
             $model->First_Name = Yii::$app->user->identity->employee[0]->First_Name;
             $model->Middle_Name = !empty(Yii::$app->user->identity->employee[0]->Middle_Name)?Yii::$app->user->identity->employee[0]->Middle_Name:'';
             $model->Last_Name = Yii::$app->user->identity->employee[0]->Last_Name;
             $model->Age = !empty(Yii::$app->user->identity->employee[0]->DAge)?Yii::$app->user->identity->employee[0]->DAge:'';
             $model->Gender = !empty(Yii::$app->user->identity->employee[0]->Gender)?Yii::$app->user->identity->employee[0]->Gender:'';
             $model->Marital_Status = !empty(Yii::$app->user->identity->employee[0]->Marital_Status)?Yii::$app->user->identity->employee[0]->Marital_Status:'';
-            $model->Citizenship = !empty(Yii::$app->user->identity->employee[0]->Citizenship)?Yii::$app->user->identity->employee[0]->Citizenship:'';
-            $model->E_Mail = !empty(Yii::$app->user->identity->employee[0]->E_Mail)?Yii::$app->user->identity->employee[0]->E_Mail:'';
-            $model->Postal_Address = !empty(Yii::$app->user->identity->employee[0]->Postal_Address)?Yii::$app->user->identity->employee[0]->Postal_Address:'';
-            $model->Post_Code = !empty(Yii::$app->user->identity->employee[0]->Post_Code)?Yii::$app->user->identity->employee[0]->Post_Code:'';
-            $model->NSSF_No = !empty(Yii::$app->user->identity->employee[0]->NSSF_No)?Yii::$app->user->identity->employee[0]->NSSF_No:'';
-            $model->NHIF_No = !empty(Yii::$app->user->identity->employee[0]->NHIF_No)?Yii::$app->user->identity->employee[0]->NHIF_No:'';
-            $model->NHIF_No = !empty(Yii::$app->user->identity->employee[0]->NHIF_No)?Yii::$app->user->identity->employee[0]->NHIF_No:'';
-            $model->HELB_No = !empty(Yii::$app->user->identity->employee[0]->HELB_No)?Yii::$app->user->identity->employee[0]->HELB_No:'';
-            $model->Union_Member_x003F_ = !empty(Yii::$app->user->identity->employee[0]->Union_Member_x003F_)?Yii::$app->user->identity->employee[0]->Union_Member_x003F_:'';
 
+            $model->E_Mail = !empty(Yii::$app->user->identity->employee[0]->E_Mail)?Yii::$app->user->identity->employee[0]->E_Mail:'';
+            $model->Mobile_Phone_No = !empty(Yii::$app->user->identity->employee[0]->Mobile_No)?Yii::$app->user->identity->employee[0]->Mobile_No:'';
+            $model->Birth_Date = !empty(Yii::$app->user->identity->employee[0]->Date_of_Birth)?Yii::$app->user->identity->employee[0]->Date_of_Birth:'';
+            $model->Phone_No = !empty(Yii::$app->user->identity->employee[0]->Phone_No)?Yii::$app->user->identity->employee[0]->Phone_No:'';
+            $model->Initials = !empty(Yii::$app->user->identity->employee[0]->Initials)?Yii::$app->user->identity->employee[0]->Initials:'';
+            $model->Full_Name = (Yii::$app->user->identity->employee[0]->First_Name??'').' '.(Yii::$app->user->identity->employee[0]->Middle_Name??''). ' '.(Yii::$app->user->identity->employee[0]->Last_Name??'');
+            $model->Post_Code = !empty(Yii::$app->user->identity->employee[0]->Post_Code)?Yii::$app->user->identity->employee[0]->Post_Code:'';
+            // $model->NHIF_Number = !empty(Yii::$app->user->identity->employee[0]->NHIF_Number)?Yii::$app->user->identity->employee[0]->NHIF_Number:'';
+            // $model->NSSF_Number = !empty(Yii::$app->user->identity->employee[0]->NSSF_Number)?Yii::$app->user->identity->employee[0]->NSSF_Number:'';
+           // $model->KRA_Number = !empty(Yii::$app->user->identity->employee[0]->KRA_Number)?Yii::$app->user->identity->employee[0]->KRA_Number:'';
+            //$model->National_ID = !empty(Yii::$app->user->identity->employee[0]->National_ID)?Yii::$app->user->identity->employee[0]->National_ID:'';
+
+        }else if(Yii::$app->session->has('HRUSER')){ //for external users - non- employees just prepopulate the email
+            $model->E_Mail = Yii::$app->session->get('HRUSER')->email;
+            $model->First_Name = Yii::$app->session->get('HRUSER')->username;
         }
-        $service = Yii::$app->params['ServiceName']['applicantProfile'];
+        $service = Yii::$app->params['ServiceName']['JobApplicantProfile'];
 
         if(Yii::$app->request->post() && $this->loadpost(Yii::$app->request->post()['Applicantprofile'],$model)){
 
@@ -114,7 +134,7 @@ class ApplicantprofileController extends Controller
                     $hruser->save(false);//do not validate model since we are just updating a single property
                 }else{
                     //update for a particular employee
-                    $srvc = Yii::$app->params['ServiceName']['employeeCard'];
+                    $srvc = Yii::$app->params['ServiceName']['EmployeeCard'];
                     $filter = [
                         'No' => Yii::$app->user->identity->employee[0]->No
                     ];
@@ -145,23 +165,64 @@ class ApplicantprofileController extends Controller
 
 
         $Countries = $this->getCountries();
-        $Religion = $this->getReligion();
+       // $Religion = $this->getReligion();
 
         return $this->render('create',[
 
             'model' => $model,
             'countries' => ArrayHelper::map($Countries,'Code','Name'),
-            'religion' => ArrayHelper::map($Religion,'Code','Description')
+            //'religion' => ArrayHelper::map($Religion,'Code','Description')
+            'towns' => $this->getTowns(),
+            'counties' => $this->getCounties(),
+            'postalCodes' => $this->getPostalCodes()
 
         ]);
     }
 
 
-    public function actionUpdate($No){
-        $service = Yii::$app->params['ServiceName']['applicantProfile'];
+    public function actionUpdate(){
+        if(!Yii::$app->user->isGuest && !empty( Yii::$app->user->identity->Employee[0]->ProfileID)){ //Profile ID for internal user
+            $profileID = Yii::$app->user->identity->Employee[0]->ProfileID;
+
+            Yii::$app->session->set('ProfileID',$profileID);
+
+        }else if(Yii::$app->session->has('HRUSER')){ //Profile ID for external user
+            $hruser = \common\models\Hruser::findByUsername(Yii::$app->session->get('HRUSER')->username);
+            $profileID =  $hruser->profileID;
+            Yii::$app->session->set('ProfileID',$profileID);
+        }
+        //Remove Requirement entries if found persistent
+
+        if(Yii::$app->session->has('requirements')){
+            Yii::$app->session->remove('requirements');
+        }
+
+        /*if(Yii::$app->session->has('REQUISITION_NO')){
+            Yii::$app->session->remove('REQUISITION_NO');
+        }*/
+
+        if(Yii::$app->session->has('ProfileID')){
+            Yii::$app->session->remove('ProfileID');
+        }
+
+        if(Yii::$app->session->has('REQ_ENTRIES')){
+            Yii::$app->session->remove('REQ_ENTRIES');
+        }
+
+        //Remove Applicant No if found persistent
+        if(Yii::$app->session->has('Job_Application_No')){
+            Yii::$app->session->remove('Job_Application_No');
+        }
+
+        //Yii::$app->recruitment->printrr($_SESSION);
+        //Check Applicant access mode (Internal or external) then serve right layout
+        if(Yii::$app->session->has('mode') && Yii::$app->session->get('mode') == 'external' && Yii::$app->session->has('HRUSER')){
+            $this->layout = 'external';
+        }
+        $service = Yii::$app->params['ServiceName']['JobApplicantProfile'];
 
         $filter = [
-            'No' => $No,
+            'No' => $profileID,
         ];
         $result = Yii::$app->navhelper->getData($service, $filter);
 
@@ -197,19 +258,20 @@ class ApplicantprofileController extends Controller
         }
 
         $Countries = $this->getCountries();
-        $Religion = $this->getReligion();
+       // $Religion = $this->getReligion();
         return $this->render('update',[
             'model' => $model,
             'countries' => ArrayHelper::map($Countries,'Code','Name'),
-            'religion' => ArrayHelper::map($Religion,'Code','Description')
+            'towns' => $this->getTowns(),
+            'counties' => $this->getCounties(),
+            'postalCodes' => $this->getPostalCodes()
+            // 'religion' => [],
 
         ]);
     }
 
     public function actionView($ApplicationNo){
-        $service = Yii::$app->params['ServiceName']['leaveApplicationCard'];
-        $leaveTypes = $this->getLeaveTypes();
-        $employees = $this->getEmployees();
+        $service = Yii::$app->params['ServiceName']['JobApplicantProfile'];
 
         $filter = [
             'Application_No' => $ApplicationNo
@@ -224,8 +286,7 @@ class ApplicantprofileController extends Controller
 
         return $this->render('view',[
             'model' => $model,
-            'leaveTypes' => ArrayHelper::map($leaveTypes,'Code','Description'),
-            'relievers' => ArrayHelper::map($employees,'No','Full_Name'),
+
         ]);
     }
 
@@ -388,6 +449,36 @@ class ApplicantprofileController extends Controller
         }
 
         return $res;
+    }
+
+    public function getTowns(){
+        $service = Yii::$app->params['ServiceName']['categoryTowns'];
+        $data = \Yii::$app->navhelper->getData($service);
+        $result = Yii::$app->navhelper->refactorArray($data,'Town_Code','Town_Name');
+        return $result;
+    }
+
+    public function getCounties(){
+        $service = Yii::$app->params['ServiceName']['Counties'];
+        $data = \Yii::$app->navhelper->getData($service);
+        $result = Yii::$app->navhelper->refactorArray($data,'Code','Name');
+        return $result;
+    }
+
+     public function getPostalCodes(){
+        $service = Yii::$app->params['ServiceName']['PostCodes'];
+
+        $res = [];
+        $countries = \Yii::$app->navhelper->getData($service);
+        foreach($countries as $c){
+            if(!empty($c->City))
+            $res[] = [
+                'Code' => $c->Code,
+                'City' => $c->City.' - '.$c->Code
+            ];
+        }
+
+        return ArrayHelper::map($res,'Code','City');
     }
 
     public function getReligion(){

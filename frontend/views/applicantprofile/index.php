@@ -59,7 +59,6 @@ $this->title = 'HRMIS - AAS';
 <?php
 
 $script = <<<JS
-
     $(function(){
          /*Data Tables*/
          
@@ -107,9 +106,3 @@ $script = <<<JS
 JS;
 
 $this->registerJs($script);
-
-
-
-
-
-

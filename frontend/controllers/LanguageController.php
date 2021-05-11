@@ -72,7 +72,7 @@ class LanguageController extends Controller
 
         if(Yii::$app->request->post() && $this->loadpost(Yii::$app->request->post()['Language'],$model)){
 
-            $model->Applicant_No = Yii::$app->recruitment->getProfileID();
+            $model->Profile_No = Yii::$app->recruitment->getProfileID();
 
             $result = Yii::$app->navhelper->postData($service,$model);
 
@@ -237,17 +237,17 @@ class LanguageController extends Controller
                 'method' => 'post',
             ]]);
 
-            $read = Html::checkbox('read', $lang->Read);
-            $write =  Html::checkbox('write', $lang->Write);
-            $speak =  Html::checkbox('speak', $lang->Speak);
+            $read = Html::checkbox('read', $lang->Read,['checked' => $lang->Read, 'readonly' => true ]);
+            $write =  Html::checkbox('write', $lang->Write, ['checked' => $lang->Write, 'readonly' => true ]);
+            $speak =  Html::checkbox('speak', $lang->Speak, ['checked' => $lang->Speak,'readonly' => true ]);
 
 
 
             $result['data'][] = [
                 'index' => $count,
                 'Key' => $lang->Key,
-                'Applicant_No' => !empty($lang->Applicant_No)?$lang->Applicant_No:'',
-                'Language_Description' => !empty($lang->Language_Description)?$lang->Language_Description:'',
+                'Applicant_No' => !empty($lang->Profile_No)?$lang->Profile_No:'',
+                'Language_Description' => !empty($lang->Language)?$lang->Language:'',
                 'Read' => $read,
                 'Write' => $write,
                 'Speak' => $speak,

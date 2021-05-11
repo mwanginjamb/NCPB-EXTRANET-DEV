@@ -2,18 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: HP ELITEBOOK 840 G5
- * Date: 3/10/2020
- * Time: 2:08 PM
+ * Date: 3/23/2020
+ * Time: 4:29 PM
  */
-
-
-
-
-
 
 /* @var $this yii\web\View */
 
-$this->title = 'Recruitment - Languages';
+$this->title = 'Recruitment - Sharepoint Reader';
 ?>
 
     <!--THE STEPS THING--->
@@ -26,52 +21,40 @@ $this->title = 'Recruitment - Languages';
 
     <!--END THE STEPS THING--->
 
-     <?php
-                    if(Yii::$app->session->hasFlash('success')){
-                        print ' <div class="alert alert-success alert-dismissable">
-                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                    <h5><i class="icon fas fa-check"></i> Success!</h5>
- ';
-                        echo Yii::$app->session->getFlash('success');
-                        print '</div>';
-                    }else if(Yii::$app->session->hasFlash('error')){
-                        print ' <div class="alert alert-danger alert-dismissable">
-                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                    <h5><i class="icon fas fa-check"></i> Error!</h5>
-                                ';
-                        echo Yii::$app->session->getFlash('error');
-                        print '</div>';
-                    }
-                    ?>
-
     <div class="row">
         <div class="col-md-12">
-            <div class="card ">
+            <div class="card">
                 <div class="card-body">
-                    <?= \yii\helpers\Html::a('Add Language',['create','create'=> 1],['class' => 'create btn btn-outline-warning push-right']) ?>
+                    <?= \yii\helpers\Html::a('Go Back',['submit'],['class' => ' back btn btn-outline-primary push-right']) ?>
                 </div>
             </div>
         </div>
     </div>
+
+
+
+
     <div class="row">
         <div class="col-md-12">
-            <div class="card card-success">
+            <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">My Languages.</h3>
-
-
-                   
-
-
+                    <h3 class="card-title">My Qualifications.</h3>
 
                 </div>
-                <div class="card-body">
-                    <table class="table table-bordered dt-responsive table-hover" id="leaves">
-                    </table>
+                <div class="card-body" >
+
+
+
+
+                    <iframe src="data:application/pdf;base64,<?= $content; ?>" height="950px" width="100%"></iframe>
+
+
+
                 </div>
             </div>
         </div>
     </div>
+
 
     <!--My Bs Modal template  --->
 
@@ -82,7 +65,7 @@ $this->title = 'Recruitment - Languages';
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Work Experience</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">My Academic Qualifications</h4>
                 </div>
                 <div class="modal-body">
 
@@ -96,7 +79,8 @@ $this->title = 'Recruitment - Languages';
         </div>
     </div>
 
-<input type="hidden" name="absolute" value="<?= Yii::$app->recruitment->absoluteUrl() ?>">
+
+    <input type="hidden" name="absolute" value="<?= Yii::$app->recruitment->absoluteUrl() ?>">
 <?php
 
 $script = <<<JS
@@ -106,29 +90,30 @@ $script = <<<JS
         var absolute = $('input[name=absolute]').val();
          /*Data Tables*/
          
-        $.fn.dataTable.ext.errMode = 'throw';
-        
+         $.fn.dataTable.ext.errMode = 'throw';        
     
           $('#leaves').DataTable({
            
             //serverSide: true,  
-            ajax: absolute+'language/getlanguage',
+            ajax: absolute+'qualification/getqualifications',
             paging: true,
             columns: [
                 { title: '....', data: 'index'},
-                { title: 'Applicant No' ,data: 'Applicant_No'},
-                { title: 'Language Description' ,data: 'Language_Description'},
-                { title: 'Read' ,data: 'Read'},
-                { title: 'Write' ,data: 'Write'},
-                { title: 'Speak' ,data: 'Speak'},
-                
-                { title: 'Actions' ,data: 'Action'},
-                //{ title: 'Remove' ,data: 'Remove'},
+                { title: 'Applicant ID' ,data: 'Employee_No'},
+                { title: 'Qualification Code' ,data: 'Qualification_Code'},
+                { title: 'From Date' ,data: 'From_Date'},
+                { title: 'To Date' ,data: 'To_Date'},
+                { title: 'Description' ,data: 'Description'},
+                { title: 'Institution / Company' ,data: 'Institution_Company'},
+               // { title: 'Comment' ,data: 'Comment'},
+               
+                { title: 'Update Action' ,data: 'Update_Action'},
+                { title: 'Remove' ,data: 'Remove'},
                 
                
             ] ,                              
            language: {
-                "zeroRecords": "No Languages to Show.."
+                "zeroRecords": "No  Qualifications to show."
             },
             
             order : [[ 0, "desc" ]]
@@ -141,7 +126,10 @@ $script = <<<JS
       table.columns([0]).visible(false);
     
     /*End Data tables*/
-             $('#leaves').on('click','.update', function(e){
+    
+    
+    /*Update Qualifications */
+        $('#leaves').on('click','.update', function(e){
                  e.preventDefault();
                 var url = $(this).attr('href');
                 console.log('clicking...');
@@ -176,11 +164,7 @@ JS;
 $this->registerJs($script);
 
 
-$style = <<<CSS
-    tr > td:last-child, th:last-child{ text-align: center; }
-CSS;
 
-$this->registerCss($style);
 
 
 

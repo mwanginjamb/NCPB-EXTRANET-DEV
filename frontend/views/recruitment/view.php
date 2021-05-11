@@ -8,10 +8,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-/*print '<pre>';
-print_r($model[0]); exit;*/
 
-$model = $model[0];
+// Yii::$app->recruitment->printrr($model);
+
+
 ?>
 <div class="row">
     <div class="col-md-12">
@@ -69,7 +69,7 @@ if(Yii::$app->session->hasFlash('success')){
         <div class="card card-success">
             <div class="card-header">
 
-                <h3 class="card-title">Job Vacancy : <?= $model->Job_Title?></h3>
+                <h3 class="card-title">Job Vacancy : <?= $model->Job_Description?></h3>
 
 
             </div>
@@ -77,32 +77,28 @@ if(Yii::$app->session->hasFlash('success')){
 
                 <table class="table table-bordered">
                     <tr>
-                        <td colspan="2"><b>Job Title: </b><?= !empty($model->Job_Title)?$model->Job_Title: 'Not Set' ?> </td>
+                        <td colspan="2"><b>Job Title: </b><?= !empty($model->Job_Description)?$model->Job_Description: 'Not Set' ?> </td>
                     </tr>
 
                     <tr>
-                        <td><b>Department :</b> <?= !empty($model->Global_Dimension_1_Code)?$model->Global_Dimension_1_Code: 'Not Set'?></td>
-                        <td><b>Location: </b> <?= !empty($model->Location)?$model->Location: 'Not Set' ?></td>
+                        <td><b>Available Positions :</b> <?= !empty($model->No_Posts)?$model->No_Posts: 'Not Set'?></td>
+                        <td><b>Type: </b> <?= !empty($model->Type)?$model->Type: 'Not Set' ?></td>
                     </tr>
 
                     <tr>
-                        <td><b>Salary: </b> <?= !empty($model->Salary)?$model->Salary: ' Not Set' ?></td>
+                        <td><b>Requisition Type: </b> <?= !empty($model->Requisition_Type)?$model->Requisition_Type: ' Not Set' ?></td>
                         <td><b>Grade : </b> <?= !empty($model->Grade)?$model->Grade: 'Not Set' ?></td>
                     </tr>
 
                     <tr>
-                        <td colspan="2">
-                            <b>Job Purpose</b><br> <?= !empty($model->Job_Purpose)?$model->Job_Purpose: 'Not Set' ?>
-                        </td>
+                        <td ><b>Job Purpose</b><br> <?= !empty($model->Employment_Type)?$model->Employment_Type: 'Not Set' ?></td>
+                        <td><b>Application End Date</b><br> <?= !empty($model->End_Date)?$model->End_Date: 'Not Set' ?></td>
                     </tr>
 
                     <tr>
-
-                        <td colspan="2">
-                            <b>Reporting Lines</b><br>
-
-                            <?= !empty($model->Position_Reporting_to)?$model->Position_Reporting_to: 'Not Set' ?>
-                        </td>
+                         <td><b>Probation Period</b><br> <?= !empty($model->Probation_Period)?$model->Probation_Period: 'Not Set' ?></td>
+                         <td><b>Contract Period</b><br> <?= !empty($model->Contract_Period)?$model->Contract_Period: 'Not Set' ?></td>
+                       
                     </tr>
                 </table>
 
@@ -125,7 +121,7 @@ if(Yii::$app->session->hasFlash('success')){
                     <div class="col-md-12">
                     <table class="table table-bordered" >
                         <?php
-                            if(!empty($model->Hr_Job_Resposibilities->Hr_Job_Resposibilities) && sizeof($model->Hr_Job_Resposibilities->Hr_Job_Resposibilities)){
+                            if(!empty($model->Hr_Job_Responsibilities->Hr_Job_Responsibilities) && sizeof($model->Hr_Job_Responsibilities->Hr_Job_Responsibilities)){
                                 foreach($model->Hr_Job_Resposibilities->Hr_Job_Resposibilities as $resp){
 
                                     if(!empty($resp->Responsibility_Description)){
@@ -164,8 +160,8 @@ if(Yii::$app->session->hasFlash('success')){
                         <table class="table table-bordered" >
                             <?php
 
-                            if(!empty($model->Job_Requirements->Job_Requirements) && sizeof($model->Job_Requirements->Job_Requirements)){
-                                foreach($model->Job_Requirements->Job_Requirements as $req){
+                            if(!empty($model->Hr_job_requirements->Hr_job_requirements) && sizeof($model->Hr_job_requirements->Hr_job_requirements)){
+                                foreach($model->Hr_job_requirements->Hr_job_requirements as $req){
                                     if(!empty($req->Requirement)){
                                         print '<tr>
                                             <td class="parent"><span>+</span>'.$req->Requirement.'</td>';

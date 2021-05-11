@@ -405,6 +405,44 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                         </li>
 
 
+
+
+                        <!-- Recruitment -->
+
+
+                         
+
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(Yii::$app->params['profileControllers'])?'menu-open':'' ?>">
+                            <a href="#" class="nav-link <?= Yii::$app->recruitment->currentCtrl('recruitment')?'active':'' ?>">
+                                <i class="nav-icon fas fa-briefcase " ></i>
+                                <p>
+                                   Employee Recruitment
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>recruitment/vacancies" class="nav-link <?= Yii::$app->recruitment->currentaction('recruitment','vacancies')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Internal Job Vacancies </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>recruitment/externalvacancies" class="nav-link <?= Yii::$app->recruitment->currentaction('recruitment','externalvacancies')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>External Job Vacancies </p>
+                                    </a>
+                                </li>
+
+                               
+
+                            </ul>
+                        </li>
+
+
                          <!-- Performance Appraisal Management -->
 
                         <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['appraisal'])?'menu-open':'' ?>">

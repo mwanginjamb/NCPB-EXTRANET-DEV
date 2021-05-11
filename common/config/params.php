@@ -55,6 +55,7 @@ return [
         'Stations' => 'Stations', //70410
         'Counties' => 'Counties', // 50334
         'SubCounties' => 'SubCounties', // 50335
+        
         /******************************NCPB LEAVE************************************/
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
@@ -68,22 +69,7 @@ return [
         'ApprovalComments' => 'ApprovalComments', //660
         'RejectedApprovalEntries' => 'RejectedApprovalEntries', //50003
 
-        'RequisitionEmployeeList' => 'RequisitionEmployeeList',//70029
-        'RequisitionEmployeeCard' => 'RequisitionEmployeeCard',//70028
-        'JobsList' => 'JobsList',//70009
-        'JobsCard' => 'JobsCard',//70002
-        'JobApplicantProfile' => 'JobApplicantProfile', //50001
-        'applicantProfile' => 'applicantProfile',//50001
-        'referees' => 'referees',//55060
-        'applicantLanguages' => 'applicantLanguages', //55061
-        'experience' => 'experience', //55062
-        'hobbies' => 'hobbies', //55063
-        'qualifications' => 'qualifications',//55064
-        'JobResponsibilities' => 'JobResponsibilities',//69000 -->specs
-        'JobRequirements' => 'JobRequirements', //69001 ---> specs
-        'JobExperience' => 'JobExperience',//69004
-        'HRqualifications' => 'HRqualifications', //5205
-        'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
+        
 
 
         /*NCPB CONTRACT MGT SERVICES*/

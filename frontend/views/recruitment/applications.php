@@ -10,7 +10,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'HRMIS - COGRI Careers';
+$this->title = 'HRMIS - My Applications';
 $this->params['breadcrumbs'][] = ['label' => 'Recruitment ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'External Vacancies', 'url' => ['externalvacancies']];
 ?>
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = ['label' => 'External Vacancies', 'url' => ['ex
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">HRMIS - Open External Vacancies</h3>
+                <h3 class="card-title">HRMIS - My Applications</h3>
 
 
                 <?php
@@ -62,21 +62,17 @@ $script = <<<JS
           $('#requistions').DataTable({
            
             //serverSide: true,  
-            ajax: absolute +'recruitment/getexternalvacancies',
+            ajax: absolute +'recruitment/getapplications',
             paging: true,
             columns: [
-                { title: 'Job ID' ,data: 'Job_ID'},
+                { title: 'Job Application No' ,data: 'No'},
+                { title: 'Applicant Name' ,data: 'Applicant_Name'},
                 { title: 'Job Description' ,data: 'Job_Description'},
-                { title: 'No of Posts' ,data: 'No_of_Posts'},
-                { title: 'Date Created' ,data: 'Date_Created'},                
-                { title: 'Requisition Type' ,data: 'ReqType'},                
-                { title: 'Action', data: 'action' },
-               
-                
-               
+                { title: 'Application Status' ,data: 'Application_Status'},            
+                    
             ] ,                              
            language: {
-                "zeroRecords": "No Open External Vacancies to display"
+                "zeroRecords": "You have no job applications to display"
             },
             
             order : [[ 0, "desc" ]]
@@ -86,7 +82,7 @@ $script = <<<JS
         
        //Hidding some 
        var table = $('#requistions').DataTable();
-       table.columns([3]).visible(false);
+       //table.columns([3,4,5,6,]).visible(false);
     
     /*End Data tables*/
         $('#requistions').on('click','tr', function(){

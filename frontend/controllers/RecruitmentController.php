@@ -10,7 +10,12 @@
 namespace frontend\controllers;
 
 use common\models\HrloginForm;
+use common\models\Hruser;
 use common\models\SignupForm;
+use frontend\models\Coverletter;
+use frontend\models\Cv;
+use frontend\models\HRPasswordResetRequestForm;
+use frontend\models\HRResetPasswordForm;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use frontend\models\Applicantprofile;
@@ -60,7 +65,7 @@ class RecruitmentController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['getvacancies','getexternalvacancies','requirementscheck'],
+                'only' => ['getvacancies','getexternalvacancies','requirementscheck','getapplications','getinternalapplications'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -74,6 +79,18 @@ class RecruitmentController extends Controller
 
         //return $this->render('index');
         return $this->redirect(['recruitment/vacancies']);
+    }
+
+    public function actionApplications(){
+
+        if(Yii::$app->session->has('HRUSER')){
+            $this->layout = 'external';
+        }
+        return $this->render('applications');
+    }
+
+    public function actionInternalapplications(){
+        return $this->render('internalapplications');
     }
 
     public function actionCreate(){
@@ -169,25 +186,35 @@ class RecruitmentController extends Controller
         ]);
     }
 
-    public function actionView($Job_ID){
+    public function actionView($Key){
+
+       if(Yii::$app->request->post() && Yii::$app->request->post('type') == 'External'){
+           $this->layout = 'external';
+           Yii::$app->session->set('mode','external');
+           /*if(!Yii::$app->session->has('HRUSER')){
+               return $this->redirect(['./recruitment/login']);
+           }*/
+
+           //Yii::$app->recruitment->printrr(Yii::$app->session->get('HRUSER'));
+       }else if(Yii::$app->request->post() && Yii::$app->request->post('type') == 'External' && !Yii::$app->session->has('HRUSER')){
+
+       }
         $service = Yii::$app->params['ServiceName']['JobsCard'];
 
-        $filter = [
-            'Job_ID' => $Job_ID
-        ];
-
-        $job = Yii::$app->navhelper->getData($service, $filter);
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
         //Get the Job Requisition No
 
-        if(is_null(Yii::$app->recruitment->getRequisitionID($Job_ID))){
-            Yii::$app->session->setFlash('error','You cannot apply for this job : Job ID ('.$Job_ID.') cannot be found in HR Requisitions List',true);
-                return $this->redirect(['vacancies']);
+        if(empty($result->Requisition_No)){
+            Yii::$app->session->setFlash('error','You cannot apply for this job : Job ID ('.$result->Requisition_No.') cannot be found in HR Requisitions List',true);
+            return $this->redirect(['vacancies']);
         }else{
-            Yii::$app->session->set('REQUISITION_NO',Yii::$app->recruitment->getRequisitionID($Job_ID));
+            Yii::$app->session->set('REQUISITION_NO', $result->Requisition_No);
+            //exit($result->Requisition_No);
         }
 
+        
         return $this->render('view',[
-            'model' => $job,
+            'model' => $result,
         ]);
     }
 
@@ -267,53 +294,31 @@ class RecruitmentController extends Controller
     }
 
     public function actionExternalvacancies(){
+        $this->layout = 'external';
         return $this->render('externalvacancies');
     }
 
     public function actionGetvacancies(){
         $service = Yii::$app->params['ServiceName']['JobsList'];
-        $filter = [
-        ];
+        $filter = [];
         $requisitions = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($requisitions as $req){
-            $RequisitionType = Yii::$app->recruitment->getRequisitionType($req->Job_ID);
-                if(($req->No_of_Posts >= 0 && !empty($req->Job_Description) && !empty($req->Job_ID)) && ($RequisitionType == 'Internal' || $RequisitionType == 'Both' ) ) {
-                    $Viewlink = Html::a('Apply', ['view', 'Job_ID' => $req->Job_ID], ['class' => 'btn btn-outline-warning btn-xs']);
-
-                    $result['data'][] = [
-                        'Job_ID' => !empty($req->Job_ID) ? $req->Job_ID : 'Not Set',
-                        'Job_Description' => !empty($req->Job_Description) ? $req->Job_Description : '',
-                        'No_of_Posts' => !empty($req->No_of_Posts) ? $req->No_of_Posts : 'Not Set',
-                        'Date_Created' => !empty($req->Date_Created) ? $req->Date_Created : '',
-                        'ReqType' => \Yii::$app->recruitment->getRequisitionType($req->Job_ID),
-                        'action' => !empty($Viewlink) ? $Viewlink : '',
-
-                    ];
-
-                }
-
-        }
-        return $result;
-    }
-
-    public function actionGetexternalvacancies(){
-        $service = Yii::$app->params['ServiceName']['JobsList'];
-        $filter = [
-        ];
-        $requisitions = \Yii::$app->navhelper->getData($service,$filter);
-        $result = [];
-        foreach($requisitions as $req){
-            $RequisitionType = Yii::$app->recruitment->getRequisitionType($req->Job_ID);
-            if(($req->No_of_Posts >= 0 && !empty($req->Job_Description) && !empty($req->Job_ID)) && ($RequisitionType == 'External' ) ) {
-                $Viewlink = Html::a('Apply', ['view', 'Job_ID' => $req->Job_ID], ['class' => 'btn btn-outline-warning btn-xs']);
+            if(($req->No_Posts >= 0 && !empty($req->Job_Description) && !empty($req->Job_Id)) && ($req->Requisition_Type == 'Internal' || $req->Requisition_Type == 'Both')  ) {
+                $Viewlink = Html::a('Apply', ['view', 'Key' => $req->Key], [
+                    'class' => 'btn btn-outline-primary btn-xs',
+                    'data' => [
+                        'params' => ['type' => 'Internal'],
+                        'method' => 'post',
+                    ],
+                ]);
 
                 $result['data'][] = [
-                    'Job_ID' => !empty($req->Job_ID) ? $req->Job_ID : 'Not Set',
+                    'Job_ID' => !empty($req->Job_Id) ? $req->Job_Id : 'Not Set',
                     'Job_Description' => !empty($req->Job_Description) ? $req->Job_Description : '',
-                    'No_of_Posts' => !empty($req->No_of_Posts) ? $req->No_of_Posts : 'Not Set',
-                    'Date_Created' => !empty($req->Date_Created) ? $req->Date_Created : '',
-                    'ReqType' => \Yii::$app->recruitment->getRequisitionType($req->Job_ID),
+                    'No_of_Posts' => !empty($req->No_Posts) ? $req->No_Posts : 'Not Set',
+                    'Date_Created' => !empty($req->Date_Created) ? $req->Date_Created : 'Not Set',
+                    'ReqType' => !empty($req->Requisition_Type) ? $req->Requisition_Type : 'Not Set',
                     'action' => !empty($Viewlink) ? $Viewlink : '',
 
                 ];
@@ -324,7 +329,133 @@ class RecruitmentController extends Controller
         return $result;
     }
 
+    public function actionGetexternalvacancies(){
+        $service = Yii::$app->params['ServiceName']['JobsList'];
+        $filter = [];
+        $requisitions = \Yii::$app->navhelper->getData($service,$filter);
+        $result = [];
+        foreach($requisitions as $req){
+            if(($req->No_Posts >= 0 && !empty($req->Job_Description) && !empty($req->Job_Id)) && ($req->Requisition_Type == 'External' || $req->Requisition_Type == 'Both')  ) {
+                $Viewlink = Html::a('Apply', ['view', 'Key' => $req->Key], [
+                    'class' => 'btn btn-outline-primary btn-xs',
+                    'data' => [
+                        'params' => ['type' => 'External'],
+                        'method' => 'post',
+                    ],
+                ]);
 
+                $result['data'][] = [
+                    'Job_ID' => !empty($req->Job_Id) ? $req->Job_Id : 'Not Set',
+                    'Job_Description' => !empty($req->Job_Description) ? $req->Job_Description : '',
+                    'No_of_Posts' => !empty($req->No_Posts) ? $req->No_Posts : 'Not Set',
+                    'Date_Created' => !empty($req->Date_Created) ? $req->Date_Created : 'Not Set',
+                    'ReqType' => !empty($req->Requisition_Type) ? $req->Requisition_Type : 'Not Set',
+                    'action' => !empty($Viewlink) ? $Viewlink : '',
+
+                ];
+
+            }
+
+        }
+        return $result;
+    }
+
+    public function actionGetapplications(){
+
+        $filter = [];
+        $service = Yii::$app->params['ServiceName']['HRJobApplicationsList'];
+        //Yii::$app->recruitment->printrr(Yii::$app->session->get('HRUSER'));
+        if(Yii::$app->session->has('HRUSER')){
+
+            $hruser = Hruser::findByUsername(Yii::$app->session->get('HRUSER')->username);
+            $profileID = $hruser->profileID ;
+
+            $filter = [
+                'Profile_No' => $profileID
+            ];
+
+
+            if(empty($profileID)){
+                return [];
+            }
+            $applications = \Yii::$app->navhelper->getData($service,$filter);
+           // Yii::$app->recruitment->printrr($applications);
+        }else{
+            if(!Yii::$app->user->isGuest && Yii::$app->recruitment->hasProfile()){
+
+                $filter = [
+                    'Profile_No' => Yii::$app->recruitment->getProfileID()
+                ];
+            $applications = \Yii::$app->navhelper->getData($service,$filter);
+            }
+
+        }
+
+
+//Yii::$app->recruitment->printrr($applications);
+
+
+
+        $result = [];
+        foreach($applications as $req){
+
+            if(property_exists($req,'Job_Description') && property_exists($req,'Profile_No') ) {
+
+                $result['data'][] = [
+                    'No' => !empty($req->No) ? $req->No : 'Not Set',
+                    'Applicant_Name' => !empty($req->Full_Name) ? $req->Full_Name : '',
+                    'Job_Description' => !empty($req->Job_Description) ? $req->Job_Description : 'Not Set',
+                    'Application_Status' => !empty($req->Job_Application_status) ? $req->Job_Application_status : '',
+
+                ];
+
+            }
+
+        }
+        return $result;
+    }
+
+    //Get Internal Applications
+
+    public function actionGetinternalapplications(){
+        if(!Yii::$app->user->isGuest){
+            $srvc = Yii::$app->params['ServiceName']['employeeCard'];
+            $filter = [
+                'No' => Yii::$app->user->identity->employee[0]->No
+            ];
+            $Employee = Yii::$app->navhelper->getData($srvc,$filter);
+            if(empty($Employee[0]->ProfileID)){
+                return [];
+            }
+            $profileID = $Employee[0]->ProfileID;
+
+        }else{ //if for some reason this check is called by a guest ,return false;
+            return [];
+        }
+
+        $service = Yii::$app->params['ServiceName']['HRJobApplicationsList'];
+        $filter = [
+            'Applicant_No' => $profileID
+        ];
+        $applications = \Yii::$app->navhelper->getData($service,$filter);
+        $result = [];
+        foreach($applications as $req){
+
+            if(property_exists($req,'Job_Description') && property_exists($req,'Applicant_No') ) {
+
+                $result['data'][] = [
+                    'Job_Application_No' => !empty($req->Job_Application_No) ? $req->Job_Application_No : 'Not Set',
+                    'Applicant_Name' => !empty($req->Applicant_Name) ? $req->Applicant_Name : '',
+                    'Job_Description' => !empty($req->Job_Description) ? $req->Job_Description : 'Not Set',
+                    'Application_Status' => !empty($req->Application_Status) ? $req->Application_Status : '',
+
+                ];
+
+            }
+
+        }
+        return $result;
+    }
 
     /**
      * Logs in a user.
@@ -343,9 +474,10 @@ class RecruitmentController extends Controller
 
 
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-
+           // Yii::$app->recruitment->printrr(Yii::$app->session->get('HRUSER'));
+            //var_dump(Yii::$app->session->get('HRUSER')->username); exit;
             //return $this->goBack();//reroute to recruitment profile page
-            return $this->redirect(['applicantprofile/create']);
+            return $this->redirect(['recruitment/externalvacancies']);
 
         } else {
             $model->password = '';
@@ -360,9 +492,9 @@ class RecruitmentController extends Controller
     {
         if(Yii::$app->session->has('HRUSER')){
             Yii::$app->session->remove('HRUSER');
-            return $this->redirect(['recruitment/vacancies']);
+            return $this->redirect(['recruitment/externalvacancies']);
         }
-        return $this->redirect(['recruitment/vacancies']);
+        return $this->redirect(['recruitment/externalvacancies']);
 
        // return $this->goHome();
     }
@@ -373,13 +505,75 @@ class RecruitmentController extends Controller
         $model = new SignupForm(); //This signup form in common is for registering external hrusers
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();//redirect to recruitment profile page
+            return $model->goHome();//redirect to recruitment login
         }
 
         return $this->render('signup', [
             'model' => $model,
         ]);
     }
+
+
+
+
+
+    /**
+     * Requests password reset.
+     *
+     * @return mixed
+     */
+    public function actionRequestPasswordReset()
+    {
+        $this->layout = 'login';
+        $model = new HRPasswordResetRequestForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+
+                return $this->redirect(['recruitment/login']);
+                //return $this->goHome();
+            } else {
+                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+            }
+        }
+
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Resets password.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
+    public function actionResetPassword($token)
+    {
+        $this->layout = 'login';
+        try {
+            $model = new HRResetPasswordForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->session->setFlash('success', 'New password saved.');
+
+            return $this->redirect(['recruitment/login']);
+
+            // return $this->goHome();
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
+
+
+
+
 
     public function actionVerifyEmail($token)
     {
@@ -405,12 +599,32 @@ class RecruitmentController extends Controller
     }
 
     public function actionSubmit(){
+        // Yii::$app->recruitment->printrr($_SESSION);
+        if(Yii::$app->session->has('mode') && Yii::$app->session->get('mode') == 'external'){
+            $this->layout = 'external';
+        }
+
+        //Check if the user has a requisition no
+
+        if(!Yii::$app->session->has('REQUISITION_NO')){
+            Yii::$app->session->setFlash('error','Kindly select a position to apply for.');
+                if(Yii::$app->session->has('HRUSER')){
+                    return $this->redirect(['externalvacancies']);
+                }else{
+                    return $this->redirect(['vacancies']);
+                }
+
+        }
+
+
 
         $model = new Applicantprofile();
+
         //get Applicant No
         $ApplicationNo = Yii::$app->recruitment->getProfileID();
 
-        $requirements = '';
+
+
 
         if(Yii::$app->request->isPost){
 
@@ -425,20 +639,35 @@ class RecruitmentController extends Controller
                 $res = Yii::$app->navhelper->updateData($service,$model);
             }
 
-            $service = Yii::$app->params['ServiceName']['JobApplication'];
 
-            //call the job application CodeUnit
+
+
+
+
+
+
+
+
             $data = [
-                'applicantNo' => $ApplicationNo,
+                'profileNo' => $ApplicationNo,
                 'requisitionNo' => Yii::$app->session->get('REQUISITION_NO'),
             ];
-            $result = Yii::$app->navhelper->SubmitJobApplication($service,$data); // This code unit should return  the Job_Applicant_No so as to generate jobrequirement entries.
-            //Remove sessions set within the process
-            Yii::$app->session->remove('REQUISITION_NO');
-            //print_r($result); exit;
-            $requirements = $this->getRequiremententries($result['return_value']);
+            $res = [];
+            if(!strlen(Yii::$app->session->get('Job_Applicant_No'))){
+                $res = $this->getRequiremententries($data);
+                Yii::$app->session->set('REQ_ENTRIES',$res);
+                $refreshed_entries = [];
+                if(is_array($res)){ // refresh the entries to get this that are marked as met
 
-            if(!is_string($result)){
+                }
+            }else{
+                $requirementEntriesService = Yii::$app->params['ServiceName']['JobApplicantRequirementEntries'];
+                $Job_Applicant_No = Yii::$app->session->get('Job_Applicant_No');
+                $refreshed_entries = Yii::$app->navhelper->getData($requirementEntriesService,['Job_Applicant_No' => $Job_Applicant_No]);
+            }
+
+
+            if(!is_string($res)){
                 Yii::$app->session->setFlash('success', 'Congratulations, Job Application submitted successfully.', true);
             }else{
                 Yii::$app->session->setFlash('error', 'Sorry, we are unable to submit your application now : '. $result);
@@ -446,18 +675,33 @@ class RecruitmentController extends Controller
         }
         
 
-
-        return $this->render('submit',['model' => $model,'requirements' => $requirements]);
+       // Yii::$app->recruitment->printrr(Yii::$app->session->get('REQ_ENTRIES'));
+        return $this->render('submit',[
+            'model' => $model,
+            'requirements' => !empty($refreshed_entries)?$refreshed_entries:Yii::$app->session->get('REQ_ENTRIES'),
+            'cvmodel' => new Cv(),
+            'covermodel' => new Coverletter()
+        ]);
 
     }
 
-    public function getRequiremententries($Job_Applicant_No){
+    public function getRequiremententries($data){
         $requirementEntriesService = Yii::$app->params['ServiceName']['JobApplicantRequirementEntries'];
-        $reqFilter = [
-            'Job_Applicant_No' => $Job_Applicant_No,
-        ];
-        $requirements = Yii::$app->navhelper->getData($requirementEntriesService, $reqFilter);
-        return $requirements;
+
+        $service = Yii::$app->params['ServiceName']['JobApplicationManagement'];
+
+        $Applicant_No = Yii::$app->navhelper->Codeunit($service,$data,'IanGenerateEmployeeRequirementEntries');
+       // Yii::$app->recruitment->printrr($Applicant_No);
+        $entries = [];
+        if(is_array($Applicant_No)){
+
+            Yii::$app->session->set('Job_Applicant_No',$Applicant_No['return_value']);
+            // Get Entries
+            $entries = Yii::$app->navhelper->getData($requirementEntriesService,['Job_Applicant_No' => $Applicant_No['return_value'] ]);
+        }
+
+        return $entries;
+
     }
 
     public function actionRequirementscheck(){
@@ -469,7 +713,38 @@ class RecruitmentController extends Controller
         ];
 
         $result = Yii::$app->navhelper->updateData($service,$data);
-        return($result);
+        Yii::$app->session->setFlash('success','Job Requirement Specification Updated Successfully.');
+        return $result;
+    }
+
+//Downloads cv or cover letter from share point and renders it in html view
+    public function actionDownload($path){
+        if(Yii::$app->session->has('mode') && Yii::$app->session->get('mode') == 'external'){
+            $this->layout = 'external';
+        }
+        $base = basename($path);
+        /* $ctx = Yii::$app->recruitment->connectWithAppOnlyToken(
+             Yii::$app->params['sharepointUrl'],
+             Yii::$app->params['clientID'],
+             Yii::$app->params['clientSecret']
+         );*/
+
+
+       /* $ctx = Yii::$app->recruitment->connectWithUserCredentials(Yii::$app->params['sharepointUrl'],Yii::$app->params['sharepointUsername'],Yii::$app->params['sharepointPassword']);
+        $fileUrl = '/'.Yii::$app->params['library'].'/'.$base;
+        $targetFilePath = './qualifications/download.pdf';
+        $resource = Yii::$app->recruitment->downloadFile($ctx,$fileUrl,$targetFilePath);*/
+
+
+        $path = Yii::getAlias('@frontend').'\\web\\qualifications\\'.$base;
+        $path =  str_replace('/', '\\', $path); // Normalize the damn path
+        $resource = base64_encode(file_get_contents($path));
+
+        return $this->render('readsharepoint',[
+            'content' => $resource
+        ]);
+
+
     }
 
     public function loadtomodel($obj,$model){

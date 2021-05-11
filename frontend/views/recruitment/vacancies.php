@@ -10,14 +10,14 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'HRMIS - NCPB Careers';
+$this->title = 'HRMIS - AAS Careers';
 $this->params['breadcrumbs'][] = ['label' => 'Recruitment ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Vacancies', 'url' => ['index']];
 ?>
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-success">
+        <div class="card">
             <div class="card-header">
                 <h3 class="card-title">HRMIS - Open Vacancies</h3>
 
@@ -65,10 +65,10 @@ $script = <<<JS
             ajax: absolute +'recruitment/getvacancies',
             paging: true,
             columns: [
-                { title: 'Job_ID' ,data: 'Job_ID'},
-                { title: 'Job_Description' ,data: 'Job_Description'},
-                { title: 'No_of_Posts' ,data: 'No_of_Posts'},
-                { title: 'Date_Created' ,data: 'Date_Created'},                
+                { title: 'Job ID' ,data: 'Job_ID'},
+                { title: 'Job Description' ,data: 'Job_Description'},
+                { title: 'No of Posts' ,data: 'No_of_Posts'},
+                { title: 'Date Created' ,data: 'Date_Created'},                
                 { title: 'Requisition Type' ,data: 'ReqType'},                
                 { title: 'Action', data: 'action' },
                

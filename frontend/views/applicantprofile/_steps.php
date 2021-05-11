@@ -31,5 +31,3 @@ $profileAction = (Yii::$app->session->has('ProfileID') && Yii::$app->recruitment
     <?php endif; ?>
 
 </div>
-
-

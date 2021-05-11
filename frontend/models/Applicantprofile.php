@@ -54,6 +54,17 @@ public $imageFile;
 public $ImageUrl;
 public $Motivation; //not added on nav
 
+public $Phone_No;
+public $Mobile_Phone_No;
+public $Birth_Date;
+public $Describe_Disability;
+public $NHIF_Number;
+public $NSSF_Number;
+public $KRA_Number;
+public $National_ID;
+public $Address;
+public $Country_Region_Code;
+
     public function rules()
     {
         return [

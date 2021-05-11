@@ -49,7 +49,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Create Applicant Profile', 'url' =
     <?= $this->render('_form', [
         'model' => $model,
         'countries' => $countries,
-        'religion' => $religion
+        'towns' => $towns,
+        'counties' => $counties,
+        'postalCodes' => $postalCodes
+        // 'religion' => $religion
 
     ]) ?>
 

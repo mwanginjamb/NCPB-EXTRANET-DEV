@@ -13,8 +13,8 @@ use yii\base\Model;
 class Language extends Model
 {
     public $Key;
-    public $Applicant_No;
-    public $Language_Description;
+    public $Profile_No;
+    public $Language;
     public $Read;
     public $Write;
     public $Speak;

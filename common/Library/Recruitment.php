@@ -73,7 +73,7 @@ class Recruitment extends Component
             $hruser = Hruser::findByUsername(Yii::$app->session->get('HRUSER')->username);
             return $hruser->profileID;
         } else if(!Yii::$app->user->isGuest && !Yii::$app->session->has('HRUSER')){
-            $srvc = Yii::$app->params['ServiceName']['employeeCard'];
+            $srvc = Yii::$app->params['ServiceName']['EmployeeCard'];
             $filter = [
                 'No' => Yii::$app->user->identity->employee[0]->No
             ];
@@ -135,7 +135,7 @@ class Recruitment extends Component
 
                     //check if an identity is guest, then check for ProfileID 
                     if(!Yii::$app->user->isGuest){
-                        $srvc = Yii::$app->params['ServiceName']['employeeCard'];
+                        $srvc = Yii::$app->params['ServiceName']['EmployeeCard'];
                         $filter = [
                             'No' => Yii::$app->user->identity->employee[0]->No
                         ];
@@ -242,6 +242,43 @@ class Recruitment extends Component
 
     }
 
+    //Check Cv
+    public function hasCv(){
+
+        $service = Yii::$app->params['ServiceName']['HRJobApplicationsCard'];
+        $filter = [
+            'No' => \Yii::$app->session->get('Job_Application_No'),
+        ];
+
+        $result = Yii::$app->navhelper->getData($service,$filter);
+
+        if(is_array($result)) {
+            return property_exists($result[0], 'Curriculum_Vitae');
+        }else{
+            return false;
+        }
+
+    }
+
+    //Check Cover Letter
+
+    public function hasCoverletter(){
+
+        $service = Yii::$app->params['ServiceName']['HRJobApplicationsCard'];
+        $filter = [
+            'No' => \Yii::$app->session->get('Job_Application_No')
+        ];
+
+        $result = Yii::$app->navhelper->getData($service,$filter);
+        if(is_array($result)) {
+            return property_exists($result[0], 'Cover_Letter');
+        }else{
+            return false;
+        }
+
+    }
+
+
     //Show Job Responsibility Specifications / children
 
     public function Responsibilityspecs($resp){
@@ -273,7 +310,7 @@ class Recruitment extends Component
     }
 
     public function Requirementspecs($req){
-        $service = Yii::$app->params['ServiceName']['JobRequirements'];
+        $service = Yii::$app->params['ServiceName']['RequirementSpecification'];
         $filter = [
             'Requirement_Line_No' => $req
         ];
@@ -418,6 +455,21 @@ class Recruitment extends Component
             print "File download failed:\r\n";
         }
     }
+
+    function curl_get_contents($url)
+    {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
+    }
+
 
     /*Sharepoint Authentication Context methods */
 
