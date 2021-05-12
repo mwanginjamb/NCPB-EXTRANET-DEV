@@ -24,7 +24,51 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
+
+
+
+        if(Yii::$app->session->hasFlash('success')){
+            print ' <div class="alert alert-success alert-dismissable">
+                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h5><i class="icon fas fa-check"></i> Success!</h5>
+ ';
+            echo Yii::$app->session->getFlash('success');
+            print '</div>';
+        }else if(Yii::$app->session->hasFlash('error')){
+            print ' <div class="alert alert-danger alert-dismissable">
+                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    <h5><i class="icon fas fa-check"></i> Error!</h5>
+                                ';
+            echo Yii::$app->session->getFlash('error');
+            print '</div>';
+        }
+
 ?>
+
+
+    <!-- Action Buttons -->
+
+
+
+    <?php if($model->Approval_Status == 'Appraisee_Level'): ?>
+
+                                <div class="col-md-4">
+
+                                    <?= Html::a('<i class="fas fa-forward"></i> submit',['submit','appraisalNo'=> $model->Appraisal_Code,'employeeNo' => $model->Employee_No],['class' => 'btn btn-app submitforapproval','data' => [
+                                            'confirm' => 'Are you sure you want to submit this appraisal to supervisor ?',
+                                            'method' => 'post',
+                                        ],
+                                        'title' => 'Send Score Card to Supervisor..'
+
+                                    ]) ?>
+                                </div>
+
+    <?php endif; ?>
+
+
+
+
+    <!-- \ Action Buttons -->
 
     <div class="row">
         <!-- Add action buttons here -->
@@ -94,6 +138,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
                                 <p class="parent"><span>+</span>
 
+                                     <?= $form->field($model, 'Hr_User_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
 
                                 </p>

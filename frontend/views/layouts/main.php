@@ -463,6 +463,42 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     </a>
                                 </li>
 
+                                <!-- Supervisor List -->
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/supervisor-appraisals" class="nav-link <?= currentaction('appraisal','supervisor-appraisals')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Supervisor List </p>
+                                    </a>
+                                </li>
+
+                                <!-- Extra Supervisor -->
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/extra-appraisals" class="nav-link <?= currentaction('appraisal','extra-appraisals')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Extra Supervisor List </p>
+                                    </a>
+                                </li>
+
+                                <!-- Hr List -->
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/hr-appraisals" class="nav-link <?= currentaction('appraisal','hr-appraisals')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>HR Appraisal List </p>
+                                    </a>
+                                </li>
+
+                                <!-- Closed List -->
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/closed-appraisals" class="nav-link <?= currentaction('appraisal','closed-appraisals')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Closed Appraisal List </p>
+                                    </a>
+                                </li>
+
                                
 
                             </ul>

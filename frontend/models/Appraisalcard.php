@@ -28,6 +28,7 @@ public $Deparrtment_Name;
 public $Approval_Status;
 public $Action_ID;
 public $Employee_Appraisal_KRAs;
+public $Hr_User_ID;
 
     public function rules()
     {
