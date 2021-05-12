@@ -55,7 +55,7 @@ return [
         'Stations' => 'Stations', //70410
         'Counties' => 'Counties', // 50334
         'SubCounties' => 'SubCounties', // 50335
-        
+
         /******************************NCPB LEAVE************************************/
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
@@ -105,7 +105,8 @@ return [
         'ApprovedKPIs' => 'ApprovedKPIs', //60019
         'KPIAttachments' => 'KPIAttachments', //60020
         'KRALookup'=> 'KRALookup', //60046 KRALookup
-        'PerspectiveObjectives' => 'PerspectiveObjectives', //60001
+        'PerspectiveObjectives' => 'PerspectiveObjectives', //60006
+        'AppraisalObjectives' => 'AppraisalObjectives', // 60001
 
         'AppraisalStatusChange' => 'AppraisalStatusChange', // Code Unit
         'AppraisalManagement' => 'AppraisalManagement', // 60000 Code Unit

@@ -21,7 +21,8 @@ $this->title = 'Update Key Performance Indicator Line';
 
     <?= $this->render('_form',[
         'model' => $model,
-        'Objectivelookup' => $Objectivelookup
+        'scoreCard' => $scoreCard,
+        'KPIs' => $KPIs
     ]) ?>
 
 </div>

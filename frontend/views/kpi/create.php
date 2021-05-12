@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'Objectivelookup' => $Objectivelookup
+        'KPIs' => $KPIs
     ]) ?>
 
 </div>

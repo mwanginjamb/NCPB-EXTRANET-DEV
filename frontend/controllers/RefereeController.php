@@ -29,7 +29,7 @@ class RefereeController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index'],
+                'only' => ['logout', 'signup','index','getreferee'],
                 'rules' => [
                     [
                         'actions' => ['signup','index'],
@@ -37,7 +37,7 @@ class RefereeController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout','index','getreferee'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

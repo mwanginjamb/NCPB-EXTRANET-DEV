@@ -72,26 +72,28 @@ class KpiController extends Controller
 
         $model = new Kpi();
         $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
+        $model->isNewRecord = true;
 
-        $Objectivelookup = ArrayHelper::map($this->getPerspectiveObjectives(Yii::$app->request->get('KRA_Code')),'code','description');
-
-        //Yii::$app->recruitment->printrr($this->getKRAs());
+        $KPIs = ArrayHelper::map($this->getKpi(Yii::$app->request->get('KRA_Code')),'code','description');
+        //Yii::$app->recruitment->printrr($this->getKpi(Yii::$app->request->get('KRA_Code')),'code','description');
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Kpi'],$model) ){
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            
 
-            $model->Appraisal_Code = Yii::$app->request->get('Appraisal_Code');
+            $model->Appraisal_Code = Yii::$app->request->get('Appraisal_No');
             $model->Employee_No = Yii::$app->user->identity->{'Employee No_'};
             $model->KRA_Code = Yii::$app->request->get('KRA_Code');
 
 
             $result = Yii::$app->navhelper->postData($service,$model);
 
+
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             if(!is_string($result)){
                 return ['note' => '<div class="alert alert-success">Appraisal KPI Added Successfully. </div>'];
             }else{
-                return $result;
-                return ['note' => '<div class="alert alert-danger"> Error Adding Appraisal KPI . </div>'];
+               
+                return ['note' => '<div class="alert alert-danger">'.$result.'</div>'];
 
             }
 
@@ -100,52 +102,46 @@ class KpiController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
-                'Objectivelookup' => $Objectivelookup
+                'KPIs' => $KPIs
             ]);
         }
 
         return $this->render('create',[
             'model' => $model,
-            'Objectivelookup' => $Objectivelookup
+            'KPIs' => $KPIs
         ]);
     }
 
 
-    public function actionUpdate(){
-        $model = new Employeeappraisalkra() ;
+    public function actionUpdate($Key){
+
+        // Yii::$app->recruitment->printrr($this->getScoreCard());
+        $model = new Kpi();
         $model->isNewRecord = false;
         $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
-        $Kralookup = ArrayHelper::map($this->getKRAs(),'code','description');
-        $filter = [
 
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
-        $ratings = $this->getAppraisalrating();
-        $performcelevels = $this->getPerformancelevels();
-        if(is_array($result)){
+        $scoreCard = $this->getScoreCard();
+        $KPIs = ArrayHelper::map($this->getKpi(Yii::$app->request->get('KRA_Code')),'code','description');
+        
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
+        if(!is_string($result)){
             //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;
+            $model = Yii::$app->navhelper->loadmodel($result,$model) ;
         }else{
-            Yii::$app->navhelper->printrr($result);
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return ['note' => '<div class="alert alert-danger">'.$result.'</div>'];
+            
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['EmployeeAppraisalKPIs'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Kpi'],$model) ){
             $result = Yii::$app->navhelper->updateData($service,$model);
 
-            //Yii::$app->recruitment->printrr($result);
-            if(!empty($result)){
-                Yii::$app->session->setFlash('success','Key Result Area Evaluated Successfully',true);
-                $evaluator = ['Agreement_Level','Supervisor_Level'];
-                if(in_array(Yii::$app->session->get('MY_Appraisal_Status'),$evaluator)){
-                    return $this->redirect(['appraisal/viewsubmitted','Employee_No'=>$model->Employee_No,'Appraisal_No' => $model->Appraisal_No]);
-                }else{
-                    return $this->redirect(['appraisal/view','Employee_No'=>$model->Employee_No,'Appraisal_No' => $model->Appraisal_No]);
-                }
-                //return $this->redirect(['appraisal/view','Employee_No' => $model->Employee_No,'Appraisal_No' => $model->Appraisal_No]);
+             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if(!is_string($result)){
+                return ['note' => '<div class="alert alert-success">Record Updated Successfully. </div>'];
             }else{
-                Yii::$app->session->setFlash('error','Error Evaluating Key Result Area: '.$result,true);
-                return $this->redirect(['appraisal/view']);
+                return ['note' => '<div class="alert alert-danger">'.$result.'</div>'];
             }
 
         }
@@ -153,14 +149,15 @@ class KpiController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'ratings' => ArrayHelper::map($ratings,'Rating','Rating_Description'),
-                'performancelevels' => ArrayHelper::map($performcelevels,'Line_Nos','Perfomace_Level'),
+                'scoreCard' => $scoreCard,
+                'KPIs' =>  $KPIs,
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'Kralookup' => $Kralookup
+            'scoreCard' => $scoreCard,
+            'KPIs' =>  $KPIs
         ]);
     }
 
@@ -240,13 +237,10 @@ class KpiController extends Controller
 
 
 
-    public function getAppraisalrating(){
-        $service = Yii::$app->params['ServiceName']['AppraisalRating'];
-        $filter = [
-        ];
-
-        $ratings = \Yii::$app->navhelper->getData($service,$filter);
-        return $ratings;
+    public function getScoreCard(){
+        $service = Yii::$app->params['ServiceName']['ScoreCards'];
+        $ratings = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($ratings,'Rating','Description');
     }
 
     public function getPerformancelevels(){
@@ -272,10 +266,12 @@ class KpiController extends Controller
         return $res;
     }
 
-    public function getPerspectiveObjectives($KRA_Code){
+
+    // This is a perspective Objective Lookup function
+    public function getKpi($KRA_Code){
         $service = Yii::$app->params['ServiceName']['PerspectiveObjectives'];
         $filter = [
-            'KRA_Code' => $KRA_Code
+            'KRA_Code' => $KRA_Code,
         ];
         $result = \Yii::$app->navhelper->getData($service, $filter);
 
@@ -286,7 +282,7 @@ class KpiController extends Controller
             foreach($result as $res)
             {
                 ++$count;
-                if(!empty($res->KPI) && !empty($res->KRA_Code) )
+                if(!empty($res->KRA_Code) )
                 {
                     $arr[$count] = [
                         'code' => $res->KPI,

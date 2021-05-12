@@ -282,7 +282,7 @@ class Recruitment extends Component
     //Show Job Responsibility Specifications / children
 
     public function Responsibilityspecs($resp){
-        $service = Yii::$app->params['ServiceName']['JobResponsibilities'];
+        $service = Yii::$app->params['ServiceName']['ResponsibilitySpecification'];
         $filter = [
             'Responsibility_Line_No' => $resp
         ];

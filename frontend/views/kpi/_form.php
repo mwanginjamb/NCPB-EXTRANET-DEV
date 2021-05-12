@@ -26,7 +26,29 @@ use yii\widgets\ActiveForm;
                         <table class="table">
                             <tbody>
 
-                            <?= $form->field($model, 'KPI_Code')->dropDownList($Objectivelookup, ['prompt' => 'Select KPI']) ?>
+                            <?= ($model->isNewRecord)?
+
+                            $form->field($model, 'KPI_Code')->dropDownList($KPIs, ['prompt' => 'Select KPI'])
+
+                            :$form->field($model, 'KPI_Code')->textInput(['readonly' => true, 'disabled' => true]); ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Activity')->textarea(['rows' => 2, 'maxlength' => 250]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target')->textarea(['rows' => 2,'maxlength' =>  250]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target_Achieved')->textInput(['maxlength' => 250]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Self_Assesment')->dropDownList($scoreCard, ['prompt' => 'Score ....']):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Self_Comments')->textarea(['rows' => 2]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Supervisor_Level')?$form->field($model, 'Joint_Assesment')->dropDownList($scoreCard, ['prompt' => 'Score ....']):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Supervisor_Level')?$form->field($model, 'Supervisor_Comments')->textarea(['rows' => 2]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Hr_Level')?$form->field($model, 'Hr_Comments')->textarea(['rows' => 2]):'' ?>
+
+
 
                             <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
 
@@ -40,10 +62,10 @@ use yii\widgets\ActiveForm;
                 <div class="row">
 
                     <div class="form-group">
-                        <?= Html::submitButton(($model->isNewRecord)?'Save':'Add', ['class' => 'btn btn-success']) ?>
+                        <?= Html::submitButton(($model->isNewRecord)?'Save':'Evaluate', ['class' => 'btn btn-success']) ?>
                     </div>
                     <div class="form-group" id="indicator" >
-                        <span class="color-success">Working......</span>
+                        <span class="text-success text-center mx-2">Working......</span>
                     </div>
 
                 </div>

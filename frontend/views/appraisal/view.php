@@ -14,6 +14,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Appraisal Card', 'url' => ['view','No'=> $model->Appraisal_Code]];
 
 
+Yii::$app->session->set('Approval_Status',$model->Approval_Status);
+
+
+
 $absoluteUrl = \yii\helpers\Url::home(true);
 
 /** Status Sessions */
@@ -44,12 +48,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
             <div class="card">
                 <div class="card-header">
 
-
-
-
                     <h3 class="card-title">Appraisal No : <?= $model->Appraisal_Code ?></h3>
-
-
 
                 </div>
                 <div class="card-body">
@@ -159,7 +158,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
                             $updateLink = Html::a('<i class="fa fa-edit"></i>',['objective/update','Key'=> $obj->Key],['class' => 'mx-1 update-objective btn btn-xs btn-outline-info', 'title' => 'Update Key Result Area']);
                              $deleteLink = Html::a('<i class="fa fa-trash"></i>',['objective/delete','Key'=> $obj->Key ],['class'=>'mx-1 delete btn btn-danger btn-xs', 'title' => 'Delete Key Result Area']);
-                             $addKpi = Html::a('<i class="fa fa-plus-square"></i>',['probation-kpi/create','Employee_No'=>$model->Employee_No,'Appraisal_No' => $model->Appraisal_Code,'KRA_Code' => $obj->KRA_Code  ],['class'=>'mx-1 add btn btn-success btn-xs','title' => 'Add a Key Performance Indicator']);
+                             $addKpi = Html::a('<i class="fa fa-plus-square"></i>',['kpi/create','Employee_No'=>$model->Employee_No,'Appraisal_No' => $model->Appraisal_Code,'KRA_Code' => $obj->KRA_Code  ],['class'=>'mx-1 update-objective add btn btn-success btn-xs','title' => 'Add a Key Performance Indicator']);
                          ?>
                                 <tr class="parent">
                                      <td><span>+</span></td>
@@ -202,8 +201,8 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                             continue;
                                                         }
 
-                             $updateLink = Html::a('<i class="fa fa-edit"></i>',['probation-kpi/update','Key'=> $kpi->Key],['class' => 'mx-1 update-objective btn btn-xs btn-outline-info', 'title' => 'Update Key Result Area']);
-                             $deleteLink = Html::a('<i class="fa fa-trash"></i>',['probation-kpi/delete','Key'=> $kpi->Key ],['class'=>'mx-1 delete btn btn-danger btn-xs', 'title' => 'Delete Key Result Area']);
+                             $updateLink = Html::a('<i class="fa fa-edit"></i>',['kpi/update','Key'=> $kpi->Key],['class' => 'mx-1 update-objective btn btn-xs btn-outline-info', 'title' => 'Update Key Result Area']);
+                             $deleteLink = Html::a('<i class="fa fa-trash"></i>',['kpi/delete','Key'=> $kpi->Key ],['class'=>'mx-1 delete btn btn-danger btn-xs', 'title' => 'Delete Key Result Area']);
 
 
                                                       ?>

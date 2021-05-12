@@ -122,7 +122,7 @@ if(Yii::$app->session->hasFlash('success')){
                     <table class="table table-bordered" >
                         <?php
                             if(!empty($model->Hr_Job_Responsibilities->Hr_Job_Responsibilities) && sizeof($model->Hr_Job_Responsibilities->Hr_Job_Responsibilities)){
-                                foreach($model->Hr_Job_Resposibilities->Hr_Job_Resposibilities as $resp){
+                                foreach($model->Hr_Job_Responsibilities->Hr_Job_Responsibilities as $resp){
 
                                     if(!empty($resp->Responsibility_Description)){
                                         print '<tr>
