@@ -303,17 +303,29 @@ class SurrenderController extends Controller
 
     public function actionView($No){
         $service = Yii::$app->params['ServiceName']['SurrenderCard'];
+		$surrenderService = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+		
         $model = new Surrendercard();
-        $filter = [
-            'Imprest_No' => $No
-        ];
-
-        $result = Yii::$app->navhelper->getData($service, $filter);
+        
+        $result = Yii::$app->navhelper->findOne($service,'Imprest_No',$No);
+		
 
         //load nav result to model
-        $model = $this->loadtomodel($result[0], $model);
+        $model = $this->loadtomodel($result, $model);
+		
+		//Check if the entry has a surrender No, if not, call a codeunit fxn for that
+		
+		$data = [
+			'imprestNo' => $model->Imprest_No,
+		];
+		
+		if(empty($model->Surrender_No))
+		{
+			$result = Yii::$app->navhelper->Codeunit($surrenderService, $data, 'CreateSurrenderNo');
+			
+		}
 
-        //Yii::$app->recruitment->printrr($model);
+        
 
         return $this->render('view',[
             'model' => $model,
@@ -355,8 +367,8 @@ class SurrenderController extends Controller
         foreach($results as $item){
 
             if(!empty($item->Imprest_No)){
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['view','No'=> $item->Imprest_No ],['title' => 'Surrender Imprest','class'=>'btn btn-info btn-xs']);
-
+                $updateLink = Html::a('<i class="far fa-eye"></i>',['view','No'=> $item->Imprest_No ],['title' => 'Surrender Imprest','class'=>'btn btn-info btn-xs']);
+				
 
                 $result['data'][] = [
                     'Key' => $item->Key,

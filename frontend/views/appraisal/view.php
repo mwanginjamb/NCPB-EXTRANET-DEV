@@ -43,35 +43,49 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
             print '</div>';
         }
 
+
+
 ?>
 
 
-    <!-- Action Buttons -->
+    
+    <!--  Action Buttons -->
 
+    <div class="row">
+        <!-- Add action buttons here -->
 
+        <?php if($model->Approval_Status == 'Appraisee_Level'): ?>
 
-    <?php if($model->Approval_Status == 'Appraisee_Level'): ?>
+                                
 
-                                <div class="col-md-4">
-
-                                    <?= Html::a('<i class="fas fa-forward"></i> submit',['submit','appraisalNo'=> $model->Appraisal_Code,'employeeNo' => $model->Employee_No],['class' => 'btn btn-app submitforapproval','data' => [
+                                    <?= Html::a('<i class="fas fa-forward"></i> submit',['submit','appraisalNo'=> $model->Appraisal_Code,'employeeNo' => $model->Employee_No],['class' => 'btn btn-app submitforapproval mx-1','data' => [
                                             'confirm' => 'Are you sure you want to submit this appraisal to supervisor ?',
                                             'method' => 'post',
                                         ],
                                         'title' => 'Send Score Card to Supervisor..'
 
                                     ]) ?>
-                                </div>
+                                
 
-    <?php endif; ?>
+        <?php endif; ?>
 
+             
+                   <?= Html::a('<i class="fas fa-book-open"></i> P.A Report',['report'],[
+                                        'class' => 'btn btn-app bg-success  pull-right mx-1',
+                                        'title' => 'Generate Performance Appraisal Report',
+                                        'target'=> '_blank',
+                                        'data' => [
+                                            // 'confirm' => 'Are you sure you want to send appraisal to peer 2?',
+                                            'params'=>[
+                                                'appraisalNo'=> $model->Appraisal_Code,
+                                                'employeeNo' => $model->Employee_No,
+                                            ],
+                                            'method' => 'post'
+                                        ]
+                                    ]);
 
-
-
-    <!-- \ Action Buttons -->
-
-    <div class="row">
-        <!-- Add action buttons here -->
+                    ?>
+            
     </div>
 
     <div class="row">

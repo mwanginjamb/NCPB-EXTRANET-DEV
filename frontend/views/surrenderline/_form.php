@@ -34,8 +34,14 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                                 <?= $form->field($model, 'Description')->textarea(['rows' => '2','maxlength' => 200,'required' => true]) ?>
 
                                 <?= $form->field($model, 'Account_Type')->
-                                dropDownList(['G_L_Account' => 'G_L_Account','Bank_Account' => 'Bank_Account'],['prompt' => 'Select Account Type ..',
-                                    'required'=> true, 'required' => true]) ?>
+									dropDownList(
+									['G_L_Account' => 'G_L_Account','Bank_Account' => 'Bank_Account'],
+									[
+									'prompt' => 'Select Account Type ..',
+                                    'required'=> true,
+									'required' => true
+									])
+								?>
 
 
 

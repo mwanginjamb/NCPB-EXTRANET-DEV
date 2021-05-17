@@ -77,7 +77,7 @@ class SurrenderlineController extends Controller
        $model = new Surrenderline();
 
 
-        if($Requisition_No && !isset(Yii::$app->request->post()['Surrenderline'])){
+        if($Requisition_No && !Yii::$app->request->post()){
 
             $model->Requisition_No = $Requisition_No;
 
@@ -94,9 +94,9 @@ class SurrenderlineController extends Controller
         
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Surrenderline'],$model) ){
-            //Yii::$app->recruitment->printrr($model);
-            $refresh = Yii::$app->navhelper->getData($service,['Line_No' => Yii::$app->request->post()['Surrenderline']['Line_No']]);
-            $model->Key = $refresh[0]->Key;
+            
+            $refresh = Yii::$app->navhelper->readByKey($service,Yii::$app->request->post()['Surrenderline']['Key']);
+            $model->Key = $refresh->Key;
             $result = Yii::$app->navhelper->updateData($service,$model);
 
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

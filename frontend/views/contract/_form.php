@@ -48,33 +48,59 @@ if(Yii::$app->session->hasFlash('success')){
 
                         <div class="col-md-6">
                             <?= $form->field($model, 'Key')->hiddenInput()->label(false) ?>
-                            <?= $form->field($model, 'Imprest_No')->textInput(['readonly'=> true]) ?>
-                            <?= $form->field($model, 'Source_Document')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= '<p><span>Payroll No</span> '.Html::a($model->Payroll_No,'#'); '</p>' ?>
-                            <?= $form->field($model, 'Staff_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= '<p><span>Imprest Account</span> '.Html::a($model->Imprest_Account,'#'); '</p>'?>
-                            <?= $form->field($model, 'Paying_Bank_Account')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= $form->field($model, 'Paying_Cashier')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= '<p><span>Paying Cashier</span> '.Html::a($model->Paying_Cashier,'#'); '</p>'?>
-                            <?= $form->field($model, 'Paying_Budget_Center')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Code')->textInput(['readonly'=> true]) ?>
 
-                            <?= $form->field($model, 'Requested_On')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Costing_Type')->dropDownlist(['Purchase' => 'Purchase','Sales' => 'Sales'],['prompt' => 'Select ...']) ?>
+                            
+                            <?= $form->field($model, 'Contract_Type')->dropDownlist($tenderTypes,['prompt'=> 'Select ...']) ?>
+
+                             <?= $form->field($model, 'Quarter')->dropDownlist([
+                                '_x0031_st_Quarter' => '1_st_Quarter',
+                                '_x0032_nd_Quarter' => '2_nd_Quarter',
+                                '_x0033_rd_Quarter' => '3_rd_Quarter',
+                                '_x0034_th_Quarter' => '4_th_Quarter',
+                            ],['prompt' => 'Select ...']) ?>
+                          
+                            <?= $form->field($model, 'Procurement_Method')->dropDownlist($procurementMethods,['prompt'=> 'Select ...']) ?>
+
+                            <?= $form->field($model, 'Method_Description')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                           
+                            <?= $form->field($model, 'Type_Description')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                            <?= $form->field($model, 'Reference_Code')->textInput(['maxlength'=> 50]) ?>
+
+                            <?= $form->field($model, 'Description')->textarea(['rows'=> 2, 'maxlength'=> 250]) ?>
+
+                            <?= $form->field($model, 'Total_Value')->textInput(['type'=> 'number']) ?>
+
+                            <?= $form->field($model, 'Invoiced_Value')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Deliverables')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+
+                            <?= $form->field($model, 'Contractor')->dropDownlist($contractors,['prompt'=> 'Select ...']) ?>
+
+                            <?= $form->field($model, 'Contractor_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
                         </div>
 
                         <div class="col-md-6">
-                            <?= $form->field($model, 'Travel_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= '<p><span>Imprest Amount</span> '.Html::a($model->Total_Imprest_Amount,'#'); '</p>'?>
+                            <?= $form->field($model, 'Comments')->textarea(['rows'=> 2, 'maxlength'=> 250]) ?>
+                           
                             <?= $form->field($model, 'Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
 
-                            <?= '<p><span>Action ID</span> '.Html::a($model->Action_ID,'#'); '</p>'?>
-                            <?= '<p><span>Approval_Levels</span> '.Html::a($model->Approval_Levels,'#'); '</p>'?>
-
-                            <?= $form->field($model, 'Due_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                            <?= $form->field($model, 'Purpose')->textInput(['maxlength'=> 200, 'required' => true]) ?>
-                            <?= $form->field($model, 'Payment_Method')->dropDownList($paymentMethods, ['prompt' => 'Select Payment Method','required' => true]) ?>
-                            <?= $form->field($model, 'Payment_Refrence')->textInput() ?>
-
+                            <?= $form->field($model, 'Global_Dimension_1_Code')->dropDownlist($function, ['prompt'=> 'Select ...']) ?>
+                            <?= $form->field($model, 'Global_Dimension_2_Code')->dropDownlist($budgetCenter, ['prompt'=> 'Select ...']) ?>
+                            <?= $form->field($model, 'Start_Date')->textInput(['type' => 'date']) ?>
+                            <?= $form->field($model, 'End_Date')->textInput(['type' => 'date']) ?>
+                            <?= $form->field($model, 'Notify_Period')->textInput(['maxlength' => 4]) ?>
+                            <?= $form->field($model, 'Monitoring_Department')->dropDownlist($HrDepartments, ['prompt' => 'Select ...']); ?>
+                            <?= $form->field($model, 'Administration_Department')->dropDownlist($HrDepartments, ['prompt' => 'Select ...']) ?>
+                            <?= $form->field($model, 'Notification_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Performance_Bond_Exp_Date')->textInput(['type' => 'date']) ?>
+                            <?= $form->field($model, 'Performance_Bond_Notify_Period')->textInput(['maxlength' => 4]) ?>
+                            <?= $form->field($model, 'Notify_Date')->textInput() ?>
+                            <?= $form->field($model, 'Financial_Year')->textInput(['maxlength' => 10]) ?>
+                            
 
 
                         </div>

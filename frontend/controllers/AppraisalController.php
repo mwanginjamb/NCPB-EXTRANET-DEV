@@ -680,6 +680,43 @@ class AppraisalController extends Controller
     }
 
 
+    /*Appraisal Report Codeunit fxn*/
+
+
+    public function actionReport()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo')
+            
+        ];
+
+
+         $path = Yii::$app->navhelper->codeunit($service,$data,'IanAppraisalSummaryPrintOut');
+
+         if(!isset($path['return_value']) || !is_file($path['return_value'])){
+
+                return $this->render('report',[
+                    'report' => false,
+                    'message' => isset($path['return_value'])?$path['return_value']:'Report is not available',
+                ]);
+        }
+
+        // Report is available
+        $binary = file_get_contents($path['return_value']); //fopen($path['return_value'],'rb');
+        $content = chunk_split(base64_encode($binary));
+
+        @unlink($path['return_value']);
+
+        return $this->render('report',[
+                'report' => true,
+                'content' => $content,
+            ]);
+    }
+
+
      
 
 

@@ -84,6 +84,9 @@ return [
         'ContractLines' => 'ContractLines', //60031
         'PurchaseOrderList' => 'PurchaseOrderList', //9307
         'RFQList' => 'RFQList',// 50045
+        'TenderTypes' => 'TenderTypes', //50084
+        'procurementMethods' => 'procurementMethods', //60032
+        'HRdepartments' => 'HRdepartments', // 70042
 
 
         

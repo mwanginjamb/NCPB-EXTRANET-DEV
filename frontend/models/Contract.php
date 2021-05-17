@@ -17,67 +17,36 @@ class Contract extends Model
 
 public $Key;
 public $Code;
-
 public $Costing_Type;
-
 public $Contract_Type;
-
 public $Quarter;
-
 public $Procurement_Method;
-
 public $Method_Description;
-
 public $Type_Description;
-
 public $Reference_Code;
-
 public $Description;
-
 public $Total_Value;
-
 public $Invoiced_Value;
-
 public $Deliverables;
-
 public $Contractor;
-
 public $Contractor_Name;
-
 public $Comments;
-
 public $Status;
-
 public $Global_Dimension_1_Code;
-
 public $Global_Dimension_2_Code;
-
 public $Start_Date;
-
 public $End_Date;
-
 public $Notify_Period;
-
 public $Monitoring_Department;
-
 public $Administration_Department;
-
 public $Notification_Date;
-
 public $Performance_Bond_Exp_Date;
-
 public $Performance_Bond_Notify_Period;
-
 public $Notify_Date;
-
 public $Financial_Year;
-
 public $Created_By;
-
 public $Created_On;
-
 public $Closed_On;
-
 public $Closed_By;
 public $isNewRecord;
 

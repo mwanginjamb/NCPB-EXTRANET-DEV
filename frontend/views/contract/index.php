@@ -21,7 +21,7 @@ $url = \yii\helpers\Url::home(true);
             <div class="card-body">
         <?= \yii\helpers\Html::a('Add New Contract',['create'],['class' => 'btn btn-info push-right', 'data' => [
             'confirm' => 'Are you sure you want to create a new Contract Document ?',
-            'method' => 'post',
+            'method' => 'get',
         ],]) ?>
             </div>
         </div>

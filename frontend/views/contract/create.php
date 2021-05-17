@@ -11,9 +11,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Imprest Request ';
-$this->params['breadcrumbs'][] = ['label' => 'imprest', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'New Imprest Request', 'url' => ['create']];
+$this->title = 'New Contract ';
+$this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'New Contract Document', 'url' => ['create']];
 
 
 $model->isNewRecord = true;
@@ -24,11 +24,12 @@ $model->isNewRecord = true;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'employees' => $employees,
-        'programs' => $programs,
-        'departments' => $departments,
-        'currencies' => $currencies,
-        'paymentMethods' => $paymentMethods
+        'tenderTypes' => $tenderTypes,
+        'procurementMethods' => $procurementMethods,
+        'contractors' => $contractors,
+        'function' => $function,
+        'budgetCenter' => $budgetCenter,
+        'HrDepartments' => $HrDepartments
     ]) ?>
 
 </div>

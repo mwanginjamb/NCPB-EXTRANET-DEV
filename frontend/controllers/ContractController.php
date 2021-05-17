@@ -81,7 +81,7 @@ class ContractController extends Controller
         $service = Yii::$app->params['ServiceName']['ContractCard'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Contract'])){
+        if(!Yii::$app->request->post()){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);
@@ -95,24 +95,24 @@ class ContractController extends Controller
             }
         }
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Contract'],$model) ){
 
+            $result = Yii::$app->navhelper->readByKey($service, $model->Key);
 
-            $filter = [
-                'Application_No' => $model->Application_No,
-            ];
-            /*Read the card again to refresh Key in case it changed*/
-            $request = Yii::$app->navhelper->getData($service,$filter);
-
-           if(!is_string($request) )
+           if(!is_string($result) )
             {
-                Yii::$app->navhelper->loadmodel($request,$model);
+                $model->Key = $result->Key;
             }else{
                 Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
                 return $this->render('create',[
                     'model' => $model,
-                    'leavetypes' => $this->getLeaveTypes(),
-                    'employees' => $this->getEmployees(),
+                    'tenderTypes' => $this->getTenderTypes(),
+                    'procurementMethods' => $this->getProcurementMethods(),
+                    'contractors' => $this->getVendors(),
+                    'function' => $this->getFunctioncodes(),
+                    'budgetCenter' =>  $this->getBudgetcenters(),
+                    'HrDepartments' => $this->getHrDepartments()
+                    
                 ]);
             }
             
@@ -122,11 +122,11 @@ class ContractController extends Controller
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Leave Header Created Successfully.' );
+                Yii::$app->session->setFlash('success','Record Created Successfully.' );
                 return $this->redirect(['view','No' => $result->Application_No]);
 
             }else{
-                Yii::$app->session->setFlash('error','Error Creating Leave Header '.$result );
+                Yii::$app->session->setFlash('error','Error  '.$result );
                 return $this->redirect(['index']);
 
             }
@@ -138,39 +138,40 @@ class ContractController extends Controller
 
         return $this->render('create',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
-            'employees' => $this->getEmployees(),
+            'tenderTypes' => $this->getTenderTypes(),
+                    'procurementMethods' => $this->getProcurementMethods(),
+                    'contractors' => $this->getVendors(),
+                    'function' => $this->getFunctioncodes(),
+                    'budgetCenter' =>  $this->getBudgetcenters(),
+                    'HrDepartments' => $this->getHrDepartments()
+            
         ]);
     }
 
 
 
 
-    public function actionUpdate(){
-        $model = new Leave();
-        $service = Yii::$app->params['ServiceName']['LeaveApplicationHeader'];
+    public function actionUpdate($Key){
+        $model = new Contract();
+        $service = Yii::$app->params['ServiceName']['ContractCard'];
         $model->isNewRecord = false;
 
-        $filter = [
-            'Application_No' => Yii::$app->request->get('No'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+         $result = Yii::$app->navhelper->readByKey($service, $Key);
 
-        if(is_array($result)){
+        if(!is_string($result)){
             //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
+            $model = Yii::$app->navhelper->loadmodel($result,$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
             Yii::$app->recruitment->printrr($result);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Contract'],$model) ){
             $filter = [
                 'Application_No' => $model->Application_No,
             ];
-            /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->getData($service,$filter);
-            Yii::$app->navhelper->loadmodel($refresh[0],$model);
+            
+
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -184,6 +185,12 @@ class ContractController extends Controller
                 Yii::$app->session->setFlash('success','Error Updating Leave Header '.$result );
                 return $this->render('update',[
                     'model' => $model,
+                    'tenderTypes' => $this->getTenderTypes(),
+                    'procurementMethods' => $this->getProcurementMethods(),
+                    'contractors' => $this->getVendors(),
+                    'function' => $this->getFunctioncodes(),
+                    'budgetCenter' =>  $this->getBudgetcenters(),
+                    'HrDepartments' => $this->getHrDepartments()
                 ]);
 
             }
@@ -195,23 +202,30 @@ class ContractController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'leavetypes' => $this->getLeaveTypes(),
-                'employees' => $this->getEmployees(),
-
+                'tenderTypes' => $this->getTenderTypes(),
+                    'procurementMethods' => $this->getProcurementMethods(),
+                    'contractors' => $this->getVendors(),
+                    'function' => $this->getFunctioncodes(),
+                    'budgetCenter' =>  $this->getBudgetcenters(),
+                    'HrDepartments' => $this->getHrDepartments()
 
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
-            'leavetypes' => $this->getLeaveTypes(),
-            'employees' => $this->getEmployees(),
+            'tenderTypes' => $this->getTenderTypes(),
+                    'procurementMethods' => $this->getProcurementMethods(),
+                    'contractors' => $this->getVendors(),
+                    'function' => $this->getFunctioncodes(),
+                    'budgetCenter' =>  $this->getBudgetcenters(),
+                    'HrDepartments' => $this->getHrDepartments()
 
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['LeaveCard'];
+        $service = Yii::$app->params['ServiceName']['ContractCard'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -227,8 +241,6 @@ class ContractController extends Controller
         $service = Yii::$app->params['ServiceName']['ContractCard'];
 
         $result = Yii::$app->navhelper->findOne($service, 'Code', $No);
-
-        ///Yii::$app->recruitment->printrr($result);
 
         //load nav result to model
         $model = $this->loadtomodel($result, $model);
@@ -255,6 +267,7 @@ class ContractController extends Controller
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
             $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Code ],['class'=>'btn btn-outline-primary btn-xs']);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
            
 
             $result['data'][] = [
@@ -269,7 +282,7 @@ class ContractController extends Controller
                 'Start_Date' => $item->Start_Date,
                 'End_Date' => $item->End_Date,
                 'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
-                'view' => $Viewlink
+                'view' => $Viewlink.$Updatelink
             ];
         }
 
@@ -315,123 +328,53 @@ class ContractController extends Controller
     }
 
 
-    public function getCovertypes(){
-        $service = Yii::$app->params['ServiceName']['MedicalCoverTypes'];
+   
 
-        $results = \Yii::$app->navhelper->getData($service);
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                if(!empty($res->Code) && !empty($res->Description)){
-                    $result[$i] =[
-                        'Code' => $res->Code,
-                        'Description' => $res->Description
-                    ];
-                    $i++;
-                }
-
-            }
-        }
-        return ArrayHelper::map($result,'Code','Description');
+    public function getTenderTypes(){
+        $service = Yii::$app->params['ServiceName']['TenderTypes']; 
+        $result = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($result,'Tender_Type_Code','Tender_Type_Name');
     }
 
-    /* My Imprests*/
-
-    public function getmyimprests(){
-        $service = Yii::$app->params['ServiceName']['PostedImprestRequest'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
-            'Surrendered' => false,
-        ];
-
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                $result[$i] =[
-                    'No' => $res->No,
-                    'detail' => $res->No.' - '.$res->Imprest_Amount
-                ];
-                $i++;
-            }
-        }
-        // Yii::$app->recruitment->printrr(ArrayHelper::map($result,'No','detail'));
-        return ArrayHelper::map($result,'No','detail');
+     public function getProcurementMethods(){
+        $service = Yii::$app->params['ServiceName']['procurementMethods']; 
+        $result = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($result,'Method_Code','Method_Description');
     }
 
-    /*Get Staff Loans */
 
-    public function getLoans(){
-        $service = Yii::$app->params['ServiceName']['StaffLoans'];
-
-        $results = \Yii::$app->navhelper->getData($service);
-        return ArrayHelper::map($results,'Code','Loan_Name');
+    public function getVendors(){
+        $service = Yii::$app->params['ServiceName']['VendorList']; 
+        $result = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($result,'No','Name');
     }
 
-    /* Get My Posted Imprest Receipts */
+    public function getFunctioncodes(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 1 ];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
 
-    public function getimprestreceipts($imprestNo){
-        $service = Yii::$app->params['ServiceName']['PostedReceiptsList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
-            'Imprest_No' => $imprestNo,
-        ];
 
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                $result[$i] =[
-                    'No' => $res->No,
-                    'detail' => $res->No.' - '.$res->Imprest_No
-                ];
-                $i++;
-            }
-        }
-        // Yii::$app->recruitment->printrr(ArrayHelper::map($result,'No','detail'));
-        return ArrayHelper::map($result,'No','detail');
     }
 
-    public function getLeaveTypes($gender = ''){
-        $service = Yii::$app->params['ServiceName']['LeaveTypesSetup']; //['leaveTypes'];
-        $filter = [
-            // 'Gender' => $gender,
-            //'Gender' => !empty(Yii::$app->user->identity->Employee[0]->Gender)?Yii::$app->user->identity->Employee[0]->Gender:'Both'
-        ];
+    /* Get Budget Centers*/
 
-        $result = \Yii::$app->navhelper->getData($service,$filter);
-        return ArrayHelper::map($result,'Code','Description');
+    public function getBudgetcenters(){
+        $service = Yii::$app->params['ServiceName']['Dimensions'];
+        $filter = ['Global_Dimension_No' => 2];
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+
     }
 
-    public function getEmployees(){
-        $service = Yii::$app->params['ServiceName']['EmployeeList'];
-
-        $employees = \Yii::$app->navhelper->getData($service);
-        // Yii::$app->recruitment->printrr($employees);
-        $data = [];
-        $i = 0;
-        if(is_array($employees)){
-
-            foreach($employees as  $emp){
-                $i++;
-                if(!empty($emp->FullName) && !empty($emp->No)){
-                    $data[$i] = [
-                        'No' => $emp->No,
-                        'Full_Name' => $emp->FullName
-                    ];
-                }
-
-            }
-
-        }
-
-        return ArrayHelper::map($data,'No','Full_Name');
+     public function getHrDepartments(){
+        $service = Yii::$app->params['ServiceName']['HRdepartments']; 
+        $result = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($result,'Department_Code','Department_Description');
     }
+
+   
 
 
 
