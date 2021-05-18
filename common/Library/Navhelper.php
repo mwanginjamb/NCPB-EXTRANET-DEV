@@ -258,10 +258,11 @@ class Navhelper extends Component{
 
     /*Method to commit single field data to services*/
 
-    public function Commit($service,$field=[],$filter=[]){
+    public function Commit($commitervice,$field=[],$Key){
        
-        $commitService = $service;
+        
 
+        $fieldName = $fieldValue = '';
         if(sizeof($field)){
             foreach($field as $key => $value){
                 $fieldName = $key;
@@ -269,21 +270,18 @@ class Navhelper extends Component{
             }
         }
 
-        $service = Yii::$app->params['ServiceName'][$commitService];
+        $service = Yii::$app->params['ServiceName'][$commitervice];
+        // Yii::$app->recruitment->printrr($Key);
+    
+        $request = $this->readByKey($service,$Key);
 
-        if(sizeof($filter)){
-            foreach($filter as $key => $value){
-                $filter[] = ['Field' => $key, 'Criteria' =>$value];
-            }
-        }
-
-        $request = Yii::$app->navhelper->getData($service, $filter);
+       
 
 
         $data = [];
-        if(is_array($request)){
+        if(is_object($request)){
             $data = [
-                'Key' => $request[0]->Key,
+                'Key' => $request->Key,
                 $fieldName => $fieldValue
             ];
         }else{

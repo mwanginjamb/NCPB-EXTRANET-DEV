@@ -228,7 +228,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Contract Card', 'url' => ['view','
                             // print '<pre>'; print_r($model->getObjectives()); exit;
 
                             foreach($model->lines as $obj):
-                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['contractline/update','Line_No'=> $obj->Line_No],['class' => 'update-objective btn btn-outline-info btn-xs']);
+                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['contractline/update','Key'=> $obj->Key],['class' => 'update-objective btn btn-outline-info btn-xs']);
                                 $deleteLink = Html::a('<i class="fa fa-trash"></i>',['contractlineline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
                                 ?>
                                 <tr>

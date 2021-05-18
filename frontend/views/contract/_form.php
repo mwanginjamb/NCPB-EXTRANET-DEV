@@ -47,7 +47,7 @@ if(Yii::$app->session->hasFlash('success')){
 
 
                         <div class="col-md-6">
-                            <?= $form->field($model, 'Key')->hiddenInput()->label(false) ?>
+                            <?= $form->field($model, 'Key')->textInput(['readonly'=> true]) ?>
                             <?= $form->field($model, 'Code')->textInput(['readonly'=> true]) ?>
 
                             <?= $form->field($model, 'Costing_Type')->dropDownlist(['Purchase' => 'Purchase','Sales' => 'Sales'],['prompt' => 'Select ...']) ?>
@@ -90,15 +90,15 @@ if(Yii::$app->session->hasFlash('success')){
 
                             <?= $form->field($model, 'Global_Dimension_1_Code')->dropDownlist($function, ['prompt'=> 'Select ...']) ?>
                             <?= $form->field($model, 'Global_Dimension_2_Code')->dropDownlist($budgetCenter, ['prompt'=> 'Select ...']) ?>
-                            <?= $form->field($model, 'Start_Date')->textInput(['type' => 'date']) ?>
-                            <?= $form->field($model, 'End_Date')->textInput(['type' => 'date']) ?>
-                            <?= $form->field($model, 'Notify_Period')->textInput(['maxlength' => 4]) ?>
+                            <?= $form->field($model, 'Start_Date')->textInput(['type' => 'date','readonly'=> true,'disabled'=>true]) ?>
+                            <?= $form->field($model, 'End_Date')->textInput(['type' => 'date','readonly'=> true, 'disabled'=>true]) ?>
+                            <?= $form->field($model, 'Notify_Period')->textInput(['maxlength' => 4, 'readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Monitoring_Department')->dropDownlist($HrDepartments, ['prompt' => 'Select ...']); ?>
                             <?= $form->field($model, 'Administration_Department')->dropDownlist($HrDepartments, ['prompt' => 'Select ...']) ?>
                             <?= $form->field($model, 'Notification_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Performance_Bond_Exp_Date')->textInput(['type' => 'date']) ?>
                             <?= $form->field($model, 'Performance_Bond_Notify_Period')->textInput(['maxlength' => 4]) ?>
-                            <?= $form->field($model, 'Notify_Date')->textInput() ?>
+                            <?= $form->field($model, 'Notify_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                             <?= $form->field($model, 'Financial_Year')->textInput(['maxlength' => 10]) ?>
                             
 
@@ -172,7 +172,7 @@ if(Yii::$app->session->hasFlash('success')){
             </div>
         </div>
     </div>
-<input type="hidden" name="url" value="<?= $absoluteUrl ?>">
+<input type="hidden" name="absolute" value="<?= $absoluteUrl ?>">
 <?php
 $script = <<<JS
  //Submit Rejection form and get results in json    
@@ -188,119 +188,245 @@ $script = <<<JS
                 },'json');
         });*/
 
-        // Set other Employee
+
+         /* Set contract-costing_type */
+         
+         
+         $('#contract-costing_type').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Costing_Type = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Costing_Type';
+            $.post(url,{'Costing_Type': Costing_Type,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-costing_type');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-costing_type');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+         /* Set contract_type */ 
+         
+         $('#contract-contract_type').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Contract_Type = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Contract_Type';
+            $.post(url,{'Contract_Type': Contract_Type,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                    $('#contract-type_description').val(msg.Type_Description);
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-type_description');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-type_description');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+
+        /* Set procurement_method */ 
+         
+         $('#contract-procurement_method').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Procurement_Method = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Procurement_Method';
+            $.post(url,{'Procurement_Method': Procurement_Method,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                    $('#contract-method_description').val(msg.Method_Description);
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-procurement_method');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-procurement_method');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+
+        /*Set Start Date*/
+         
+         $('#contract-start_date').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Start_Date = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Start_Date';
+            $.post(url,{'Start_Date': Start_Date,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                   
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-start_date');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-start_date');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+
+         /*Set End Date*/
+         
+         $('#contract-end_date').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const End_Date = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=End_Date';
+            $.post(url,{'End_Date': End_Date,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                   
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-end_date');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-end_date');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+
+        /*Set Notify Period*/
+         
+         $('#contract-notify_period').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Notify_Period = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Notify_Period';
+            $.post(url,{'Notify_Period': Notify_Period,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                    $('#contract-notification_date').val(msg.Notification_Date);
+                   
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-notify_period');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-notify_period');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+
+        // Commit Contrator
+
+        $('#contract-contractor').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#contract-key').val();
+            const Contractor = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'contract/setfield?field=Contractor';
+            $.post(url,{'Contractor': Contractor,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#contract-key').val(msg.Key);
+                    $('#contract-contractor_name').val(msg.Contractor_Name);
+                   
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-contract-contractor');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-contract-contractor');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        });
+         
+         function disableSubmit(){
+             document.getElementById('submit').setAttribute("disabled", "true");
+        }
         
-     $('#imprestcard-employee_no').change(function(e){
-        const Employee_No = e.target.value;
-        const No = $('#imprestcard-no').val();
-        if(No.length){
-            const url = $('input[name=url]').val()+'imprest/setemployee';
-            $.post(url,{'Employee_No': Employee_No,'No': No}).done(function(msg){
-                   //populate empty form fields with new data
-                    console.log(typeof msg);
-                    console.table(msg);
-                    if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-imprestcard-employee_no');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = msg;
-                        
-                    }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestcard-employee_no');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = ''; 
-                        
-                    }
-                    
-                },'json');
+        function enableSubmit(){
+            document.getElementById('submit').removeAttribute("disabled");
+        
         }
-     });
-     
-     /*Set Program and Department dimension */
-     
-     $('#imprestcard-global_dimension_1_code').change(function(e){
-        const dimension = e.target.value;
-        const No = $('#imprestcard-no').val();
-        if(No.length){
-            const url = $('input[name=url]').val()+'imprest/setdimension?dimension=Global_Dimension_1_Code';
-            $.post(url,{'dimension': dimension,'No': No}).done(function(msg){
-                   //populate empty form fields with new data
-                    console.log(typeof msg);
-                    console.table(msg);
-                    if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-imprestcard-global_dimension_1_code');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = msg;
-                        
-                    }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestcard-global_dimension_1_code');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = ''; 
-                        
-                    }
-                    
-                },'json');
-        }
-     });
-     
-     
-     /* set department */
-     
-     $('#imprestcard-global_dimension_2_code').change(function(e){
-        const dimension = e.target.value;
-        const No = $('#imprestcard-no').val();
-        if(No.length){
-            const url = $('input[name=url]').val()+'imprest/setdimension?dimension=Global_Dimension_2_Code';
-            $.post(url,{'dimension': dimension,'No': No}).done(function(msg){
-                   //populate empty form fields with new data
-                    console.log(typeof msg);
-                    console.table(msg);
-                    if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-imprestcard-global_dimension_2_code');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = msg;
-                        
-                    }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestcard-global_dimension_2_code');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = ''; 
-                        
-                    }
-                    
-                },'json');
-        }
-     });
-     
-     
-     /*Set Imprest Type*/
-     
-     $('#imprestcard-imprest_type').change(function(e){
-        const Imprest_Type = e.target.value;
-        const No = $('#imprestcard-no').val();
-        if(No.length){
-            const url = $('input[name=url]').val()+'imprest/setimpresttype';
-            $.post(url,{'Imprest_Type': Imprest_Type,'No': No}).done(function(msg){
-                   //populate empty form fields with new data
-                    console.log(typeof msg);
-                    console.table(msg);
-                    if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-imprestcard-imprest_type');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = msg;
-                        
-                    }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestcard-imprest_type');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = '';
-                        
-                         $('.modal').modal('show')
-                        .find('.modal-body')
-                        .html('<div class="alert alert-success">Imprest Type Update Successfully.</div>');
-                        
-                    }
-                    
-                },'json');
-        }
-     });
      
      
      /* Add Line */

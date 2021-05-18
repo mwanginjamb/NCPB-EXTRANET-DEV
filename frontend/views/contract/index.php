@@ -66,12 +66,42 @@ if(Yii::$app->session->hasFlash('success')){
     </div>
 </div>
 
+ <!--My Bs Modal template  --->
+
+    <div class="modal fade bs-example-modal-lg bs-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Contract Management</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <input type="hidden" value="<?= $url ?>" id="url" />
 <?php
 
 $script = <<<JS
 
     $(function(){
+
+
+       
+
+
+
+
          /*Data Tables*/
          
          //$.fn.dataTable.ext.errMode = 'throw';
@@ -88,11 +118,11 @@ $script = <<<JS
                 { title: 'Total Value' ,data: 'Total_Value'},
                 { title: 'Invoiced Value' ,data: 'Invoiced_Value'},
                 { title: 'Deliverables' ,data: 'Deliverables'},   
-                { title: 'Contractor_Name' ,data: 'Contractor_Name'},
+                { title: 'Contractor Name' ,data: 'Contractor_Name'},
                 { title: 'Comments', data: 'Comments' },
-                { title: 'Start_Date', data: 'Start_Date' },
-                { title: 'End_Date', data: 'End_Date' },
-                { title: 'Procurement_Method', data: 'Procurement_Method' },
+                { title: 'Start Date', data: 'Start_Date' },
+                { title: 'End Date', data: 'End_Date' },
+                { title: 'Procurement Method', data: 'Procurement_Method' },
                 { title: 'View', data: 'view' },
                
             ] ,                              
@@ -110,9 +140,36 @@ $script = <<<JS
        table.columns([5,6]).visible(false);
     
     /*End Data tables*/
-        $('#table').on('click','tr', function(){
-            
-        });
+        $('#table').on('click','.delete', function(e){
+
+            e.preventDefault();
+            var secondThought = confirm("Are you sure you want to delete this record ?");
+               if(!secondThought){//if user says no, kill code execution
+                    return;
+               }
+           
+             var url = $(this).attr('href');
+             $.get(url).done(function(msg){
+                 $('.modal').modal('show')
+                        .find('.modal-body')
+                        .html(msg.note);
+             },'json');
+
+
+        }); // End dt event delegation
+
+
+
+          
+    /*Handle modal dismissal event  */
+    
+    $('.modal').on('hidden.bs.modal',function(){
+        var reld = location.reload(true);
+        setTimeout(reld,1000);
+    });
+
+
+
     });
         
 JS;

@@ -302,17 +302,9 @@ class SafarilineController extends Controller
 
     public function actionSetfield($field){
         $service = 'safariLine';     
-        
-
         $field = [ $field => \Yii::$app->request->post($field)];
         $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
-        // Keys for this model
-        $filter = [
-            'Document_No' => Yii::$app->request->post('Document_No'),
-            'Expense_Date' => Yii::$app->request->post('Expense_Date')
-        ];
-
-        $result = Yii::$app->navhelper->Commit($service,$field,$filter,$Key);
+        $result = Yii::$app->navhelper->Commit($service,$field,$Key);
         return $result;
         
     }

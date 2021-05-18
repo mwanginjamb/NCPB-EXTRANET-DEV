@@ -58,7 +58,7 @@ class ContractController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['list'],
+                'only' => ['list','setfield'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -167,10 +167,7 @@ class ContractController extends Controller
 
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Contract'],$model) ){
-            $filter = [
-                'Application_No' => $model->Application_No,
-            ];
-            
+           
 
 
             $result = Yii::$app->navhelper->updateData($service,$model);
@@ -179,10 +176,10 @@ class ContractController extends Controller
 
                 Yii::$app->session->setFlash('success','Leave Header Updated Successfully.' );
 
-                return $this->redirect(['view','No' => $result->Application_No]);
+                return $this->redirect(['view','No' => $result->Key]);
 
             }else{
-                Yii::$app->session->setFlash('success','Error Updating Leave Header '.$result );
+                Yii::$app->session->setFlash('error','Error Updating Leave Header '.$result );
                 return $this->render('update',[
                     'model' => $model,
                     'tenderTypes' => $this->getTenderTypes(),
@@ -197,7 +194,10 @@ class ContractController extends Controller
 
         }
 
-
+        ($model->Start_Date == '0001-01-01')?$model->Start_Date = date('Y-m-d'): $model->Start_Date;
+         ($model->End_Date == '0001-01-01')?$model->End_Date = date('Y-m-d'): $model->End_Date;
+         ($model->Performance_Bond_Exp_Date == '0001-01-01')?$model->Performance_Bond_Exp_Date = date('Y-m-d'): $model->Performance_Bond_Exp_Date;
+         ($model->Notify_Date == '0001-01-01')?$model->Notify_Date = date('Y-m-d'): $model->Notify_Date;
         // Yii::$app->recruitment->printrr($model);
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
@@ -268,6 +268,7 @@ class ContractController extends Controller
             $link = $updateLink = $deleteLink =  '';
             $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Code ],['class'=>'btn btn-outline-primary btn-xs']);
             $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
+            $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
            
 
             $result['data'][] = [
@@ -282,7 +283,7 @@ class ContractController extends Controller
                 'Start_Date' => $item->Start_Date,
                 'End_Date' => $item->End_Date,
                 'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
-                'view' => $Viewlink.$Updatelink
+                'view' => $Viewlink.$Updatelink.$Deletelink
             ];
         }
 
@@ -566,6 +567,15 @@ class ContractController extends Controller
             return $this->redirect(['view','No' => $No]);
 
         }
+    }
+
+    public function actionSetfield($field){
+        $service = 'ContractCard';     
+        $field = [ $field => \Yii::$app->request->post($field)];
+        $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
+        $result = Yii::$app->navhelper->Commit($service,$field,$Key);
+        return $result;
+        
     }
 
 
