@@ -58,7 +58,13 @@ class AppraisalController extends Controller
 				'supervisorlist',
 				'hrlist',
 				'extrasupervisorlist',
-				'closedlist'
+				'closedlist',
+                'gsappraiseelist',
+                'gssuperlist',
+                'gshrlist',
+                'myappraiseelist',
+                'mysuperlist',
+                'myhrlist'
 				],
                 'formatParam' => '_format',
                 'formats' => [
@@ -99,57 +105,79 @@ class AppraisalController extends Controller
 
     }
 
+    /*Mid Year Lists*/
+
+    public function actionMyAppraisee(){
+
+        return $this->render('myappraisee');
+
+    }
+
+
+    public function actionMySupervisor(){
+
+        return $this->render('mysuper');
+
+    }
+
+    public function actionMyHr(){
+
+        return $this->render('myhr');
+
+    }
+
+    /*End Mid Year List*/
+
+    /*Goal setting Lists*/
+
+
+    public function actionGsAppraisee(){
+
+        return $this->render('gsappraisee');
+
+    }
+
+
+    public function actionGsSupervisor(){
+
+        return $this->render('gssuper');
+
+    }
+
+    public function actionGsHr(){
+
+        return $this->render('gshr');
+
+    }
+
+
+
+    /*End Goal Setting Lists*/
+
+
+
+
+
+
 
 
 
     public function actionCreate(){
 
-        $model = new Claim();
-        $service = Yii::$app->params['ServiceName']['MileageCard'];
+       
+        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
 
-        /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave']) && !Yii::$app->request->post()){
+        $data = ['Employee_No' => Yii::$app->user->identity->{'Employee No_'}];
 
+        $result =  Yii::$app->navhelper->postData($service,$data);
 
-            $request = Yii::$app->navhelper->postData($service,$model);
-            //Yii::$app->recruitment->printrr($request);
-            if(is_object($request) )
-            {
-                Yii::$app->navhelper->loadmodel($request,$model);
-            }else{
-                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
-                return $this->render('create',[
-                    'model' => $model,
-                    'safariRequests' => $this->safariRequests(),
-                    'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters()
-                ]);
-            }
+        if(is_object($result))
+        {
+            return $this->redirect(['view','No' => $result->Appraisal_Code]);
+        }else if(is_string($result)){
+            Yii::$app->setFlash('Error', $result);
+             return $this->redirect(['index']);
         }
-
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Leave'],$model) ){
-
-
-            /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->findOne($service, 'Claim_No', $model->Claim_No);;
-            $model->Key = $refresh->Key;
-            
-            $result = Yii::$app->navhelper->updateData($service,$model);
-            if(!is_string($result)){
-
-                Yii::$app->session->setFlash('success','Claim saved Successfully.' );
-                return $this->redirect(['view','No' => $result->Claim_No]);
-
-            }else{
-                Yii::$app->session->setFlash('error','Error  '.$result );
-                return $this->redirect(['index']);
-
-            }
-
-        }
-
-
-        //Yii::$app->recruitment->printrr($model);
 
         return $this->render('create',[
             'model' => $model,
@@ -310,6 +338,97 @@ class AppraisalController extends Controller
 
         return $result;
     }
+
+
+    // Mid Year Appraisee List
+
+     public function actionGsappraiseelist(){
+
+        $service = Yii::$app->params['ServiceName']['GoalSettingAppraisalList'];
+        $filter = [
+            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
+
+    //Mid Year Appraisee List
+
+    public function actionMyappraiseelist(){
+
+        $service = Yii::$app->params['ServiceName']['MyAppraisee'];
+        $filter = [
+            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
 	
 	// Get Supervisor List
 	
@@ -356,11 +475,200 @@ class AppraisalController extends Controller
         return $result;
     }
 
+
+    // Mid Year Supervisor List
+
+
+    public function actionMysuperlist(){
+
+        $service = Yii::$app->params['ServiceName']['MySuper'];
+        $filter = [
+            'Action_ID' => Yii::$app->user->identity->{'User ID'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
+
+
+    // Supervisor Goal Setting List
+
+
+    public function actionGssuperlist(){
+
+        $service = Yii::$app->params['ServiceName']['GoalSettingSuper'];
+        $filter = [
+            'Action_ID' => Yii::$app->user->identity->{'User ID'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
+
+
+
+
     // Get Hr List
 	
 	public function actionHrlist(){
 
         $service = Yii::$app->params['ServiceName']['AppraisalListHr'];
+        $filter = [
+            'Hr_User_ID' => Yii::$app->user->identity->{'User ID'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
+
+
+    // Goal Setting HR List
+
+    public function actionGshrlist(){
+
+        $service = Yii::$app->params['ServiceName']['GoalSettingHr'];
+        $filter = [
+            'Hr_User_ID' => Yii::$app->user->identity->{'User ID'},
+        ];
+        
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        // Yii::$app->recruitment->printrr($results);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Appraisal_Code))
+            {
+                continue;
+            }
+
+
+            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
+            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
+            
+
+            $result['data'][] = [
+                'Key' => $item->Key,
+                'No' => $item->Appraisal_Code,
+                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
+                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
+                'Department' => !empty($item->Department)?$item->Department:'',
+                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
+                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
+                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
+                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
+                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
+                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
+                'Actions' => $ViewLink ,
+
+            ];
+        }
+
+        return $result;
+    }
+
+
+    // Mid Year Hr List
+
+    public function actionMyhrlist(){
+
+        $service = Yii::$app->params['ServiceName']['MyHr'];
         $filter = [
             'Hr_User_ID' => Yii::$app->user->identity->{'User ID'},
         ];
@@ -644,7 +952,7 @@ class AppraisalController extends Controller
          $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendNewEmployeeForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', ' Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', ' Appraisal Sent to Supervisor Successfully.', true);
             return $this->redirect(['index']);
         }else{
 
@@ -675,6 +983,95 @@ class AppraisalController extends Controller
 
             Yii::$app->session->setFlash('error', 'Error   : '. $result);
             return $this->redirect(['view','No' => $No]);
+
+        }
+    }
+
+    /*Return Appraisal Back to Appraisee*/
+
+    public function actionBackToAppraisee()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->post('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendNewEmployeeAppraisalBackToAppraisee');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Sent Back to Appraisee Successfully.', true);
+            return $this->redirect(['supervisor-appraisals']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['supervisor-appraisals']);
+
+        }
+    }
+
+
+    /*sEND Appraisal to HR*/
+
+
+
+    public function actionToHr()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->post('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendEmployeeAppraisalToHr');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', 'Appraisal sent to HR Successfully.', true);
+            return $this->redirect(['supervisor-appraisals']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['supervisor-appraisals']);
+
+        }
+    }
+
+
+    /*HR bACK tO sUPERVISOR*/
+
+    public function actionBackToSupervisor()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->post('appraisalNo')]),
+            'rejectionComments' => ''
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendNewEmployeeAppraisalBackToSupervisor');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal sent Back to Supervisor Successfully.', true);
+            return $this->redirect(['hr-appraisals']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['hr-appraisals']);
 
         }
     }

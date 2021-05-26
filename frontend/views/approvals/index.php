@@ -14,14 +14,9 @@ $this->title = 'HRMIS - Approval Requests';
 $this->params['breadcrumbs'][] = ['label' => 'Approval Management', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Approvals List', 'url' => ['index']];
 ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card-success">
-                <div class="card-header">
-                    <h3 class="card-title">Approval Requests</h3>
 
 
-                    <?php
+<?php
                     if(Yii::$app->session->hasFlash('success')){
                         print ' <div class="alert alert-success alert-dismissable">
                                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -39,6 +34,18 @@ $this->params['breadcrumbs'][] = ['label' => 'Approvals List', 'url' => ['index'
                     }
                     ?>
 
+
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-success">
+                <div class="card-header">
+                    <h3 class="card-title">Approval Requests</h3>
+
+
+                    
 
 
                 </div>

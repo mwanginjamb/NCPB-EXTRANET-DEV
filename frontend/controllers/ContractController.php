@@ -31,6 +31,15 @@ use kartik\mpdf\Pdf;
 
 class ContractController extends Controller
 {
+
+
+    public function beforeAction($action) {
+        $this->enableCsrfValidation = ($action->id !== "consumables-report"); // <-- here
+        return parent::beforeAction($action);
+    }
+
+
+
     public function behaviors()
     {
         return [
@@ -58,7 +67,7 @@ class ContractController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['list','setfield'],
+                'only' => ['list','setfield','vendor-list','lpo-list'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -68,9 +77,24 @@ class ContractController extends Controller
         ];
     }
 
+
+
+    
     public function actionIndex(){
 
         return $this->render('index');
+
+    }
+
+    public function actionVendors(){
+
+        return $this->render('vendorlist');
+
+    }
+
+    public function actionLpos(){
+
+        return $this->render('lpolist');
 
     }
 
@@ -240,7 +264,8 @@ class ContractController extends Controller
         $model = new Contract();
         $service = Yii::$app->params['ServiceName']['ContractCard'];
 
-        $result = Yii::$app->navhelper->findOne($service, 'Code', $No);
+        // $result = Yii::$app->navhelper->findOne($service, 'Code', $No);
+        $result = Yii::$app->navhelper->readByKey($service, $No);
 
         //load nav result to model
         $model = $this->loadtomodel($result, $model);
@@ -290,37 +315,63 @@ class ContractController extends Controller
         return $result;
     }
 
-    // Get Imprest  surrender list
 
-    public function actionGetimprestsurrenders(){
-        $service = Yii::$app->params['ServiceName']['ImprestSurrenderList'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-        ];
-        //Yii::$app->recruitment->printrr( );
+     public function actionVendorList(){
+        $service = Yii::$app->params['ServiceName']['VendorList'];
+        $filter = [];
+
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view-surrender','No'=> $item->No ],['class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Status == 'New'){
-                $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
-
-                $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->No ],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Status == 'Pending_Approval'){
-                $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
-            }
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
+            $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
+           
 
             $result['data'][] = [
-                'Key' => $item->Key,
                 'No' => $item->No,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Purpose' => !empty($item->Purpose)?$item->Purpose:'',
-                'Imprest_Amount' => !empty($item->Imprest_Amount)?$item->Imprest_Amount:'',
-                'Status' => $item->Status,
-                'Action' => $link,
-                'Update_Action' => $updateLink,
+                'Name' => !empty($item->Name)?$item->Name:'',
+                'Responsibility_Center' => !empty($item->Responsibility_Center)?number_format($item->Responsibility_Center):'',
+                'Balance_Due_LCY' => !empty($item->Balance_Due_LCY)?number_format($item->Balance_Due_LCY):'',
+                'Vendor_Type' => !empty($item->Vendor_Type)?$item->Vendor_Type:'',
+                
+                'view' => $Viewlink
+            ];
+        }
+
+        return $result;
+    }
+
+    //LPO List
+
+
+    public function actionLpoList(){
+        $service = Yii::$app->params['ServiceName']['PurchaseOrderArchives'];
+        $filter = [];
+
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        $result = [];
+        foreach($results as $item){
+            $link = $updateLink = $deleteLink =  '';
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
+            $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
+           
+
+            $result['data'][] = [
+                'No' => $item->No,
+                'Buy_from_Vendor_Name' => !empty($item->Buy_from_Vendor_Name)?$item->Buy_from_Vendor_Name:'',
+                'Vendor_Authorization_No' => !empty($item->Vendor_Authorization_No)?$item->Vendor_Authorization_No:'',
+                'Pay_to_Name' => !empty($item->Pay_to_Name)?$item->Pay_to_Name:'',
+                'Posting_Date' => !empty($item->Posting_Date)?$item->Posting_Date:'',
+                'Location_Code' => !empty($item->Location_Code)?$item->Location_Code:'',
+                'Purchaser_Code' => !empty($item->Purchaser_Code)?$item->Purchaser_Code:'',
+                'Document_Date' => !empty($item->Document_Date)?$item->Document_Date:'',
+                'Payment_Terms_Code' => !empty($item->Payment_Terms_Code)?$item->Payment_Terms_Code:'',
+                'Payment_Discount_Percent' => !empty($item->Payment_Discount_Percent)?$item->Payment_Discount_Percent:'',
+                'Payment_Method_Code' => !empty($item->Payment_Method_Code)?$item->Payment_Method_Code:'',
+                
                 'view' => $Viewlink
             ];
         }
@@ -568,6 +619,74 @@ class ContractController extends Controller
 
         }
     }
+
+
+
+    public function actionConsumablesReport()
+    {
+
+
+       // Yii::$app->recruitment->printrr($this->getItems());
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+
+
+        if(Yii::$app->request->post()){
+             
+            $data = [
+                'itemNo' =>Yii::$app->request->post('itemNo'),
+                'locationCode' => Yii::$app->request->post('locationCode'),
+                'balanceAtDate' =>  Yii::$app->request->post('balanceAtDate')
+             ];
+            $path = Yii::$app->navhelper->codeunit($service,$data,'DownloadStockBalanceReport');
+
+            // Yii::$app->recruitment->printrr($path);
+
+            if(!@is_file($path['return_value'])){
+              
+                return $this->render('consumables_report',[
+                    'report' => false,
+                    'p9years' => '',
+                    'message' => @$path['return_value']
+                ]);
+            }
+            $binary = file_get_contents($path['return_value']); //fopen($path['return_value'],'rb');
+
+            $content = chunk_split(base64_encode($binary));
+            //delete the file after getting it's contents --> This is some house keeping
+            @unlink($path['return_value']);
+
+           // Yii::$app->recruitment->printrr($path);
+            return $this->render('consumables_report',[
+                'report' => true,
+                'content' => $content,
+                'p9years' => '',
+                'locations' =>  $this->getLocations(),
+                'items' => $this->getItems(),
+            ]);
+        }
+
+        return $this->render('consumables_report',[
+            'report' => false,
+            'locations' =>  $this->getLocations(),
+            'items' => $this->getItems(),
+        ]);
+    }
+
+
+     public function getItems(){
+        $service = Yii::$app->params['ServiceName']['ItemList'];
+        $result = \Yii::$app->navhelper->getData($service, ['Consumable_Item' => true]);
+        return Yii::$app->navhelper->refactorArray($result,'No','Description');
+    }
+
+    public function getLocations(){
+
+        $service = Yii::$app->params['ServiceName']['LocationList'];
+        $result = \Yii::$app->navhelper->getData($service, []);
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
+    }
+
+
 
     public function actionSetfield($field){
         $service = 'ContractCard';     

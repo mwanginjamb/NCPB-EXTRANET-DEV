@@ -54,7 +54,7 @@ class ObjectiveController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => [''],
+                'only' => ['setfield'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -62,6 +62,16 @@ class ObjectiveController extends Controller
                 ],
             ]
         ];
+    }
+
+
+     public function actionSetfield($field){
+        $service = 'EmployeeAppraisalKRAs';     
+        $field = [ $field => \Yii::$app->request->post($field)];
+        $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
+        $result = Yii::$app->navhelper->Commit($service,$field,$Key);
+        return $result;
+        
     }
 
     public function actionIndex(){
@@ -72,8 +82,22 @@ class ObjectiveController extends Controller
 
     public function actionCreate(){
 
+        // Yii::$app->recruitment->printrr($this->GetKRAs());
+
         $model = new Objective() ;
-        $service = Yii::$app->params['ServiceName']['ProbationKRAs'];
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
+
+
+        $model->Appraisal_Code = Yii::$app->request->get('Appraisal_Code');
+        $model->Employee_No = Yii::$app->user->identity->{'Employee No_'};
+
+        // Post Initial Data
+
+        $res = Yii::$app->navhelper->postData($service,$model);
+
+        // Load model with resultant data
+
+        Yii::$app->navhelper->loadmodel($res,$model);
 
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Objective'],$model)  ){
@@ -91,11 +115,13 @@ class ObjectiveController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
+                'kra' => $this->GetKRAs()
             ]);
         }
 
         return $this->render('create',[
             'model' => $model,
+            'kra' => $this->GetKRAs()
         ]);
     }
 
@@ -134,17 +160,18 @@ class ObjectiveController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-
+                'kra' => $this->GetKRAs()
             ]);
         }
 
         return $this->render('update',[
             'model' => $model,
+            'kra' => $this->GetKRAs()
         ]);
     }
 
     public function actionDelete(){
-        $service = Yii::$app->params['ServiceName']['ProbationKRAs'];
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
@@ -191,5 +218,15 @@ class ObjectiveController extends Controller
         }
 
         return $model;
+    }
+
+
+    public function GetKRAs() {
+        $service = Yii::$app->params['ServiceName']['KRALookup'];
+        $result = Yii::$app->navhelper->getData($service);
+
+        return Yii::$app->navhelper->RefactorArray($result,'KRA_Code','Objective');
+
+
     }
 }

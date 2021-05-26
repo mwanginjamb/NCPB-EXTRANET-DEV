@@ -7,6 +7,7 @@
  */
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+$absoluteUrl = \yii\helpers\Url::home(true);
 ?>
 
 <div class="row">
@@ -41,10 +42,10 @@ use yii\widgets\ActiveForm;
 
                                     <?= $form->field($model, 'Employee_No')->hiddenInput()->label(false) ?>
                                    
-                                    <?= (Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'KRA_Code')->textInput():'' ?>
+                                    <?= (Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'KRA_Code')->dropDownList($kra,['prompt' => 'Select ...']):'' ?>
 
 
-                                     <?= $form->field($model, 'Objective')->textInput() ?>
+                                     <?= $form->field($model, 'Objective')->textInput(['readonly' => true]) ?>
 
                                      <?= $form->field($model, 'Objective_Description')->textarea(['rows' => '3']) ?>
                                    
@@ -96,7 +97,7 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 </div>
-
+<input type="hidden" name="absolute" value="<?= $absoluteUrl ?>">
 <?php
 $script = <<<JS
  //Submit Rejection form and get results in json    
@@ -111,6 +112,41 @@ $script = <<<JS
         
                 },'json');
         });
+
+
+         /*Set KRA Code */
+
+         $('#objective-kra_code').on('change', function(e){
+            e.preventDefault();
+                  
+            const Key = $('#objective-key').val();
+            const KRA_Code = e.target.value;  
+            
+            const url = $('input[name="absolute"]').val()+'objective/setfield?field=KRA_Code';
+            $.post(url,{'KRA_Code': KRA_Code,'Key': Key}).done(function(msg){
+
+                   //populate empty form fields with new data
+                    console.log(typeof msg);
+                   
+                    $('#objective-kra-key').val(msg.Key);
+                    $('#objective-objective').val(msg.Objective);
+                   
+
+                    if((typeof msg) === 'string'){ // A string is an error
+                        const parent = document.querySelector('.field-objective-kra_code');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = msg;
+                        disableSubmit();
+                    }else{ // An object represents correct details
+                        const parent = document.querySelector('.field-objective-kra_code');
+                        const helpbBlock = parent.children[2];
+                        helpbBlock.innerText = ''; 
+                        enableSubmit();
+                    }    
+                    
+                },'json');
+        }); 
+         
 JS;
 
 $this->registerJs($script);

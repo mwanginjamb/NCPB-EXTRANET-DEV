@@ -87,6 +87,7 @@ return [
         'TenderTypes' => 'TenderTypes', //50084
         'procurementMethods' => 'procurementMethods', //60032
         'HRdepartments' => 'HRdepartments', // 70042
+        'PurchaseOrderArchives' => 'PurchaseOrderArchives',
 
 
         
@@ -98,6 +99,16 @@ return [
         'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
         'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
         'ScoreCards' => 'ScoreCards', //60011
+
+        'GoalSettingAppraisalList' => 'GoalSettingAppraisalList', //60053
+        'GoalSettingSuper' => 'GoalSettingSuper', // 60054
+        'GoalSettingHr' => 'GoalSettingHr', //60055
+
+        'MyAppraisee' => 'MyAppraisee', //60050
+        'MySuper' => 'MySuper', //60051
+        'MyHr' => 'MyHr', //60052
+
+
         'AppraisalListSupervisor' => 'AppraisalListSupervisor', //60012
         'AppraisalListHr' => 'AppraisalListHr', //60013
         'AppraisalListClosed' => 'AppraisalListClosed', //60014

@@ -11,8 +11,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Leave Request';
-$this->params['breadcrumbs'][] = ['label' => 'Imprest Line', 'url' => ['index']];
+$this->title = 'Add Contract Line.';
+$this->params['breadcrumbs'][] = ['label' => 'Contract Line', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -25,10 +25,7 @@ $model->isNewRecord = true;
 
     <?= $this->render('_form', [
         'model' => $model,
-        'towns' => $towns,
-        'claimtype' => $claimtype,
-        'functions' => $functions,
-        'budgetCenters' => $budgetCenters
+       
     ]) ?>
 
 </div>

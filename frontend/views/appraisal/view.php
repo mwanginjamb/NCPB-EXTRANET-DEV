@@ -56,22 +56,24 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
         <?php if($model->Approval_Status == 'Appraisee_Level'): ?>
 
-                                
-
-                                    <?= Html::a('<i class="fas fa-forward"></i> submit',['submit','appraisalNo'=> $model->Appraisal_Code,'employeeNo' => $model->Employee_No],['class' => 'btn btn-app submitforapproval mx-1','data' => [
+                         <div class="col-md-3">
+                                     <?= Html::a('<i class="fas fa-forward"></i> submit',['submit','appraisalNo'=> $model->Appraisal_Code,'employeeNo' => $model->Employee_No],['class' => 'btn btn-app submitforapproval mx-1','data' => [
                                             'confirm' => 'Are you sure you want to submit this appraisal to supervisor ?',
                                             'method' => 'post',
                                         ],
                                         'title' => 'Send Score Card to Supervisor..'
 
                                     ]) ?>
+                         </div>       
+
+                                    
                                 
 
         <?php endif; ?>
 
-             
+            <div class="col-md-3">  
                    <?= Html::a('<i class="fas fa-book-open"></i> P.A Report',['report'],[
-                                        'class' => 'btn btn-app bg-success  pull-right mx-1',
+                                        'class' => 'btn btn-app bg-success mx-1',
                                         'title' => 'Generate Performance Appraisal Report',
                                         'target'=> '_blank',
                                         'data' => [
@@ -85,6 +87,77 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                     ]);
 
                     ?>
+            </div>
+
+
+<!--    Supervisor Level Actions -->
+        <?php if($model->Approval_Status == 'Supervisor_Level'): ?>
+                 <div class="col-md-3"> 
+                        <?= Html::a('<i class="fas fa-backward"></i> Back To Appraisee',['back-to-appraisee'],[
+                                        'class' => 'btn btn-app bg-danger mx-1',
+                                        'title' => 'Send Appraisal Back To Appraisee..',
+                                        'data' => [
+                                             'confirm' => 'Are you sure you want to send appraisal Back to Appraisee?',
+                                            'params'=>[
+                                                'appraisalNo'=> $model->Appraisal_Code,
+                                                'employeeNo' => $model->Employee_No,
+                                            ],
+                                            'method' => 'post'
+                                        ]
+                                    ]);
+
+                        ?>  
+                    </div>   
+
+                    <div class="col-md-3"> 
+                        <?= Html::a('<i class="fas fa-forward"></i>To HR',['to-hr'],[
+                                        'class' => 'btn btn-app bg-success mx-1',
+                                        'title' => 'Send Appraisal To Hr',
+                                        'data' => [
+                                             'confirm' => 'Are you sure you want to send appraisal to HR?',
+                                            'params'=>[
+                                                'appraisalNo'=> $model->Appraisal_Code,
+                                                'employeeNo' => $model->Employee_No,
+                                            ],
+                                            'method' => 'post'
+                                        ]
+                                    ]);
+
+                        ?>  
+                    </div>  
+
+                                    
+                                
+
+        <?php endif; ?>
+
+     <!-- HR aCTIONS -->     
+
+     <?php if($model->Approval_Status == 'Hr_Level'): ?>
+                 
+                 <div class="col-md-3"> 
+                        <?= Html::a('<i class="fas fa-backward"></i> Back To Supervisor',['back-to-supervisor'],[
+                                        'class' => 'btn btn-app bg-success mx-1',
+                                        'title' => 'Send Appraisal Back To Supervisor..',
+                                        'data' => [
+                                             'confirm' => 'Are you sure you want to send appraisal Back to Supervisor?',
+                                            'params'=>[
+                                                'appraisalNo'=> $model->Appraisal_Code,
+                                                'employeeNo' => $model->Employee_No,
+                                            ],
+                                            'method' => 'post'
+                                        ]
+                                    ]);
+
+                        ?>  
+                    </div>   
+                                    
+                                
+
+        <?php endif; ?>
+
+
+     <!-- / hr Actions -->     
             
     </div>
 
@@ -183,6 +256,11 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
             <div class="card">
                 <div class="card-header">
                     <div class="card-title"> Employee Key Result Areas</div>
+                            
+                    <div class="card-tools">
+                        <?= Html::a('<i class="fa fa-plus-square"></i>',['objective/create','Appraisal_Code'=> $model->Appraisal_Code],['class' => 'mx-1 update-objective btn btn-xs btn-outline-warning', 'title' => 'Add Key Result Area']);
+                            ?>
+                    </div>
                 </div>
 
 

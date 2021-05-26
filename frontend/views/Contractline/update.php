@@ -12,7 +12,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
 
-$this->title = 'Update Leave Line.';
+$this->title = 'Update Contract Line.';
 
 //$model->Start_Date = (date('Y',strtotime($model->Start_Date)) == '0001')?$model->Start_Date = date('Y-m-d'):$model->Start_Date;
 //$model->End_Date = (date('Y',strtotime($model->End_Date)) == '0001')?$model->End_Date = date('Y-m-d'):$model->End_Date;
@@ -24,10 +24,7 @@ $this->title = 'Update Leave Line.';
 
     <?= $this->render('_form',[
         'model' => $model,
-        'towns' => $towns,
-        'claimtype' => $claimtype,
-        'functions' => $functions,
-        'budgetCenters' => $budgetCenters
+        
     ]) ?>
 
 </div>

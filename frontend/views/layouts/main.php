@@ -383,7 +383,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                         <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['contract'])?'menu-open':'' ?>">
                             <a href="#" class="nav-link <?= currentCtrl(['contract'])?'active':'' ?>">
-                                <i class="nav-icon fas fa-briefcase " ></i>
+                                <i class="nav-icon fas fa-file-contract " ></i>
                                 <p>
                                     Contract Management
                                     <i class="fas fa-angle-left right"></i>
@@ -394,8 +394,29 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                                 <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>contract" class="nav-link <?= currentaction('contract','index')?'active':'' ?>">
-                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <i class="fa fa-file-contract nav-icon"></i>
                                         <p>Contracts List </p>
+                                    </a>
+                                </li>
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract/consumables-report" class="nav-link <?= currentaction('contract','consumables-report')?'active':'' ?>">
+                                        <i class="fa fa-file-invoice nav-icon"></i>
+                                        <p>Consumables Report </p>
+                                    </a>
+                                </li>
+
+                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract/vendors" class="nav-link <?= currentaction('contract','vendors')?'active':'' ?>">
+                                        <i class="fa fa-users-cog nav-icon"></i>
+                                        <p>Registered Vendors </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract/lpos" class="nav-link <?= currentaction('contract','lpos')?'active':'' ?>">
+                                        <i class="fa fa-users-cog nav-icon"></i>
+                                        <p>LPO Analysis </p>
                                     </a>
                                 </li>
 

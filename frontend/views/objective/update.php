@@ -21,6 +21,7 @@ $model->isNewRecord = true;
 
     <?= $this->render('_form',[
         'model' => $model,
+        'kra' => $kra
     ]) ?>
 
 </div>

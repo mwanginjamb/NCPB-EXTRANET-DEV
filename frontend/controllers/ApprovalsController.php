@@ -105,11 +105,17 @@ class ApprovalsController extends Controller
 
 
 
-                    $Approvelink = ($app->Status == 'Approval_Pending')? Html::a('Approve Request',['approve-request','app'=> $app->Document_No ],['class'=>'btn btn-success btn-xs','data' => [
+                    $Approvelink = ($app->Status == 'Approval_Pending')? Html::a('Approve Request',['approve-request',
+                        'app'=> $app->Document_No,
+                        'Document_Type' => $app->Document_Type
+                         ],
+                        ['class'=>'btn btn-success btn-xs','data' => [
                         'confirm' => 'Are you sure you want to Approve this request?',
                         'method' => 'post',
                     ]]):'';
-                    $Rejectlink = ($app->Status == 'Approval_Pending')? Html::a('Reject Request',['reject-request' ],['class'=>'btn btn-warning reject btn-xs',
+                    $Rejectlink = ($app->Status == 'Approval_Pending')? Html::a('Reject Request',['reject-request',
+                        'Document_Type' => $app->Document_Type
+                     ],['class'=>'btn btn-warning reject btn-xs',
                         'rel' => $app->Document_No,
                         ]): "";
 
@@ -163,11 +169,71 @@ class ApprovalsController extends Controller
 
 
     public function actionApproveRequest($app){
+
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+
+        // Check if Document  Approval is setup in approval codeunit
+
+        if(!array_key_exists(Yii::$app->request->get('Document_Type'), Yii::$app->params['Documents']))
+        {
+            Yii::$app->session->setFlash('error', 'Approval Workflow for this document is not supported in Extranet.');
+
+            return $this->redirect(['index']);
+        }
+
+        $data = [
+            'documentType' => Yii::$app->params['Documents'][Yii::$app->request->get('Document_Type')],
+            'documentNo' =>  Yii::$app->request->get('app'),
+        ];
+
+
+        $result = Yii::$app->navhelper->codeunit($service,$data,'ApproveDocument');
+
+        if(!is_string($result))
+        {
+            Yii::$app->session->setFlash('success', 'Document Approved Successfully.');
+
+            return $this->redirect(['index']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error: '.$result);
+            return $this->redirect(['index']);
+
+        }
        
     }
 
     public function actionRejectRequest(){
-        
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+
+        // Check if Document  Approval is setup in approval codeunit
+
+        if(!array_key_exists(Yii::$app->request->get('Document_Type'), Yii::$app->params['Documents']))
+        {
+            Yii::$app->session->setFlash('error', 'Approval Workflow for this document is not supported in Extranet.');
+
+            return $this->redirect(['index']);
+        }
+
+        $data = [
+            'documentType' => Yii::$app->params['Documents'][Yii::$app->request->get('Document_Type')],
+            'documentNo' =>  Yii::$app->request->get('app'),
+        ];
+
+
+        $result = Yii::$app->navhelper->codeunit($service,$data,'RejectDocument');
+
+        if(!is_string($result))
+        {
+            Yii::$app->session->setFlash('success', 'Document Rejected Successfully.');
+
+            return $this->redirect(['index']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error: '.$result);
+            return $this->redirect(['index']);
+
+        }
     }
 
     public function getName($userID){

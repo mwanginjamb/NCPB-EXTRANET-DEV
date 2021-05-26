@@ -10,11 +10,23 @@
 
 /* @var $this yii\web\View */
 
-$this->title = Yii::$app->params['generalTitle'].' Performance Appraisal';
+$this->title = Yii::$app->params['generalTitle'].' Supervisor Appraisal List';
 $this->params['breadcrumbs'][] = ['label' => 'Appraisal List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = '';
 $url = \yii\helpers\Url::home(true);
 ?>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-info mx-1 py-2', 'data' => [
+            'confirm' => 'Are you sure you want to create a new Appraisal?',
+            'method' => 'get',
+        ],]) ?>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <?php
@@ -34,34 +46,11 @@ if(Yii::$app->session->hasFlash('success')){
     print '</div>';
 }
 ?>
-
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-info mx-1 py-2', 'data' => [
-            'confirm' => 'Are you sure you want to create a new Appraisal?',
-            'method' => 'get',
-        ],]) ?>
-            </div>
-        </div>
-    </div>
-</div> 
-
-
-
 <div class="row">
     <div class="col-md-12">
         <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Performance Appraisal List</h3>
-
-
-
-
-
-
+                <h3 class="card-title">Super Appraisal List</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -87,7 +76,7 @@ $script = <<<JS
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'appraisal/list',
+            ajax: url+'appraisal/supervisorlist',
             paging: true,
             columns: [
                 { title: 'No' ,data: 'No'},

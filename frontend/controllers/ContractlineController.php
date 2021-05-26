@@ -74,37 +74,35 @@ class ContractlineController extends Controller
         $service = Yii::$app->params['ServiceName']['ContractLines'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Safari']) && !Yii::$app->request->post()){
+        if(!Yii::$app->request->post()){
 
-
+        
+            $model->Code = Yii::$app->request->get('Code');
             $request = Yii::$app->navhelper->postData($service,$model);
-            //Yii::$app->recruitment->printrr($request);
+          
             if(is_object($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
             }else{
-                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
-                return $this->render('create',[
-                    'model' => $model,
-                    'safariRequests' => $this->safariRequests(),
-                    'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters(),
-                    'fleet' => $this->getApprovedFleet()
-                ]);
+                // Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                
+                return '<div class="alert alert-danger">Error : '.$request.'</div>' ;
+                
             }
         }
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safari'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Contractline'],$model) ){
 
 
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);
+            // $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);
+            $refresh = Yii::$app->navhelper->readByKey($service, $model->Key);
             $model->Key = $refresh->Key;
             
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Claim saved Successfully.' );
+                Yii::$app->session->setFlash('success','Record saved Successfully.' );
                 return $this->redirect(['view','No' => $result->Safari_No]);
 
             }else{
@@ -117,13 +115,17 @@ class ContractlineController extends Controller
 
 
         //Yii::$app->recruitment->printrr($model);
+          if(Yii::$app->request->isAjax){
+            return $this->renderAjax('create', [
+                'model' => $model,
+                
+                
+            ]);
+        }
 
         return $this->render('create',[
             'model' => $model,
-            'safariRequests' => $this->safariRequests(),
-            'functions' => $this->getFunctioncodes(),
-            'budgetCenters' => $this->getBudgetcenters(),
-            'fleet' => $this->getApprovedFleet()
+            
            
         ]);
     }
@@ -132,7 +134,7 @@ class ContractlineController extends Controller
 
 
     public function actionUpdate($Key){
-        $model = new Safari();
+        $model = new Contractline();
         $service = Yii::$app->params['ServiceName']['ContractLines'];
         $model->isNewRecord = false;
 
@@ -144,22 +146,21 @@ class ContractlineController extends Controller
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result,$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
-            Yii::$app->sessiom->setFlash('error', $result);
+            Yii::$app->session->setFlash('error', $result);
              return $this->render('update',[
             'model' => $model,
-            'safariRequests' => $this->safariRequests(),
-            'functions' => $this->getFunctioncodes(),
-            'budgetCenters' => $this->getBudgetcenters(),
-            'fleet' => $this->getApprovedFleet()
+            
 
         ]);
         }
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Safari'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Contractline'],$model) ){
             
             /*Read the card again to refresh Key in case it changed*/
-            $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);;
+            // $refresh = Yii::$app->navhelper->findOne($service, 'Safari_No', $model->Safari_No);
+
+            $refresh = Yii::$app->navhelper->readByKey($service, $model->Key);
             $model->Key = $refresh->Key;
 
             $result = Yii::$app->navhelper->updateData($service,$model);
@@ -174,10 +175,7 @@ class ContractlineController extends Controller
                 Yii::$app->session->setFlash('success','Error Updating Record'.$result );
                 return $this->render('update',[
                     'model' => $model,
-                    'safariRequests' => $this->safariRequests(),
-                     'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters(),
-                    'fleet' => $this->getApprovedFleet()
+                   
                 ]);
 
             }
@@ -189,20 +187,14 @@ class ContractlineController extends Controller
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
-                'safariRequests' => $this->safariRequests(),
-                'functions' => $this->getFunctioncodes(),
-                'budgetCenters' => $this->getBudgetcenters(),
-                'fleet' => $this->getApprovedFleet()
+                
                 
             ]);
         }
 
         return $this->render('update',[
                 'model' => $model,
-                'safariRequests' => $this->safariRequests(),
-                'functions' => $this->getFunctioncodes(),
-                'budgetCenters' => $this->getBudgetcenters(),
-                'fleet' => $this->getApprovedFleet()
+                
 
         ]);
     }
@@ -681,15 +673,11 @@ class ContractlineController extends Controller
 
 
     public function actionSetfield($field){
-        $service = 'MileageCard';
-        $value = Yii::$app->request->post($field);
-        $filterValue =Yii::$app->request->post('No'); 
-        $filterKey = 'Claim_No';
-
-        $result = Yii::$app->navhelper->Commit($service,$field,$value,$filterKey,$filterValue);
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
+        $service = 'ContractLines';     
+        $field = [ $field => \Yii::$app->request->post($field)];
+        $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
+        $result = Yii::$app->navhelper->Commit($service,$field,$Key);
         return $result;
-      
         
     }
 
