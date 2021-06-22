@@ -191,6 +191,11 @@ return [
 
         'wsPortalWorkflow' => 'wsPortalWorkflow', //(Code Unit)80005 ---Philip
 
+        /**Procurement**/
+
+        'SupplierApplicationList' => 'SupplierApplicationList', //66050
+        'SupplierCard' => 'SupplierCard', //66051
+
 
        
     ],
