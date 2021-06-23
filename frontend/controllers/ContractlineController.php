@@ -165,18 +165,19 @@ class ContractlineController extends Controller
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Record Updated Successfully.' );
+               // Yii::$app->session->setFlash('success','Record Updated Successfully.' );
 
-                return $this->redirect(['view','No' => $result->Safari_No]);
+                return ['note' => '<div class="alert alert-success">Record Updated Successfully. </div>' ];
+
+                //return $this->redirect(['view','No' => $result->Safari_No]);
 
             }else{
-                Yii::$app->session->setFlash('success','Error Updating Record'.$result );
-                return $this->render('update',[
-                    'model' => $model,
-                   
-                ]);
+               // Yii::$app->session->setFlash('success','Error Updating Record'.$result );
+                return ['note' => '<div class="alert alert-danger">Error Updating Record: '.$result.'</div>'];
 
             }
 

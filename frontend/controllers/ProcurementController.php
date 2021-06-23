@@ -1129,4 +1129,18 @@ class ProcurementController extends Controller
 
 
 
+    /*tESTING LAYOUT*/
+
+    public function actionRegister()
+    {
+        $this->layout = 'vendor';
+        $model = new \frontend\models\SignupForm();
+
+        return $this->render('register',[
+            'model' => $model,
+        ]);
+    }
+
+
+
 }

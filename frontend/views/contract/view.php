@@ -207,16 +207,18 @@ $this->params['breadcrumbs'][] = ['label' => 'Contract Card', 'url' => ['view','
                              <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <td><b>Deliverable_Code</b></td>
+                                <td><b>Deliverable Code</b></td>
                                 <td><b>Description</b></td>
                                 <td><b>Start Date</b></td>
-                                <td><b>Period</b></td>
+                                
                                 <td><b>End Date</b></td>
+                                <td><b>Period</b></td>
                                 <td><b>Contractor</b></td>
                                 <td><b>Vendor No</b></td>
                                 <td><b>Vendor Name</b></td>
 
                                 <td><b>Amount</b></td>
+                                <td><b>Invoiced</b></td>
                                 <td><b>Action</b></td>
 
 
@@ -228,6 +230,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Contract Card', 'url' => ['view','
                             // print '<pre>'; print_r($model->getObjectives()); exit;
 
                             foreach($model->lines as $obj):
+                                $checked = ($obj->Invoiced)?true:false;
                                 $updateLink = Html::a('<i class="fa fa-edit"></i>',['contractline/update','Key'=> $obj->Key],['class' => 'update-objective btn btn-outline-info btn-xs']);
                                 $deleteLink = Html::a('<i class="fa fa-trash"></i>',['contractlineline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
                                 ?>
@@ -236,12 +239,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Contract Card', 'url' => ['view','
                                     <td><?= !empty($obj->G_L_Account)?$obj->G_L_Account:'Not Set' ?></td>
                                     <td><?= !empty($obj->Description)?$obj->Description:'Not Set' ?></td>
                                     <td><?= !empty($obj->Start_Date)?$obj->Start_Date:'Not Set' ?></td>
+                                    
+                                    <td><?= !empty($obj->End_Date)?$obj->End_Date:'Not Set' ?></td>
                                     <td><?= !empty($obj->Period)?$obj->Period:'Not Set' ?></td>
                                     <td><?= !empty($obj->Contractor)?$obj->Contractor:'Not Set' ?></td>
                                     <td><?= !empty($obj->Vendor_No)?$obj->Vendor_No:'Not Set' ?></td>
                                     <td><?= !empty($obj->Vendor_Name)?$obj->Vendor_Name:'Not Set' ?></td>
                                     <td><?= !empty($obj->Amount)?$obj->Amount:'Not Set' ?></td>
-                                    <td><?= !empty($obj->Invoiced)?Html::checkbox($obj->Invoiced):'Not Set' ?></td>
+                                    <td><?= Html::checkbox('Invoiced',$checked) ?></td>
                                     
 
                                     <td><?= $updateLink.'|'.$deleteLink ?></td>

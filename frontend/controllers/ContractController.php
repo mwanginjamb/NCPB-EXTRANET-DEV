@@ -63,6 +63,8 @@ class ContractController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
+                    'delete' => ['post'],
+                    
                 ],
             ],
             'contentNegotiator' =>[
@@ -198,12 +200,12 @@ class ContractController extends Controller
 
             if(!is_string($result)){
 
-                Yii::$app->session->setFlash('success','Leave Header Updated Successfully.' );
+                Yii::$app->session->setFlash('success','Document Updated Successfully.' );
 
                 return $this->redirect(['view','No' => $result->Key]);
 
             }else{
-                Yii::$app->session->setFlash('error','Error Updating Leave Header '.$result );
+                Yii::$app->session->setFlash('error','Error Updating Document '.$result );
                 return $this->render('update',[
                     'model' => $model,
                     'tenderTypes' => $this->getTenderTypes(),
@@ -218,7 +220,7 @@ class ContractController extends Controller
 
         }
 
-        ($model->Start_Date == '0001-01-01')?$model->Start_Date = date('Y-m-d'): $model->Start_Date;
+         ($model->Start_Date == '0001-01-01')?$model->Start_Date = date('Y-m-d'): $model->Start_Date;
          ($model->End_Date == '0001-01-01')?$model->End_Date = date('Y-m-d'): $model->End_Date;
          ($model->Performance_Bond_Exp_Date == '0001-01-01')?$model->Performance_Bond_Exp_Date = date('Y-m-d'): $model->Performance_Bond_Exp_Date;
          ($model->Notify_Date == '0001-01-01')?$model->Notify_Date = date('Y-m-d'): $model->Notify_Date;
@@ -291,9 +293,35 @@ class ContractController extends Controller
         $result = [];
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Code ],['class'=>'btn btn-outline-primary btn-xs']);
-            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
-            $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view'],[
+                'class'=>'btn btn-outline-primary btn-xs',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'No'=> $item->Key
+                    ]
+                ]
+
+            ]);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update' ],[
+                'class'=>'btn btn-outline-warning btn-xs mx-1',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'Key'=> $item->Key
+                    ]
+                ]
+            ]);
+            $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete'],[
+                'class'=>'btn btn-outline-danger delete btn-xs mx-1',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'POST',
+                    'params' => [
+                        'Key'=> $item->Key
+                    ]
+                ]
+            ]);
            
 
             $result['data'][] = [

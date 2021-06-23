@@ -42,7 +42,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                         </div>
 
                         <div class="col-md-6">
-                                <?= $form->field($model, 'Vendor_No')->dropDownList(['readonly' => true]); ?>
+                                <?= $form->field($model, 'Vendor_No')->textInput(['readonly' => true,'disabled' => true]); ?>
                                 <?= $form->field($model, 'Vendor_Name')->textInput(['readonly'=> true,'disabled' => true]) ?>
                                 
                                 <?= $form->field($model, 'Amount')->textInput(['type' => 'number']) ?>

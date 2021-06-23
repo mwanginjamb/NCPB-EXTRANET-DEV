@@ -484,6 +484,52 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     </a>
                                 </li>
 
+
+
+
+
+                                <!--Mid Year Appraisals-->
+                                <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentaction('appraisal',['my-appraisee','my-supervisor','my-hr'])?'menu-open':'' ?>">
+                                    <a href="#" class="nav-link <?= Yii::$app->recruitment->currentaction('appraisal',['my-appraisee','my-supervisor','my-hr'])?'active':'' ?>">
+                                        <i class="nav-icon fa fa-balance-scale"></i>
+                                        <p>
+                                            Mid Year Appraisals
+                                            <i class="fas fa-angle-left right"></i>
+                                            <!--<span class="badge badge-info right">6</span>-->
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview"><!--Mid Year Appraisals Menu-->
+
+                                        <li class="nav-item">
+                                            <a href="<?= $absoluteUrl ?>appraisal/my-appraisee" class="nav-link <?= Yii::$app->recruitment->currentaction('appraisal','my-appraisee')?'active':'' ?>">
+                                                <i class="fa fa-check-square nav-icon"></i>
+                                                <p>M-Y Appraisal (Appraisee) </p>
+                                            </a>
+                                        </li>
+
+                                       
+
+                                            <li class="nav-item">
+                                                <a href="<?= $absoluteUrl ?>appraisal/my-supervisor" class="nav-link <?= Yii::$app->recruitment->currentaction('appraisal','my-supervisor')?'active':'' ?>">
+                                                    <i class="fa fa-check-square nav-icon"></i>
+                                                    <p>M-Y Appraisal (Supervisor) </p>
+                                                </a>
+                                            </li>
+
+                                        
+
+                                        <li class="nav-item">
+                                            <a href="<?= $absoluteUrl ?>appraisal/my-hr" class="nav-link <?= Yii::$app->recruitment->currentaction('appraisal','my-hr')?'active':'' ?>">
+                                                <i class="fa fa-check-square nav-icon"></i>
+                                                <p>M-Y Appraisal (HR) </p>
+                                            </a>
+                                        </li>
+
+                                        
+
+                                    </ul><!--End Mid Year Appraisals menu list-->
+
                                 <!-- Supervisor List -->
 
                                  <li class="nav-item">
