@@ -47,6 +47,7 @@ class Vendor extends Model
     public $Preferred_Bank_Account_Code;
     public $Location_Code;
     public $Shipment_Method_Code;
+    public $isNewRecord;
 
     public function rules()
     {

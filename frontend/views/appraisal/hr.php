@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal List', 'url' => ['index'
 $this->params['breadcrumbs'][] = '';
 $url = \yii\helpers\Url::home(true);
 ?>
-<div class="row">
+<!--<div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -26,7 +26,7 @@ $url = \yii\helpers\Url::home(true);
             </div>
         </div>
     </div>
-</div>
+</div>-->
 
 
 <?php
@@ -48,7 +48,7 @@ if(Yii::$app->session->hasFlash('success')){
 ?>
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-info">
+        <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">HR Appraisal List</h3>
             </div>

@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\Hruser;
+use common\models\Vuser;
 use common\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
@@ -34,6 +35,7 @@ class VerifyEmailForm extends Model
         }
         $this->_user = User::findByVerificationToken($token);//find an erp user - default identity
         $this->_user = Hruser::findByVerificationToken($token);//Find a hr user
+        $this->_user = Vuser::findByVerificationToken($token);//Find a supplier user
 
         if (!$this->_user) {
             throw new InvalidArgumentException('Wrong verify email token.');
@@ -46,7 +48,7 @@ class VerifyEmailForm extends Model
      *
      * @return User|null the saved model or null if saving fails
      */
-    public function verifyEmail($HRUser = false)
+    public function verifyEmail($HRUser = false,$VUSER=false)
     {
         $user = $this->_user;
 
@@ -55,6 +57,12 @@ class VerifyEmailForm extends Model
             $user->status = Hruser::STATUS_ACTIVE;
             return $user->save(false) ? $user : null;
         }
+
+        if($VUSER){
+            $user->status = Vuser::STATUS_ACTIVE;
+            return $user->save(false) ? $user : null;
+        }
+
         $user->status = User::STATUS_ACTIVE;
         return $user->save(false) ? $user : null;
     }

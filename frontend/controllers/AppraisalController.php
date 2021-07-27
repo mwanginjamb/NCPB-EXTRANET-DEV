@@ -406,13 +406,13 @@ class AppraisalController extends Controller
     //Mid Year Appraisee List
 
     public function actionMyappraiseelist(){
-
+         //exit(Yii::$app->user->identity->{'Employee No_'});
         $service = Yii::$app->params['ServiceName']['MyAppraisee'];
         $filter = [
             'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
         ];
         
-        $results = \Yii::$app->navhelper->getData($service,$filter);
+        $results = \Yii::$app->navhelper->getData($service);
         // Yii::$app->recruitment->printrr($results);
         $result = [];
         foreach($results as $item){

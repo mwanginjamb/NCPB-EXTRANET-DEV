@@ -48,15 +48,9 @@ if(Yii::$app->session->hasFlash('success')){
 ?>
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-info">
+        <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Extra Supervisor Appraisal List</h3>
-
-
-
-
-
-
             </div>
             <div class="card-body">
                 <div class="table-responsive">

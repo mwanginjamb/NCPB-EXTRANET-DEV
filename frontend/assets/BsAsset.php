@@ -20,7 +20,7 @@ class BsAsset extends AssetBundle
     public $css = [
         'plugins/fontawesome-free/css/all.min.css',
         'https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css',
-        '//cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css',
+       // '//cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css',
         
         'css/steps.css',
         'css/validation.css'
@@ -28,7 +28,7 @@ class BsAsset extends AssetBundle
     ];
     public $js = [
 
-        '//code.jquery.com/jquery-3.5.1.slim.min.js',
+        //'//code.jquery.com/jquery-3.5.1.slim.min.js',
         '//cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js'
 
 

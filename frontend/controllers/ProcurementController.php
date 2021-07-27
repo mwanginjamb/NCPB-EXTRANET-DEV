@@ -23,6 +23,9 @@ use yii\web\Response;
 use kartik\mpdf\Pdf;
 
 use frontend\models\Vendor;
+use frontend\models\Vuser;
+use frontend\models\VerifyEmailForm;
+use common\models\VendorLoginForm;
 
 class ProcurementController extends Controller
 {
@@ -31,19 +34,27 @@ class ProcurementController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','signup','index','list','create','update','delete','view','supervisorlist','hrlist','extrasupervisorlist','closedlist'],
+                'only' => ['logout','signup','register','index','list','create','update','delete','view','supervisorlist','hrlist','extrasupervisorlist','closedlist'],
                 'rules' => [
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup','register'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index','list','create','update','delete','view','supervisorlist','hrlist','extrasupervisorlist','closedlist'],
+                        'actions' => ['logout','index','list','create','update','delete','view'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+
                 ],
+                'denyCallback' => function($rule,$action) {
+                    if (Yii::$app->user->isGuest) {
+                        return $action->controller->redirect('login');
+                    }else{
+                        return $action->controller->redirect('index');
+                    }
+                }
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
@@ -81,109 +92,52 @@ class ProcurementController extends Controller
 
     }
 
-    public function actionClosedAppraisals(){
-
-        return $this->render('closed');
-
-    }
-
-    public function actionExtraAppraisals(){
-
-        return $this->render('extra');
-
-    }
-
-    public function actionHrAppraisals(){
-
-        return $this->render('hr');
-
-    }
-
-    public function actionSupervisorAppraisals(){
-
-        return $this->render('super');
-
-    }
-
-    /*Mid Year Lists*/
-
-    public function actionMyAppraisee(){
-
-        return $this->render('myappraisee');
-
-    }
-
-
-    public function actionMySupervisor(){
-
-        return $this->render('mysuper');
-
-    }
-
-    public function actionMyHr(){
-
-        return $this->render('myhr');
-
-    }
-
-    /*End Mid Year List*/
-
-    /*Goal setting Lists*/
-
-
-    public function actionGsAppraisee(){
-
-        return $this->render('gsappraisee');
-
-    }
-
-
-    public function actionGsSupervisor(){
-
-        return $this->render('gssuper');
-
-    }
-
-    public function actionGsHr(){
-
-        return $this->render('gshr');
-
-    }
-
-
-
-    /*End Goal Setting Lists*/
-
-
-
-
-
-
-
 
 
     public function actionCreate(){
 
+       $model = new Vendor();
+       $service = Yii::$app->params['ServiceName']['SupplierCard'];
+
        
-        $service = Yii::$app->params['ServiceName']['AppraisalCard'];
 
-        $data = ['Employee_No' => Yii::$app->user->identity->{'Employee No_'}];
+        $result =  Yii::$app->navhelper->postData($service,[]);
 
-        $result =  Yii::$app->navhelper->postData($service,$data);
+        if(is_object($result) )
+            {
+                Yii::$app->navhelper->loadmodel($result,$model);
+            }
 
-        if(is_object($result))
-        {
-            return $this->redirect(['view','No' => $result->Appraisal_Code]);
-        }else if(is_string($result)){
-            Yii::$app->setFlash('Error', $result);
-             return $this->redirect(['index']);
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Vendor'],$model) ){
+
+
+            /*Read the card again to refresh Key in case it changed*/
+            $refresh = Yii::$app->navhelper->findOne($service, 'No', $model->No);;
+            $model->Key = $refresh->Key;
+            
+            $result = Yii::$app->navhelper->updateData($service,$model);
+            if(!is_string($result)){
+
+                //Update Vuser Model
+
+                $vuser = Vuser::findOne(['id' => Yii::$app->session->get('VUSER')->id]);
+                $vuser->VendorId = $result->No;
+                $vuser->save();
+
+                Yii::$app->session->setFlash('success','Claim saved Successfully.' );
+                return $this->redirect(['view','Key' => $result->Key]);
+
+            }else{
+                Yii::$app->session->setFlash('error','Error  '.$result );
+                return $this->redirect(['index']);
+
+            }
+
         }
 
         return $this->render('create',[
             'model' => $model,
-            'safariRequests' => $this->safariRequests(),
-             'functions' => $this->getFunctioncodes(),
-             'budgetCenters' => $this->getBudgetcenters()
+            
            
         ]);
     }
@@ -205,7 +159,7 @@ class ProcurementController extends Controller
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
-            Yii::$app->sessiom->setFlash('error', $result);
+            Yii::$app->session->setFlash('error', $result);
              return $this->render('update',[
             'model' => $model,
             'safariRequests' => $this->safariRequests(),
@@ -282,9 +236,17 @@ class ProcurementController extends Controller
         // Yii::$app->recruitment->printrr(Yii::$app->user->identity->{'User ID'});
 		$model = new Vendor();
         $service = Yii::$app->params['ServiceName']['SupplierCard'];
+        $DocumentService = Yii::$app->params['ServiceName']['SupplierAttachments'];
 
         // $result = Yii::$app->navhelper->findOne($service, 'Appraisal_Code', $No);
         $result = Yii::$app->navhelper->readByKey($service, $Key);
+
+        // Get All Vendor Docs
+
+        $filter = [
+            'Supplier_No' => $result->No
+        ];
+        $Documents = Yii::$app->navhelper->getData($DocumentService, $filter);
 
 
         //load nav result to model
@@ -294,6 +256,7 @@ class ProcurementController extends Controller
 
         return $this->render('view',[
             'model' => $model,
+            'documents' => $Documents
         ]);
     }
 
@@ -616,241 +579,17 @@ class ProcurementController extends Controller
     }
 
 
-    // Goal Setting HR List
-
-    public function actionGshrlist(){
-
-        $service = Yii::$app->params['ServiceName']['GoalSettingHr'];
-        $filter = [
-            'Hr_User_ID' => Yii::$app->user->identity->{'User ID'},
-        ];
-        
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-        // Yii::$app->recruitment->printrr($results);
-        $result = [];
-        foreach($results as $item){
-
-            if(empty($item->Appraisal_Code))
-            {
-                continue;
-            }
+   
 
 
-            $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
-            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
-            
+    
+	
 
-            $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Appraisal_Code,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Department' => !empty($item->Department)?$item->Department:'',
-                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
-                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
-                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
-                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
-                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
-                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
-                'Actions' => $ViewLink ,
-
-            ];
-        }
-
-        return $result;
-    }
-
-
-    // Mid Year Hr List
-
-    public function actionMyhrlist(){
-
-        $service = Yii::$app->params['ServiceName']['MyHr'];
-        $filter = [
-            'Hr_User_ID' => Yii::$app->user->identity->{'User ID'},
-        ];
-        
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-        // Yii::$app->recruitment->printrr($results);
-        $result = [];
-        foreach($results as $item){
-
-            if(empty($item->Appraisal_Code))
-            {
-                continue;
-            }
-
-
-            $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
-            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
-            
-
-            $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Appraisal_Code,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Department' => !empty($item->Department)?$item->Department:'',
-                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
-                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
-                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
-                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
-                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
-                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
-                'Actions' => $ViewLink ,
-
-            ];
-        }
-
-        return $result;
-    }
 	
 	
-	public function actionExtrasupervisorlist(){
 
-        $service = Yii::$app->params['ServiceName']['AppraisalListExtraSupervisor'];
-        $filter = [
-            'Action_ID' => Yii::$app->user->identity->{'User ID'},
-        ];
-        
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-        // Yii::$app->recruitment->printrr($results);
-        $result = [];
-        foreach($results as $item){
+   
 
-            if(empty($item->Appraisal_Code))
-            {
-                continue;
-            }
-
-
-            $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
-            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
-            
-
-            $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Appraisal_Code,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Department' => !empty($item->Department)?$item->Department:'',
-                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
-                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
-                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
-                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
-                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
-                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
-                'Actions' => $ViewLink ,
-
-            ];
-        }
-
-        return $result;
-    }
-	
-	
-	public function actionClosedlist(){
-
-        $service = Yii::$app->params['ServiceName']['AppraisalListClosed'];
-        $filter = [
-            //'Employee_No' => Yii::$app->user->identity->{'Employee No_'},
-        ];
-        
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-        
-        $result = [];
-        foreach($results as $item){
-
-            if(empty($item->Appraisal_Code))
-            {
-                continue;
-            }
-
-
-            $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Appraisal_Code ],['title' => 'View Appriasal Card..','class'=>'btn btn-outline-primary btn-xs']);
-            $updateLink = Html::a('<i class="fas fa-pen"></i>',['update','No'=> $item->Appraisal_Code ],['title' => 'Update Appraisal Card.','class'=>'btn btn-outline-primary btn-xs']);
-            
-
-            $result['data'][] = [
-                'Key' => $item->Key,
-                'No' => $item->Appraisal_Code,
-                'Employee_No' => !empty($item->Employee_No)?$item->Employee_No:'',
-                'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
-                'Department' => !empty($item->Department)?$item->Department:'',
-                'Appraisal_Start_Date' => !empty($Appraisal_Start_Date)?$Appraisal_Start_Date:'',
-                'Appraisal_End_Date' => !empty($item->Appraisal_End_Date)?$item->Appraisal_End_Date:'',
-                'Remaining_Days' => !empty($item->Remaining_Days)?$item->Remaining_Days:'',
-                'Total_KPI_x0027_s' => !empty($item->Total_KPI_x0027_s)?$item->Total_KPI_x0027_s:'',
-                'Created_By' => !empty($item->Created_By)?$item->Created_By:'',
-                'Created_On' => !empty($item->Created_On)?$item->Created_On:'',
-                'Actions' => $ViewLink ,
-
-            ];
-        }
-
-        return $result;
-    }
-
-
-    public function getCovertypes(){
-        $service = Yii::$app->params['ServiceName']['MedicalCoverTypes'];
-
-        $results = \Yii::$app->navhelper->getData($service);
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                if(!empty($res->Code) && !empty($res->Description)){
-                    $result[$i] =[
-                        'Code' => $res->Code,
-                        'Description' => $res->Description
-                    ];
-                    $i++;
-                }
-
-            }
-        }
-        return ArrayHelper::map($result,'Code','Description');
-    }
-
-    /* My Imprests*/
-
-    public function getmyimprests(){
-        $service = Yii::$app->params['ServiceName']['PostedImprestRequest'];
-        $filter = [
-            'Employee_No' => Yii::$app->user->identity->Employee[0]->No,
-            'Surrendered' => false,
-        ];
-
-        $results = \Yii::$app->navhelper->getData($service,$filter);
-
-        $result = [];
-        $i = 0;
-        if(is_array($results)){
-            foreach($results as $res){
-                $result[$i] =[
-                    'No' => $res->No,
-                    'detail' => $res->No.' - '.$res->Imprest_Amount
-                ];
-                $i++;
-            }
-        }
-        // Yii::$app->recruitment->printrr(ArrayHelper::map($result,'No','detail'));
-        return ArrayHelper::map($result,'No','detail');
-    }
-
-    /*Get Staff Loans */
-
-    public function getLoans(){
-        $service = Yii::$app->params['ServiceName']['StaffLoans'];
-
-        $results = \Yii::$app->navhelper->getData($service);
-        return ArrayHelper::map($results,'Code','Loan_Name');
-    }
 
     /* Get My Posted Imprest Receipts */
 
@@ -1131,15 +870,188 @@ class ProcurementController extends Controller
 
     /*tESTING LAYOUT*/
 
+
+     public function actionLogin()
+    {
+        $this->layout = 'vendorLogin';
+
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new VendorLoginForm();
+
+
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+          
+
+            return $this->redirect(['procurement/index']);
+
+        } else {
+            $model->password = '';
+
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Logs out the current user.
+     *
+     * @return mixed
+     */
+    public function actionLogout()
+    {
+
+        if(Yii::$app->session->has('IdentityPassword')){
+            Yii::$app->session->remove('IdentityPassword');
+        }
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
+
+
+
     public function actionRegister()
     {
         $this->layout = 'vendor';
-        $model = new \frontend\models\SignupForm();
+        $model = new \common\models\VendorSignupForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+            return $this->redirect(['procurement/create']);
+        }
 
         return $this->render('register',[
             'model' => $model,
         ]);
     }
+
+
+    /**
+     * Requests password reset.
+     *
+     * @return mixed
+     */
+    public function actionRequestPasswordReset()
+    {
+         $this->layout = 'vendor';
+        $model = new PasswordResetRequestForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+
+                return $this->goHome();
+            } else {
+                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+            }
+        }
+
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Resets password.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
+    public function actionResetPassword($token)
+    {
+        try {
+            $model = new ResetPasswordForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->session->setFlash('success', 'New password saved.');
+
+            return $this->goHome();
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Verify email address
+     *
+     * @param string $token
+     * @throws BadRequestHttpException
+     * @return yii\web\Response
+     */
+    public function actionVerifyEmail($token)
+    {
+        try {
+            $model = new VerifyEmailForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+
+        if ($user = $model->verifyEmail()) {
+            if (Yii::$app->user->login($user)) {
+                Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+                return $this->goHome();
+            }
+        }
+
+        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        return $this->goHome();
+    }
+
+    /**
+     * Resend verification email
+     *
+     * @return mixed
+     */
+    public function actionResendVerificationEmail()
+    {
+         $this->layout = 'vendor';
+        $model = new ResendVerificationEmailForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                return $this->goHome();
+            }
+            Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
+        }
+
+        return $this->render('resendVerificationEmail', [
+            'model' => $model
+        ]);
+    }
+
+    public function goHome()
+    {
+         return $this->redirect(['procurement/login']);
+    }
+
+     public function welcome()
+    {
+         return $this->redirect(['procurement/create']);
+    }
+
+
+    public function actionRead(){
+       
+        $path =  Yii::$app->request->post('path'); // Normalize the damn path
+        $resource = base64_encode(file_get_contents($path));
+        return $this->render('read',[
+            'content' => $resource
+        ]);
+
+    }
+
 
 
 

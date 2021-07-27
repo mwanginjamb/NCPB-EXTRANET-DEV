@@ -77,14 +77,14 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 <section class="signup bg-light my-5 p-5 text-center">
     <div class="container ">
 
-       
+        <p class="display-4 py-3">Fill out below form to login.</p>
          <div class="row">
             <div class="col-md-5 d-none d-md-block">
-                <h1 class="display-4"> Welcome! </h1>
-                <img src="<?= $webroot ?>/svgs/welcome.svg" class="img-fluid" />
+                
+                <img src="<?= $webroot ?>/svgs/login.svg" class="img-fluid" />
             </div>
              <div class="col-md-7 col-sm-12">
-                <h3 class="display-4">Signup as a vendor Today.</h3>
+               
                 <div class="card text-center card-form">
                     <div class="card-body">
                          <?= $content?>

@@ -262,6 +262,54 @@ if(Yii::$app->session->hasFlash('success')){
             </div>
         </div>
 
+        <div class="card card-success collapsed-card collapsed-card">
+            <div class="card-header">
+                <h3 class="card-title">Supplier Documents</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                       
+                <?php if(is_array($documents)): $counter = 0; ?>
+
+                    <table class="table table-bordered table-hover">
+                        <?php
+                            foreach($documents as $doc)
+                            {
+                                $counter++;
+                               echo '<tr>
+
+                                        <td>'.$counter.'</td>
+                                        <td>'.$doc->Name.'</td>
+                                        <td>'.Html::a('<i class="fa fa-eye mx-1"></i> View',['read'],[
+                                            'class' => 'btn btn-outline-success',
+                                            'data' => [
+                                                    'params' => [
+                                                        'path' => $doc->File_path
+                                                    ],
+                                                    'method' => 'post'
+                                                ]
+                                            ]).'</td>
+                                    </tr>';
+                            }
+                        ?>
+                    </table>
+
+                <?php else: ?> 
+                    
+                    
+                <?php endif; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <?php ActiveForm::end(); ?>
     </div>
 </div>

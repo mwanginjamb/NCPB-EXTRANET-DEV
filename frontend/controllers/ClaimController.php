@@ -74,7 +74,7 @@ class ClaimController extends Controller
         $service = Yii::$app->params['ServiceName']['MileageCard'];
 
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Leave']) && !Yii::$app->request->post()){
+        if(!isset(Yii::$app->request->post()['Claim']) && !Yii::$app->request->post()){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);

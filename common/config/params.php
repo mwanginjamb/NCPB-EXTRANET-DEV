@@ -1,10 +1,10 @@
 <?php
 return [
-    'adminEmail' => 'admin@example.com',
-    'supportEmail' => 'customer@softeboard.com',
+    'adminEmail' => 'rck.support@softeboard.com',
+    'supportEmail' => 'rck.support@softeboard.com',
     'senderEmail' => 'customer@softeboard.com',
     'senderName' => 'NCPB Mailer',
-    'user.passwordResetTokenExpire' => 3600,
+    'user.passwordResetTokenExpire' => 36000,
     'powered' => 'Iansoft Technologies Ltd.',
     'NavisionUsername'=>'Administrator',
     'NavisionPassword'=>'Ncpb&admin&',
@@ -195,6 +195,7 @@ return [
 
         'SupplierApplicationList' => 'SupplierApplicationList', //66050
         'SupplierCard' => 'SupplierCard', //66051
+        'SupplierAttachments' => 'SupplierAttachments', //66063
 
 
        
