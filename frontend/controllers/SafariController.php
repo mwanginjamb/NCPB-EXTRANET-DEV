@@ -634,7 +634,7 @@ class SafariController extends Controller
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Cancelling Approval Request.  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }

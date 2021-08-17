@@ -662,23 +662,24 @@ class SurrenderController extends Controller
 
     public function actionSendForApproval($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
-
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+       
         $data = [
-            'applicationNo' => $No,
-            'sendMail' => 1,
-            'approvalUrl' => '',
+            'documentType' => Yii::$app->params['Documents']['Surrender'],
+            'documentNo' => Yii::$app->request->get('No'),
+            'uID' => Yii::$app->user->identity->{'User ID'}
+            
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanSendImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Request Sent to Supervisor Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Sending Request for Approval  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
@@ -688,21 +689,22 @@ class SurrenderController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         $data = [
-            'applicationNo' => $No,
+            'documentType' => Yii::$app->params['Documents']['Surrender'],
+            'documentNo' =>  Yii::$app->request->get('No'),
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Approval Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Cancelling Approval Request.  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }

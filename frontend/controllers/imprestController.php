@@ -228,11 +228,11 @@ class ImprestController extends Controller
 
     public function actionUpdate(){
         $model = new Imprestcard() ;
-        $service = Yii::$app->params['ServiceName']['ImprestRequestCardPortal'];
+        $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
         $model->isNewRecord = false;
 
         $filter = [
-            'No' => Yii::$app->request->get('No'),
+            'Imprest_No' => Yii::$app->request->get('No'),
         ];
         $result = Yii::$app->navhelper->getData($service,$filter);
 
@@ -308,19 +308,17 @@ class ImprestController extends Controller
         }
     }
 
-    public function actionView($No){
+    public function actionView(){
         $service = Yii::$app->params['ServiceName']['ImprestRequestCard'];
 
-        $filter = [
-            'Imprest_No' => $No
-        ];
+       
 
-        $result = Yii::$app->navhelper->getData($service, $filter);
-
+        $result = Yii::$app->navhelper->readByKey($service, Yii::$app->request->get('Key'));
+        // Yii::$app->recruitment->printrr($result);
         //load nav result to model
-        $model = $this->loadtomodel($result[0], new Imprestcard());
+        $model = $this->loadtomodel($result, new Imprestcard());
 
-        //Yii::$app->recruitment->printrr($model);
+        // Yii::$app->recruitment->printrr($model);
 
         return $this->render('view',[
             'model' => $model,
@@ -338,7 +336,7 @@ class ImprestController extends Controller
 
         $result = Yii::$app->navhelper->getData($service, $filter);
         //load nav result to model
-        $model = $this->loadtomodel($result[0], new Imprestsurrendercard());
+        $model = $this->loadtomodel($result[0], new Imprestcard());
 
         return $this->render('viewsurrender',[
             'model' => $model,
@@ -361,7 +359,14 @@ class ImprestController extends Controller
         $result = [];
         foreach($results as $item){
             $ApprovalLink = $updateLink = $ViewLink =  '';
-            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Imprest_No ],['title' => 'View Imprest Application.','class'=>'btn btn-outline-primary btn-xs']);
+            $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view'],
+            ['title' => 'View Imprest Application.',
+            'class'=>'btn btn-outline-primary btn-xs',
+            'data' => [
+                'params' => ['Key' => $item->Key],
+                'method' => 'GET'
+            ]
+        ]);
             if($item->Status == 'New'){
                 $ApprovalLink = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Imprest_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
 
@@ -660,23 +665,24 @@ class ImprestController extends Controller
 
     public function actionSendForApproval($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
-
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
+       
         $data = [
-            'applicationNo' => $No,
-            'sendMail' => 1,
-            'approvalUrl' => '',
+            'documentType' => Yii::$app->params['Documents']['Imprest'],
+            'documentNo' => Yii::$app->request->get('No'),
+            'uID' => Yii::$app->user->identity->{'User ID'}
+            
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanSendImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'SubmitDocumentForApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Sent to Supervisor Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Request Sent to Supervisor Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Sending Imprest Request for Approval  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Sending Request for Approval  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }
@@ -686,21 +692,22 @@ class ImprestController extends Controller
 
     public function actionCancelRequest($No)
     {
-        $service = Yii::$app->params['ServiceName']['PortalFactory'];
+        $service = Yii::$app->params['ServiceName']['wsPortalWorkflow'];
 
         $data = [
-            'applicationNo' => $No,
+            'documentType' => Yii::$app->params['Documents']['Imprest'],
+            'documentNo' =>  Yii::$app->request->get('No'),
         ];
 
 
-        $result = Yii::$app->navhelper->PortalWorkFlows($service,$data,'IanCancelImprestForApproval');
+        $result = Yii::$app->navhelper->codeunit($service,$data,'CancelDocumentApproval');
 
         if(!is_string($result)){
-            Yii::$app->session->setFlash('success', 'Imprest Request Cancelled Successfully.', true);
+            Yii::$app->session->setFlash('success', 'Approval Request Cancelled Successfully.', true);
             return $this->redirect(['view','No' => $No]);
         }else{
 
-            Yii::$app->session->setFlash('error', 'Error Cancelling Imprest Approval Request.  : '. $result);
+            Yii::$app->session->setFlash('error', 'Error Cancelling Approval Request.  : '. $result);
             return $this->redirect(['view','No' => $No]);
 
         }

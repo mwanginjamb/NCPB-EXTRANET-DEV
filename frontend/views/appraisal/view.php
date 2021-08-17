@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal Card', 'url' => ['view',
 
 
 Yii::$app->session->set('Approval_Status',$model->Approval_Status);
+Yii::$app->session->set('Mid_Year_Approval_Status',$model->Mid_Year_Approval_Status);
 
 
 
@@ -219,6 +220,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                 <?= $form->field($model, 'Total_KPI_x0027_s')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Deparrtment_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Mid_Year_Approval_Status')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Action_ID')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                
                                 
@@ -234,7 +236,14 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 
                             </div>
                         </div>
+
                     </div>
+
+                   
+                  
+                    
+                   
+                   
 
 
 
@@ -242,6 +251,26 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                     <?php ActiveForm::end(); ?>
 
 
+
+                </div>
+
+
+                <div class="text lead text-center">SCORES</div>
+                <div class=" d-flex flex-row justify-content-between mr-4 ml-4">
+
+                    
+                   
+                               
+
+                                <div class="col col-md-6">
+                                    <?= $form->field($model, 'Mid_Year_Score')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                </div>
+                                <div class="col col-md-6">
+                                    <?= $form->field($model, 'End_Year_Score')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                </div>
+                   
+                    
+                    
 
                 </div>
             </div><!--end details card-->

@@ -163,7 +163,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">   <?= Html::a('<i class="fa fa-plus-square"></i> New Imprest Line',['imprestline/create','Request_No'=>$model->Imprest_No],['class' => 'add-objective btn btn-outline-info']) ?></div>
+                    <div class="card-title">   <?= Html::a('<i class="fa fa-plus-square"></i> New Imprest Line',['imprestline/create','Request_No'=>$model->Imprest_No],['class' => 'add-objective btn btn-outline-warning']) ?></div>
                 </div>
 
 

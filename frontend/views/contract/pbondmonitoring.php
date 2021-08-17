@@ -15,18 +15,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Contract List', 'url' => ['index']
 
 $url = \yii\helpers\Url::home(true);
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-        <?= \yii\helpers\Html::a('Add New Contract',['create'],['class' => 'btn btn-warning push-right', 'data' => [
-            'confirm' => 'Are you sure you want to create a new Contract Document ?',
-            'method' => 'get',
-        ],]) ?>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 <?php
@@ -50,7 +39,7 @@ if(Yii::$app->session->hasFlash('success')){
     <div class="col-md-12">
         <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">Contracts List</h3>
+                <h3 class="card-title">List of Contracts whose Performance Bond Expires in Less than 3 Months</h3>
             </div>
             <div class="card-body">
                 <table class="table table-bordered dt-responsive table-hover" id="table">
@@ -89,8 +78,6 @@ if(Yii::$app->session->hasFlash('success')){
 $script = <<<JS
 
     $(function(){
-
-
          /*Data Tables*/
          
          //$.fn.dataTable.ext.errMode = 'throw';
@@ -99,7 +86,7 @@ $script = <<<JS
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'contract/list',
+            ajax: url+'contract/list-pbond',
             paging: true,
             columns: [
                 { title: 'No' ,data: 'Code'},

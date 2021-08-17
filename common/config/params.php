@@ -88,6 +88,8 @@ return [
         'procurementMethods' => 'procurementMethods', //60032
         'HRdepartments' => 'HRdepartments', // 70042
         'PurchaseOrderArchives' => 'PurchaseOrderArchives',
+        'ContractsNearingExpiry' => 'ContractsNearingExpiry', // 60111
+        'PbondMonitoringList' => 'PbondMonitoringList', //60112
 
 
         

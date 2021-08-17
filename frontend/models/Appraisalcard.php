@@ -30,6 +30,10 @@ public $Action_ID;
 public $Employee_Appraisal_KRAs;
 public $Hr_User_ID;
 
+public $Mid_Year_Approval_Status;
+public $Mid_Year_Score;
+public $End_Year_Score;
+
     public function rules()
     {
         return [

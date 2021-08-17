@@ -31,6 +31,7 @@ public $Total_Imprest_Amount;
 public $Surrender_Amount;
 public $Surrender_Status;
 public $Surrender_Ation_ID;
+public $Requisition_No;
 public $Surrender_Approval_Levels;
 public $Surrender_Posting_Date;
 public $MR_No;

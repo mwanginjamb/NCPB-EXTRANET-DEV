@@ -39,9 +39,9 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
                             <div class="col-md-6">
-                                <?= $form->field($model, 'Line_No')->textInput(['readonly' => true])->label() ?>
+                                <?= $form->field($model, 'Line_No')->hiddenInput(['readonly' => true])->label(false) ?>
                                 <?= $form->field($model, 'Imprest_No')->textInput(['readonly' => true,'disabled'=>true])->label() ?>
-                                <?= $form->field($model, 'Key')->textInput(['readonly'=> true])->label() ?>
+                                <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
 
                                 <?= $form->field($model, 'G_L_Account')->
                                 dropDownList($glAccounts,['prompt' => 'Select Transaction Type ..',
@@ -58,6 +58,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                                     'required'=> true, 'required' => true]) ?>
 
 
+                                
                                 <?= $form->field($model, 'Amount')->textInput(['type' => 'number','required' => true]) ?>
 
                             </div>

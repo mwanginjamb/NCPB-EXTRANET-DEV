@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
             ]):'' ?>
 
 
-            <?= ($model->Document_Status == 'New')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
+            <?= ($model->Document_Status == 'Approval_Pending')?Html::a('<i class="fas fa-times"></i> Cancel Approval Req.',['cancel-request'],['class' => 'btn btn-app submitforapproval',
                 'data' => [
                     'confirm' => 'Are you sure you want to cancel imprest approval request?',
                     'params'=>[
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card-info">
+            <div class="card-success">
                 <div class="card-header">
                     <h3>Claim Card </h3>
                 </div>

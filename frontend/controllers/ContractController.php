@@ -69,7 +69,7 @@ class ContractController extends Controller
             ],
             'contentNegotiator' =>[
                 'class' => ContentNegotiator::class,
-                'only' => ['list','setfield','vendor-list','lpo-list'],
+                'only' => ['list','setfield','vendor-list','lpo-list','list-expiry','list-pbond'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -87,6 +87,21 @@ class ContractController extends Controller
         return $this->render('index');
 
     }
+
+    public function actionNearingExpiry(){
+
+        return $this->render('expiry');
+
+    }
+
+    public function actionPbondMonitoring(){
+
+        return $this->render('pbondmonitoring');
+
+    }
+
+
+
 
     public function actionVendors(){
 
@@ -281,7 +296,7 @@ class ContractController extends Controller
 
 
 
-    // Get imprest list
+    // Get Contract list
 
     public function actionList(){
         $service = Yii::$app->params['ServiceName']['ContractList'];
@@ -323,6 +338,7 @@ class ContractController extends Controller
                 ]
             ]);
            
+            $Financial_Year = (!empty($item->Financial_Year)?$item->Financial_Year: '');
 
             $result['data'][] = [
                 'Code' => $item->Code,
@@ -335,8 +351,129 @@ class ContractController extends Controller
                 'Status' => $item->Status,
                 'Start_Date' => $item->Start_Date,
                 'End_Date' => $item->End_Date,
+                'Period' => $item->Quarter.' '.$Financial_Year,
                 'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
-                'view' => $Viewlink.$Updatelink.$Deletelink
+                'view' => $Viewlink.$Updatelink
+            ];
+        }
+
+        return $result;
+    }
+
+    // Get Contracts Nearing Expiry
+
+    
+    public function actionListExpiry(){
+        $service = Yii::$app->params['ServiceName']['ContractsNearingExpiry'];
+        $filter = [
+            
+        ];
+
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Key))
+            {
+                continue;
+            }
+            $link = $updateLink = $deleteLink =  '';
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view'],[
+                'class'=>'btn btn-outline-primary btn-xs',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'No'=> $item->Key
+                    ]
+                ]
+
+            ]);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update' ],[
+                'class'=>'btn btn-outline-warning btn-xs mx-1',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'Key'=> $item->Key
+                    ]
+                ]
+            ]);
+            
+           
+            $Financial_Year = (!empty($item->Financial_Year)?$item->Financial_Year: '');
+            $result['data'][] = [
+                'Code' => $item->Code,
+                'Description' => !empty($item->Description)?$item->Description:'',
+                'Total_Value' => !empty($item->Total_Value)?number_format($item->Total_Value):'',
+                'Invoiced_Value' => !empty($item->Invoiced_Value)?number_format($item->Invoiced_Value):'',
+                'Deliverables' => !empty($item->Deliverables)?$item->Deliverables:'',
+                'Contractor_Name' => !empty($item->Contractor_Name)?$item->Contractor_Name:'',
+                'Comments' => !empty($item->Comments)?$item->Comments:'',
+                'Status' => $item->Status,
+                'Start_Date' => $item->Start_Date,
+                'End_Date' => $item->End_Date,
+                'Period' => $item->Quarter.' '.$Financial_Year,
+                'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
+                'view' => $Viewlink
+            ];
+        }
+
+        return $result;
+    }
+
+    // Get a list of contracts whos performance bond expires in less than 3 months
+
+    public function actionListPbond(){
+        $service = Yii::$app->params['ServiceName']['PbondMonitoringList'];
+        $filter = [
+            
+        ];
+
+        $results = \Yii::$app->navhelper->getData($service,$filter);
+        $result = [];
+        foreach($results as $item){
+
+            if(empty($item->Key))
+            {
+                continue;
+            }
+
+            $link = $updateLink = $deleteLink =  '';
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view'],[
+                'class'=>'btn btn-outline-primary btn-xs',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'No'=> $item->Key
+                    ]
+                ]
+
+            ]);
+            $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update' ],[
+                'class'=>'btn btn-outline-warning btn-xs mx-1',
+                'data' => [
+                    'method' => 'GET',
+                    'params' => [
+                        'Key'=> $item->Key
+                    ]
+                ]
+            ]);
+            
+           
+            $Financial_Year = (!empty($item->Financial_Year)?$item->Financial_Year: '');
+            $result['data'][] = [
+                'Code' => $item->Code,
+                'Description' => !empty($item->Description)?$item->Description:'',
+                'Total_Value' => !empty($item->Total_Value)?number_format($item->Total_Value):'',
+                'Invoiced_Value' => !empty($item->Invoiced_Value)?number_format($item->Invoiced_Value):'',
+                'Deliverables' => !empty($item->Deliverables)?$item->Deliverables:'',
+                'Contractor_Name' => !empty($item->Contractor_Name)?$item->Contractor_Name:'',
+                'Comments' => !empty($item->Comments)?$item->Comments:'',
+                'Status' => $item->Status,
+                'Start_Date' => $item->Start_Date,
+                'End_Date' => $item->End_Date,
+                'Period' => $item->Quarter.' '.$Financial_Year,
+                'Procurement_Method' => !empty($item->Procurement_Method)?$item->Procurement_Method:'',
+                'view' => $Viewlink
             ];
         }
 

@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card-info">
+            <div class="card-success">
                 <div class="card-header">
                     <h3>Leave Card </h3>
                 </div>

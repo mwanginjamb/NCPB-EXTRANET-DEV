@@ -78,14 +78,23 @@ class ImprestlineController extends Controller
 
         if($Request_No && !isset(Yii::$app->request->post()['Imprestline'])){
 
-               $model->Imprest_No = $Request_No;
+            $model->Imprest_No = $Request_No;
 
-            return $this->renderAjax('create', [
-                'model' => $model,
-                'functions' => $this->getFunctioncodes(),
-                'glAccounts' => $this->getGlaccounts(),
-                'budgetCenters' => $this->getBudgetcenters()
-            ]);
+            $result = Yii::$app->navhelper->postData($service, $model);
+
+            if(is_object($result))
+            {
+                $model = Yii::$app->navhelper->loadmodel($result,$model);
+            }else{
+                
+                return $this->renderAjax('create', [
+                    'model' => $model,
+                    'functions' => $this->getFunctioncodes(),
+                    'glAccounts' => $this->getGlaccounts(),
+                    'budgetCenters' => $this->getBudgetcenters()
+                ]);
+            }
+
 
         }
         
@@ -268,7 +277,7 @@ class ImprestlineController extends Controller
         $service = Yii::$app->params['ServiceName']['Dimensions'];
         $filter = ['Global_Dimension_No' => 1 ];
         $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
 
 
     }
@@ -279,7 +288,7 @@ class ImprestlineController extends Controller
         $service = Yii::$app->params['ServiceName']['Dimensions'];
         $filter = ['Global_Dimension_No' => 2];
         $result = \Yii::$app->navhelper->getData($service, $filter);
-        return ArrayHelper::map($result,'Code','Name');
+        return Yii::$app->navhelper->refactorArray($result,'Code','Name');
 
 
     }
@@ -291,7 +300,7 @@ class ImprestlineController extends Controller
         $filter = [];
         $result = \Yii::$app->navhelper->getData($service, $filter);
 
-        return  ArrayHelper::map($result,'No','Name');
+        return  Yii::$app->navhelper->refactorArray($result,'No','Name');
 
     }
 

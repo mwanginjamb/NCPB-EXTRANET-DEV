@@ -343,6 +343,21 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                                     </a>
                                 </li>
 
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract/nearing-expiry" class="nav-link <?= currentaction('contract','nearing-expiry')?'active':'' ?>">
+                                        <i class="fa fa-file-contract nav-icon"></i>
+                                        <p>Contracts Nearing Expiry </p>
+                                    </a>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract/pbond-monitoring" class="nav-link <?= currentaction('contract','pbond-monitoring')?'active':'' ?>">
+                                        <i class="fa fa-file-contract nav-icon"></i>
+                                        <p>Perf.Bond Monitoring </p>
+                                    </a>
+                                </li>
+
                                  <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>contract/consumables-report" class="nav-link <?= currentaction('contract','consumables-report')?'active':'' ?>">
                                         <i class="fa fa-file-invoice nav-icon"></i>

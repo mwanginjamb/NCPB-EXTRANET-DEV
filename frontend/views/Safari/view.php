@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Safari Card', 'url' => ['view','No
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card-info">
+            <div class="card-success">
                 <div class="card-header">
                     <h3>Safari Card </h3>
                 </div>
@@ -161,9 +161,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Safari Card', 'url' => ['view','No
 
 
 
-            <div class="card">
+            <div class="card card-success">
                 <div class="card-header">
-                    <div class="card-title">   <?= ($model->Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['safariline/create','No'=>$model->Safari_No],['class' => 'add-objective btn btn-outline-info']):'' ?></div>
+                    <div class="card-title">   <?= ($model->Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['safariline/create','No'=>$model->Safari_No],['class' => 'add-objective btn btn-outline-warning']):'' ?></div>
                 </div>
 
 

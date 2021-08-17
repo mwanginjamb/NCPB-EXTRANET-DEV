@@ -19,7 +19,7 @@ $url = \yii\helpers\Url::home(true);
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-info mx-1 py-2', 'data' => [
+        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-warning mx-1 py-2', 'data' => [
             'confirm' => 'Are you sure you want to create a new Request?',
             'method' => 'get',
         ],]) ?>
@@ -48,7 +48,7 @@ if(Yii::$app->session->hasFlash('success')){
 ?>
 <div class="row">
     <div class="col-md-12">
-        <div class="card card-info">
+        <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">Safari Applications List</h3>
 

@@ -46,7 +46,8 @@ public $isNewRecord;
         return [
             'Shortcut_Dimension_1_Code' => 'Function Code',
             'Shortcut_Dimension_2_Code' => 'Budget Center Code',
-            'Description' => 'G/L Account Description'
+            'Description' => 'G/L Account Description',
+           
         ];
     }
 }
