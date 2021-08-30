@@ -78,6 +78,7 @@ return [
 
         'ItemList' => 'ItemList', //31
         'LocationList' => 'LocationList', //15
+        'Vendor' => 'Vendor', //26
         'VendorList' => 'VendorList', //27
         'ContractList' => 'ContractList', //60029
         'ContractCard' => 'ContractCard', //60030
@@ -87,7 +88,8 @@ return [
         'TenderTypes' => 'TenderTypes', //50084
         'procurementMethods' => 'procurementMethods', //60032
         'HRdepartments' => 'HRdepartments', // 70042
-        'PurchaseOrderArchives' => 'PurchaseOrderArchives',
+        'PurchaseOrderArchives' => 'PurchaseOrderArchives', // 9347
+        'PurchaseOrderArchive' => 'PurchaseOrderArchive',//5167
         'ContractsNearingExpiry' => 'ContractsNearingExpiry', // 60111
         'PbondMonitoringList' => 'PbondMonitoringList', //60112
 

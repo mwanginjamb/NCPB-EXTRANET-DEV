@@ -13,10 +13,10 @@ use frontend\models\Experience;
 use frontend\models\Imprestcard;
 use frontend\models\Imprestline;
 use frontend\models\Imprestsurrendercard;
-use frontend\models\Leaveplancard;
+use frontend\models\Purchaseorderarchive;
 use frontend\models\Leave;
 use frontend\models\Contract;
-use frontend\models\Trainingplan;
+use frontend\models\RegisteredVendor;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
@@ -45,7 +45,7 @@ class ContractController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout','signup','index','list','create','update','delete','view'],
+                'only' => ['logout','signup','index','list','create','update','delete','view','lpo'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -53,7 +53,7 @@ class ContractController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index','list','create','update','delete','view'],
+                        'actions' => ['logout','index','list','create','update','delete','view','lpo'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -144,7 +144,7 @@ class ContractController extends Controller
             {
                 $model->Key = $result->Key;
             }else{
-                Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
+                Yii::$app->session->setFlash('error', 'Error : ' . $result, true);
                 return $this->render('create',[
                     'model' => $model,
                     'tenderTypes' => $this->getTenderTypes(),
@@ -293,6 +293,47 @@ class ContractController extends Controller
             'model' => $model,
         ]);
     }
+
+    // Get Vendor Data
+
+    public function actionVendor($Key)
+    {
+        $model = new RegisteredVendor();
+        $service = Yii::$app->params['ServiceName']['Vendor'];
+
+        $result = Yii::$app->navhelper->readByKey($service, $Key);
+
+        //load nav result to model
+        $model = $this->loadtomodel($result, $model);
+
+        
+
+        return $this->render('vendorview',[
+            'model' => $model,
+        ]);
+    }
+
+
+    // Get Posted LPO
+
+    public function actionLpo($Key)
+    {
+        $model = new Purchaseorderarchive();
+        $service = Yii::$app->params['ServiceName']['PurchaseOrderArchive'];
+
+        $result = Yii::$app->navhelper->readByKey($service, $Key);
+
+        //load nav result to model
+        $model = $this->loadtomodel($result, $model);
+
+       // Yii::$app->recruitment->printrr($result->PurchLinesArchive->Purchase_Order_Archive_Line);
+
+        return $this->render('lpoview',[
+            'model' => $model,
+            'result' => $result,
+        ]);
+    }
+
 
 
 
@@ -489,7 +530,7 @@ class ContractController extends Controller
         $result = [];
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['vendor','Key'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
             $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
             $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
            
@@ -519,7 +560,7 @@ class ContractController extends Controller
         $result = [];
         foreach($results as $item){
             $link = $updateLink = $deleteLink =  '';
-            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
+            $Viewlink = Html::a('<i class="fas fa-eye"></i>',['lpo','Key'=> $item->Key ],['class'=>'btn btn-outline-primary btn-xs']);
             $Updatelink = Html::a('<i class="fas fa-pen"></i>',['update','Key'=> $item->Key ],['class'=>'btn btn-outline-warning btn-xs mx-1']);
             $Deletelink = Html::a('<i class="fas fa-trash"></i>',['delete','Key'=> $item->Key ],['class'=>'btn btn-outline-danger delete btn-xs mx-1']);
            
@@ -694,31 +735,7 @@ class ContractController extends Controller
 
     }
 
-        /*Set Imprest to Surrend*/
-
-    public function actionSetimpresttosurrender(){
-        $model = new Imprestsurrendercard();
-        $service = Yii::$app->params['ServiceName']['ImprestSurrenderCardPortal'];
-
-        $filter = [
-            'No' => Yii::$app->request->post('No')
-        ];
-        $request = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($request)){
-            Yii::$app->navhelper->loadmodel($request[0],$model);
-            $model->Key = $request[0]->Key;
-            $model->Imprest_No = Yii::$app->request->post('Imprest_No');
-        }
-
-
-        $result = Yii::$app->navhelper->updateData($service,$model);
-
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
-
-        return $result;
-
-    }
+     
 
     public function loadtomodel($obj,$model){
 
