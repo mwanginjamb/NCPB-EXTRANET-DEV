@@ -201,7 +201,12 @@ return [
         'SupplierCard' => 'SupplierCard', //66051
         'SupplierAttachments' => 'SupplierAttachments', //66063
 
+        /**Training Mgt */
 
+        'TrainingRequestList' => 'TrainingRequestList', //70401
+        'TrainingRequestHeader' => 'TrainingRequestHeader', //70402
+        'TrainingRequestLine' => 'TrainingRequestLine', //70403
+        'TrainingAreas' => 'TrainingAreas', //70400
        
     ],
     'QualificationsMimeTypes' => [
