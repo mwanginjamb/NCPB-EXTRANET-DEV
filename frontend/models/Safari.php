@@ -44,7 +44,7 @@ public $isNewRecord;
     public function rules()
     {
         return [
-
+            ['Purpose', 'required']
         ];
     }
 

@@ -47,42 +47,9 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                                 <?= $form->field($model, 'Days_Spent')->textInput(['type' => 'number','readonly' => true]) ?>
                                
                                      
-                        </div>
-
-                    
-
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>
 
                 </div>
-
-
-
-
-
-
-
-
-
-
-
 
                 <div class="row">
 
@@ -113,38 +80,6 @@ $script = <<<JS
                 },'json');
         });
 
-         $('#leaveline-leave_code').on('change', function(e){
-            e.preventDefault();
-                  
-            let Leave_Code = e.target.value;
-            let Application_No  = $('#leaveline-application_no').val();
-            
-            
-            const url = $('input[name="absolute"]').val()+'leaveline/setleavetype';
-            $.post(url,{'Leave_Code': Leave_Code,'Application_No': Application_No}).done(function(msg){
-                   //populate empty form fields with new data
-                   
-                    $('#leaveline-line_no').val(msg.Line_No);
-                    $('#leaveline-key').val(msg.Key);
-                    $('#leaveline-leave_balance').val(msg.Leave_balance);
-                  
-                    console.log(typeof msg);
-                    console.table(msg);
-                    if((typeof msg) === 'string') { // A string is an error
-                        const parent = document.querySelector('.field-leaveline-leave_code');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = msg;
-                        disableSubmit();
-                    }else{ // An object represents correct details
-                        const parent = document.querySelector('.field-imprestline-transaction_type');
-                        const helpbBlock = parent.children[2];
-                        helpbBlock.innerText = ''; 
-                        enableSubmit();
-                    }
-                   
-                    
-                },'json');
-        });
 
         // Set Expense date
          
@@ -162,6 +97,8 @@ $script = <<<JS
                    //populate empty form fields with new data
                     console.log(typeof msg);
                     console.table(msg);
+                    $('#safariline-expense_date').val(msg.Expense_Date);
+                    $('#safariline-key').val(msg.Key);
                     if((typeof msg) === 'string'){ // A string is an error
                         const parent = document.querySelector('.field-safariline-expense_date');
                         const helpbBlock = parent.children[2];
@@ -174,8 +111,7 @@ $script = <<<JS
                         enableSubmit();
                     }
 
-                    $('#safariline-expense_date').val(msg.Expense_Date);
-                    $('#safariline-key').val(msg.Key);
+                   
                     
                    
                     

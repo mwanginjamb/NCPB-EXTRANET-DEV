@@ -55,7 +55,7 @@ if(Yii::$app->session->hasFlash('success')){
                         <div class="col-md-6">
 
 
-                             <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                             <?= $form->field($model, 'Claim_No')->textInput(['readonly'=> true]) ?>
                                 <?= $form->field($model, 'Payroll_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Safari_No')->dropDownList($safariRequests,['prompt' => 'select']) ?>
                                 <?= $form->field($model, 'Full_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>

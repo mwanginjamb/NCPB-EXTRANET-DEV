@@ -198,9 +198,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
                             foreach($model->lines as $obj):
                                 $updateLink = Html::a('<i class="fa fa-edit"></i>',['claimline/update',
-                                    'Claim_No'=> $obj->Claim_No,
-                                    'Claim_Type' => $obj->Claim_Type,
-                                    'Travel_To' => $obj->Travel_To
+                                    'Key'=> $obj->Key
                                 ],
                                     ['class' => 'update-objective btn btn-outline-info btn-xs','title' => 'update line']);
                                 $deleteLink = Html::a('<i class="fa fa-trash"></i>',['claimline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
@@ -249,7 +247,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Leave Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Claims Management</h4>
                 </div>
                 <div class="modal-body">
 

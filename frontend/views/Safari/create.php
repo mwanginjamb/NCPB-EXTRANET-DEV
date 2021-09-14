@@ -27,7 +27,8 @@ $model->isNewRecord = true;
         'model' => $model,
         'safariRequests' => $safariRequests,
         'functions' => $functions,
-        'budgetCenters' => $budgetCenters
+        'budgetCenters' => $budgetCenters,
+        'fleet' => $fleet
     ]) ?>
 
 </div>

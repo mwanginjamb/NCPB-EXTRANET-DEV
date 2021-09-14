@@ -185,15 +185,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
                                 <td><b>Commitments</b></td>
                                 <td><b>Available Budget</b></td>
                                 <td><b>Actions</b></td>
-
-
-
                             </tr>
                             </thead>
                             <tbody>
                             <?php
-                            // print '<pre>'; print_r($model->getObjectives()); exit;
-
+                            
                             foreach($model->getLines($model->Imprest_No) as $obj):
                                 $updateLink = Html::a('<i class="fa fa-edit"></i>',['imprestline/update','Line_No'=> $obj->Line_No],['class' => 'update-objective btn btn-outline-info btn-xs']);
                                 $deleteLink = Html::a('<i class="fa fa-trash"></i>',['imprestline/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
@@ -289,7 +285,7 @@ $script = <<<JS
    
         
         
-      //Add a training plan
+      //Add a Line
     
      $('.add-objective, .update-objective').on('click',function(e){
         e.preventDefault();

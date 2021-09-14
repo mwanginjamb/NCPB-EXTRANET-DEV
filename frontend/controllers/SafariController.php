@@ -140,11 +140,11 @@ class SafariController extends Controller
 
         $result = Yii::$app->navhelper->findOne($service, 'Safari_No', Yii::$app->request->get('No'));
 
-        if(is_array($result)){
+        if(is_object($result)){
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result,$model) ;//$this->loadtomodeEmployee_Nol($result[0],$Expmodel);
         }else{
-            Yii::$app->sessiom->setFlash('error', $result);
+            Yii::$app->session->setFlash('error', $result);
              return $this->render('update',[
             'model' => $model,
             'safariRequests' => $this->safariRequests(),
@@ -185,7 +185,9 @@ class SafariController extends Controller
         }
 
 
-        // Yii::$app->recruitment->printrr($model);
+        $model->Expected_Travel_Date = ($model->Expected_Travel_Date == '0001-01-01')? Date('Y-m-d') : $model->Expected_Travel_Date;
+        $model->Expected_Date_of_Return = ($model->Expected_Date_of_Return == '0001-01-01')? Date('Y-m-d') : $model->Expected_Date_of_Return;
+        
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,

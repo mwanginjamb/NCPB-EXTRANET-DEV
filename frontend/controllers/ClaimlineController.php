@@ -72,7 +72,7 @@ class ClaimlineController extends Controller
        $model = new Claimline();
 
 
-        if($No && !isset(Yii::$app->request->post()['Claimline']) && !Yii::$app->request->post()){
+        if($No && !Yii::$app->request->post()){
 
                $model->Claim_No = $No;
                         
@@ -98,12 +98,8 @@ class ClaimlineController extends Controller
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
 
 
-             $refresh = Yii::$app->navhelper->getData($service,[
-                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
-                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
-                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
-            ]);
-            $model->Key = $refresh[0]->Key;
+             $refresh = Yii::$app->navhelper->readByKey($service, $model->Key);
+            $model->Key = $refresh->Key;
             $result = Yii::$app->navhelper->updateData($service,$model);
 
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -119,7 +115,7 @@ class ClaimlineController extends Controller
 
         }
 
-        
+        $model->Date = ($model->Date == '0001-01-01')?Date('Y-m-d'):$model->Date;
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('create', [
                 'model' => $model,
@@ -134,35 +130,29 @@ class ClaimlineController extends Controller
     }
 
 
-    public function actionUpdate(){
+    public function actionUpdate($Key){
         $model = new Claimline() ;
         $model->isNewRecord = false;
         $service = Yii::$app->params['ServiceName']['MileageLines'];
-        $filter = [
-            'Claim_No' => Yii::$app->request->get('Claim_No'),
-            'Claim_Type' => Yii::$app->request->get('Claim_Type'),
-            'Travel_To' => Yii::$app->request->get('Travel_To'),
-        ];
-        $result = Yii::$app->navhelper->getData($service,$filter);
+        
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
 
+       
 
-        if(is_array($result)){
+        if(is_object($result)){
             //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result[0],$model) ;
+            $model = Yii::$app->navhelper->loadmodel($result,$model) ;
             // Yii::$app->recruitment->printrr($model);
         }else{
-            Yii::$app->recruitment->printrr($result);
+            
+            return ['note' => '<div class="alert alert-danger">'.$result.'</div>' ];
         }
 
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Claimline'],$model) ){
 
-            $refresh = Yii::$app->navhelper->getData($service,[
-                'Claim_No' => Yii::$app->request->post()['Claimline']['Claim_No'],
-                'Claim_Type' => Yii::$app->request->post()['Claimline']['Claim_Type'],
-                'Travel_To' => Yii::$app->request->post()['Claimline']['Travel_To'],
-            ]);
-            $model->Key = $refresh[0]->Key;
+            $refresh = Yii::$app->navhelper->readByKey($service, Yii::$app->request->post()['Claimline']['Key']);
+            $model->Key = $refresh->Key;
 
             $result = Yii::$app->navhelper->updateData($service,$model);
 
@@ -174,7 +164,7 @@ class ClaimlineController extends Controller
             }
 
         }
-
+        $model->Date = ($model->Date == '0001-01-01')?Date('Y-m-d'):$model->Date;
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('update', [
                 'model' => $model,
@@ -205,69 +195,7 @@ class ClaimlineController extends Controller
         }
     }
 
-    public function actionSetleavetype(){
-        $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['MileageLines'];
-
-           $model->Leave_Code = Yii::$app->request->post('Leave_Code');
-           $model->Application_No = Yii::$app->request->post('Application_No');
-           $model->Line_No = time();
-
-        $line = Yii::$app->navhelper->postData($service, $model);
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
-        return $line;
-
-    }
-
-    public function actionSetstartdate(){
-        $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['MileageLines'];
-
-        $filter = [
-            'Line_No' => Yii::$app->request->post('Line_No')
-        ];
-        $line = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($line)){
-            Yii::$app->navhelper->loadmodel($line[0],$model);
-            $model->Key = $line[0]->Key;
-            $model->Start_Date = date('Y-m-d',strtotime(Yii::$app->request->post('Start_Date')));
-        }
-
-
-        $result = Yii::$app->navhelper->updateData($service,$model);
-
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
-
-        return $result;
-    }
-
-
-    /* Set Days*/
-
-    public function actionSetdays(){
-        $model = new Leaveline();
-        $service = Yii::$app->params['ServiceName']['MileageLines'];
-
-        $filter = [
-            'Line_No' => Yii::$app->request->post('Line_No')
-        ];
-        $line = Yii::$app->navhelper->getData($service, $filter);
-
-        if(is_array($line)){
-            Yii::$app->navhelper->loadmodel($line[0],$model);
-            $model->Key = $line[0]->Key;
-            $model->Days = Yii::$app->request->post('Days');
-        }
-
-
-        $result = Yii::$app->navhelper->updateData($service,$model);
-
-        Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
-
-        return $result;
-    }
-
+    
     public function actionView($ApplicationNo){
         $service = Yii::$app->params['ServiceName']['MileageLines'];
         $leaveTypes = $this->getLeaveTypes();

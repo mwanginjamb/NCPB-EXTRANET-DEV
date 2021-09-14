@@ -84,7 +84,7 @@ if(Yii::$app->session->hasFlash('success')){
                                 <?= $form->field($model, 'Employee_Department')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Department_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Fleet_Request_No')->dropDownList( $fleet, ['prompt'=> 'Select ...', 'required'=>true]) ?>
-                                <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true]) ?>
+                                <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
 
 
                         </div>
