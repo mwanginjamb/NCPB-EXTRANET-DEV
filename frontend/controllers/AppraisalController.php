@@ -42,6 +42,9 @@ class AppraisalController extends Controller
                         'actions' => [
                             'logout',
                             'index',
+                            'goal-setting',
+                            'goal-setting-super',
+                            'goal-setting-hr',
                             'list',
                             'create',
                             'update',
@@ -98,6 +101,26 @@ class AppraisalController extends Controller
         return $this->render('index');
 
     }
+
+    public function actionGoalSetting(){
+
+        return $this->render('gsetting');
+
+    }
+
+    public function actionGoalSettingSuper(){
+
+        return $this->render('gsettingsuper');
+
+    }
+
+    public function actionGoalSettingHr(){
+
+        return $this->render('gsettinghr');
+
+    }
+
+
 
     public function actionClosedAppraisals(){
 
@@ -692,7 +715,7 @@ class AppraisalController extends Controller
         ];
         
         $results = \Yii::$app->navhelper->getData($service,$filter);
-        // Yii::$app->recruitment->printrr($results);
+        // Yii::$app->recruitment->printrr( Yii::$app->user->identity->{'User ID'});
         $result = [];
         foreach($results as $item){
 
@@ -954,6 +977,151 @@ class AppraisalController extends Controller
 
     /* Call Appraisal Status Change  Methods */
 
+
+
+    // Goal Setting Functions
+
+    
+    public function actionSubmitGoalsToSupervisor()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendGoalSettingForApproval');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Goals Sent to Supervisor Successfully.', true);
+            return $this->redirect(['goal-setting']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['goal-setting']);
+
+        }
+    }
+
+    public function actionSubmitGoalsToHr()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendGoalSettingToHr');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Goals Sent to H.R Successfully.', true);
+            return $this->redirect(['goal-setting-super']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['goal-setting-super']);
+
+        }
+    }
+
+    public function actionSubmitGoalsBackToAppraisee()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'rejectionComments' => 'Rejected, Please Amend',
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendGoalSettingBackToAppraisee');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Goals Sent to Back to Appraisee Successfully.', true);
+            return $this->redirect(['goal-setting-super']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['goal-setting-super']);
+
+        }
+    }
+
+    public function actionApproveGoals()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            //'rejectionComments' => 'Rejected Please Amend',
+            //'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanApproveGoalSetting');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Goals Approved Successfully.', true);
+            return $this->redirect(['goal-setting-hr']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['goal-setting-hr']);
+
+        }
+    }
+
+    public function actionSubmitGoalsBackToSupervisor()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'rejectionComments' => 'Rejected, Please Amend.',
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendGoalSettingBackToSupervisor');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Goals Sent to Back to Supervisor Successfully.', true);
+            return $this->redirect(['goal-setting-hr']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['goal-setting-hr']);
+
+        }
+    }
+
+
+
+
+
+
+
+
     public function actionSubmit()
     {
         $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
@@ -976,6 +1144,91 @@ class AppraisalController extends Controller
 
             Yii::$app->session->setFlash('error', 'Error   : '. $result);
             return $this->redirect(['index']);
+
+        }
+    }
+
+    // Appraisee- send mid year to supervisor
+
+    public function actionSubmitMyToSupervisor()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendMidYearForApproval');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Mid Year Appraisal Sent to Supervisor Successfully.', true);
+            return $this->redirect(['my-appraisee']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['my-appraisee']);
+
+        }
+    }
+
+    // Supervisor -- submit to HR
+
+    public function actionSubmitMyToHr()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanSendMidYearAppraisalToHr');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Mid Year Appraisal Sent to H.R Successfully.', true);
+            return $this->redirect(['my-supervisor']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['my-supervisor']);
+
+        }
+    }
+
+
+    // HR APPROVAL OF MID YEAR
+
+    public function actionApproveMy()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->post('appraisalNo'),
+            'employeeNo' => Yii::$app->request->post('employeeNo'),
+            'sendEmail' => true,
+            //'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanApproveMidYearAppraisal');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Mid Year Apprasal Approved Successfully.', true);
+            return $this->redirect(['my-hr']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['my-hr']);
 
         }
     }
@@ -1085,6 +1338,35 @@ class AppraisalController extends Controller
 
         if(!is_string($result)){
             Yii::$app->session->setFlash('success', ' Appraisal sent Back to Supervisor Successfully.', true);
+            return $this->redirect(['hr-appraisals']);
+        }else{
+
+            Yii::$app->session->setFlash('error', 'Error   : '. $result);
+            return $this->redirect(['hr-appraisals']);
+
+        }
+    }
+
+
+    // HR APPROVAL
+
+    public function actionHrGoalsApproval()
+    {
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
+       
+        $data = [
+            'appraisalNo' => Yii::$app->request->get('appraisalNo'),
+            'employeeNo' => Yii::$app->request->get('employeeNo'),
+            'sendEmail' => true,
+            // 'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/view', 'No' => Yii::$app->request->get('appraisalNo')])
+            
+        ];
+
+
+         $result = Yii::$app->navhelper->codeunit($service,$data,'IanApproveNewEmployeeAppraisal');
+
+        if(!is_string($result)){
+            Yii::$app->session->setFlash('success', ' Appraisal Approved Successfully.', true);
             return $this->redirect(['hr-appraisals']);
         }else{
 

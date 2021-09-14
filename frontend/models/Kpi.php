@@ -32,6 +32,8 @@ public $isNewRecord;
 
 public $Mid_Year_Self_Assesment;
 public $Mid_Year_Joint_Assesment;
+public $Mid_Year_Self_Comments;
+public $Mid_Year_Supervisor_Comments;
 public $Mid_Year_Weighted_Rating;
 
 

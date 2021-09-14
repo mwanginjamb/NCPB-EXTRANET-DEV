@@ -437,9 +437,23 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>appraisal" class="nav-link <?= currentaction('appraisal','index')?'active':'' ?>">
+                                    <a href="<?= $absoluteUrl ?>appraisal/goal-setting" class="nav-link <?= currentaction('appraisal','goal-setting')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>
-                                        <p>Appraisal List </p>
+                                        <p>Goal Setting List </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/goal-setting-super" class="nav-link <?= currentaction('appraisal','goal-setting-super')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Goal Setting (Supervisor) </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal/goal-setting-hr" class="nav-link <?= currentaction('appraisal','goal-setting-hr')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Goal Setting (HR) </p>
                                     </a>
                                 </li>
 
@@ -491,6 +505,12 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
 
                                 <!-- Supervisor List -->
 
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>appraisal" class="nav-link <?= currentaction('appraisal','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Appraisal List </p>
+                                    </a>
+                                </li>
                                  <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>appraisal/supervisor-appraisals" class="nav-link <?= currentaction('appraisal','supervisor-appraisals')?'active':'' ?>">
                                         <i class="fa fa-check-square nav-icon"></i>

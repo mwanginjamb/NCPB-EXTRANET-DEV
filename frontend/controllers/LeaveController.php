@@ -83,6 +83,9 @@ class LeaveController extends Controller
         /*Do initial request */
         if(!isset(Yii::$app->request->post()['Leave'])){
 
+            $model->Employee_No = Yii::$app->user->identity->Employee[0]->No;
+            $model->Application_Date = Date('Y-m-d');
+            $model->Application_No = time();
 
             $request = Yii::$app->navhelper->postData($service,$model);
             //Yii::$app->recruitment->printrr($request);

@@ -10,14 +10,11 @@
 
 /* @var $this yii\web\View */
 
-$this->title = Yii::$app->params['generalTitle'];
-$this->params['breadcrumbs'][] = ['label' => 'Posted Imprests List', 'url' => ['index']];
+$this->title = Yii::$app->params['generalTitle'].' Performance Appraisal';
+$this->params['breadcrumbs'][] = ['label' => 'Appraisal List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = '';
 $url = \yii\helpers\Url::home(true);
 ?>
-<div class="row">
-
-</div>
 
 
 <?php
@@ -37,15 +34,40 @@ if(Yii::$app->session->hasFlash('success')){
     print '</div>';
 }
 ?>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+        <?= \yii\helpers\Html::a('New',['create'],['class' => 'btn btn-info mx-1 py-2', 'data' => [
+            'confirm' => 'Are you sure you want to create a new Appraisal?',
+            'method' => 'get',
+        ],]) ?>
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Posted Imprest List</h3>
+                <h3 class="card-title">Appraisal Goal Setting List</h3>
+
+
+
+
+
+
             </div>
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-bordered dt-responsive table-hover" id="table">
                 </table>
+            </div>
             </div>
         </div>
     </div>
@@ -59,28 +81,31 @@ $script = <<<JS
     $(function(){
          /*Data Tables*/
          
-         $.fn.dataTable.ext.errMode = 'throw';
+        $.fn.dataTable.ext.errMode = 'throw';
         const url = $('#url').val();
     
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'surrender/list',
+            ajax: url+'appraisal/gshrlist',
             paging: true,
             columns: [
-                { title: 'Imprest No.' ,data: 'No'},
+                { title: 'No' ,data: 'No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
-                { title: 'Imprest Account' ,data: 'Imprest_Account'},
-                { title: 'Paying Bank Account' ,data: 'Paying_Bank_Account'},   
-                { title: 'Paying Cashier' ,data: 'Paying_Cashier'},
-                { title: 'Requested On', data: 'Requested_On' },
-                { title: 'Travel Date', data: 'Travel_Date' },
+                { title: 'Department' ,data: 'Department'},
+                { title: 'Appraisal Start Date' ,data: 'Appraisal_Start_Date'},
+                               
+                { title: 'Appraisal End Date' ,data: 'Appraisal_End_Date'},
+                { title: 'Remaining Days', data: 'Remaining_Days' },
+                { title: 'Total KPIs', data: 'Total_KPI_x0027_s' },
+                { title: 'Created By', data: 'Created_By' },
+                { title: 'Created On', data: 'Created_On' },
                 { title: 'Actions', data: 'Actions' },
                
             ] ,                              
            language: {
-                "zeroRecords": "No Posted Imprests to display"
+                "zeroRecords": "No Records to display"
             },
             
             order : [[ 0, "desc" ]]
@@ -90,7 +115,7 @@ $script = <<<JS
         
        //Hidding some 
        var table = $('#table').DataTable();
-       // table.columns([5,6]).visible(false);
+      table.columns([8,9]).visible(false);
     
     /*End Data tables*/
         $('#table').on('click','tr', function(){

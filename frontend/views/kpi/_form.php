@@ -32,11 +32,19 @@ use yii\widgets\ActiveForm;
 
                             :$form->field($model, 'KPI_Code')->textInput(['readonly' => true, 'disabled' => true]); ?>
 
-                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Activity')->textarea(['rows' => 2, 'maxlength' => 250]):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Activity')->textarea(['rows' => 2, 'maxlength' => 250]):'' ?>
 
-                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target')->textarea(['rows' => 2,'maxlength' =>  250]):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target')->textarea(['rows' => 2,'maxlength' =>  250]):'' ?>
 
-                            <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target_Achieved')->textInput(['maxlength' => 250]):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Target_Achieved')->textInput(['maxlength' => 250]):'' ?>
+
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Mid_Year_Self_Assesment')->dropDownList($scoreCard, ['prompt' => 'Score ....']):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Supervisor_Level')?$form->field($model, 'Mid_Year_Joint_Assesment')->dropDownList($scoreCard, ['prompt' => 'Score ....']):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Mid_Year_Self_Comments')->textarea(['rows' => 2]):'' ?>
+                            <?= (!$model->isNewRecord && Yii::$app->session->get('Mid_Year_Approval_Status') == 'Supervisor_Level')?$form->field($model, 'Mid_Year_Supervisor_Comments')->textarea(['rows' => 2]):'' ?>
+
+
+
 
                             <?= (!$model->isNewRecord && Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'Self_Assesment')->dropDownList($scoreCard, ['prompt' => 'Score ....']):'' ?>
 

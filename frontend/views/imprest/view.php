@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Imprest - '.$model->Imprest_No;
 $this->params['breadcrumbs'][] = ['label' => 'imprests', 'url' => ['/imprest']];
-$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Imprest_No]];
+$this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','No'=> $model->Key]];
 /** Status Sessions */
 
 ?>
@@ -163,17 +163,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Imprest Card', 'url' => ['view','N
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">   <?= Html::a('<i class="fa fa-plus-square"></i> New Imprest Line',['imprestline/create','Request_No'=>$model->Imprest_No],['class' => 'add-objective btn btn-outline-warning']) ?></div>
+                    <div class="card-title">   <?= ($model->Status == 'New')?
+                     Html::a('<i class="fa fa-plus-square"></i> New Imprest Line',['imprestline/create','Request_No'=>$model->Imprest_No],['class' => 'add-objective btn btn-outline-warning'])
+                     : '' ?></div>
                 </div>
 
-
-
                 <div class="card-body">
-
-
-
-
-
                     <?php
                     if(is_array($model->getLines($model->Imprest_No))){ //show Lines ?>
                         <table class="table table-bordered">

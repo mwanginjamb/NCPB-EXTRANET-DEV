@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Appraisal Card', 'url' => ['view',
 
 Yii::$app->session->set('Approval_Status',$model->Approval_Status);
 Yii::$app->session->set('Mid_Year_Approval_Status',$model->Mid_Year_Approval_Status);
+Yii::$app->session->set('Goal_Setting_Status',$model->Goal_Setting_Status);
 
 
 
@@ -55,6 +56,106 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
     <div class="row">
         <!-- Add action buttons here -->
 
+
+        <!-- Goal Setting Actions -->
+        <?php if($model->Goal_Setting_Status == 'Appraisee_Level'): ?>                                  
+                <div class="col-md-3"> 
+                                <?= Html::a('<i class="fas fa-forward"></i> Submit Goals',['submit-goals-to-supervisor'],[
+                                                'class' => 'btn btn-app bg-success mx-1',
+                                                'title' => 'Submit Appraisal Goals.',
+                                                'data' => [
+                                                    'confirm' => 'Are you sure you want to submit your goals to Supervisor?',
+                                                    'params'=>[
+                                                        'appraisalNo'=> $model->Appraisal_Code,
+                                                        'employeeNo' => $model->Employee_No,
+                                                    ],
+                                                    'method' => 'post'
+                                                ]
+                                            ]);
+
+                                ?>  
+                </div>  
+        <?php endif; ?>  
+
+        <?php if($model->Goal_Setting_Status == 'Supervisor_Level'): ?>                                  
+                    <div class="col-md-3"> 
+                                    <?= Html::a('<i class="fas fa-forward"></i> Goals To HR',['submit-goals-to-hr'],[
+                                                    'class' => 'btn btn-app bg-success mx-1',
+                                                    'title' => 'Submit Mid Year Appraisal.',
+                                                    'data' => [
+                                                        'confirm' => 'Are you sure you want to submit goals to H.R ?',
+                                                        'params'=>[
+                                                            'appraisalNo'=> $model->Appraisal_Code,
+                                                            'employeeNo' => $model->Employee_No,
+                                                        ],
+                                                        'method' => 'post'
+                                                    ]
+                                                ]);
+
+                                    ?>  
+                    </div>
+
+                    <div class="col-md-3"> 
+                                    <?= Html::a('<i class="fas fa-backward"></i> To Appraisee',['submit-goals-back-to-appraisee'],[
+                                                    'class' => 'btn btn-app bg-warning mx-1',
+                                                    'title' => 'Submit Mid Year Appraisal.',
+                                                    'data' => [
+                                                        'confirm' => 'Are you sure you want to submit goals back  to Appraisee ?',
+                                                        'params'=>[
+                                                            'appraisalNo'=> $model->Appraisal_Code,
+                                                            'employeeNo' => $model->Employee_No,
+                                                        ],
+                                                        'method' => 'post'
+                                                    ]
+                                                ]);
+
+                                    ?>  
+                    </div>
+        <?php endif; ?>
+
+
+
+        <?php if($model->Goal_Setting_Status == 'Hr_Level'): ?>                                  
+                    <div class="col-md-3"> 
+                                    <?= Html::a('<i class="fas fa-forward"></i> Approve Goals',['approve-goals'],[
+                                                    'class' => 'btn btn-app bg-success mx-1',
+                                                    'title' => 'Submit Mid Year Appraisal.',
+                                                    'data' => [
+                                                        'confirm' => 'Are you sure you want to Approve these Goals ?',
+                                                        'params'=>[
+                                                            'appraisalNo'=> $model->Appraisal_Code,
+                                                            'employeeNo' => $model->Employee_No,
+                                                        ],
+                                                        'method' => 'post'
+                                                    ]
+                                                ]);
+
+                                    ?>  
+                    </div>
+
+                    <div class="col-md-3"> 
+                                    <?= Html::a('<i class="fas fa-backward"></i> To Supervisor',['submit-goals-back-to-supervisor'],[
+                                                    'class' => 'btn btn-app bg-warning mx-1',
+                                                    'title' => 'Submit Mid Year Appraisal.',
+                                                    'data' => [
+                                                        'confirm' => 'Are you sure you want to submit goals back  to Appraisee ?',
+                                                        'params'=>[
+                                                            'appraisalNo'=> $model->Appraisal_Code,
+                                                            'employeeNo' => $model->Employee_No,
+                                                        ],
+                                                        'method' => 'post'
+                                                    ]
+                                                ]);
+
+                                    ?>  
+                    </div>
+        <?php endif; ?>
+
+        <!-- End Goal Setting Actions -->
+
+
+        <!-- Ey Appraisal Action for Appraisee -->
+
         <?php if($model->Approval_Status == 'Appraisee_Level'): ?>
 
                          <div class="col-md-3">
@@ -67,10 +168,80 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                     ]) ?>
                          </div>       
 
-                                    
+        
                                 
 
         <?php endif; ?>
+
+        <!-- Appraisee Mid Year Actions -->
+        <?php if($model->Mid_Year_Approval_Status == 'Appraisee_Level'): ?>                                  
+                <div class="col-md-3"> 
+                                <?= Html::a('<i class="fas fa-forward"></i> Submit M.Y',['submit-my-to-supervisor'],[
+                                                'class' => 'btn btn-app bg-success mx-1',
+                                                'title' => 'Submit Mid Year Appraisal.',
+                                                'data' => [
+                                                    'confirm' => 'Are you sure you want to submit your mid year appaisal to Supervisor?',
+                                                    'params'=>[
+                                                        'appraisalNo'=> $model->Appraisal_Code,
+                                                        'employeeNo' => $model->Employee_No,
+                                                    ],
+                                                    'method' => 'post'
+                                                ]
+                                            ]);
+
+                                ?>  
+                </div>   
+        <?php endif; ?>     
+        <!-- End Appraisee Mid Year Actions -->
+
+        <!-- Supervisor Mid Year Actions -->
+
+        <?php if($model->Mid_Year_Approval_Status == 'Supervisor_Level'): ?>                                  
+                <div class="col-md-3"> 
+                                <?= Html::a('<i class="fas fa-forward"></i> Submit M.Y',['submit-my-to-hr'],[
+                                                'class' => 'btn btn-app bg-success mx-1',
+                                                'title' => 'Submit Mid Year Appraisal to H.R.',
+                                                'data' => [
+                                                    'confirm' => 'Are you sure you want to submit your mid year appaisal to Supervisor?',
+                                                    'params'=>[
+                                                        'appraisalNo'=> $model->Appraisal_Code,
+                                                        'employeeNo' => $model->Employee_No,
+                                                    ],
+                                                    'method' => 'post'
+                                                ]
+                                            ]);
+
+                                ?>  
+                </div>   
+        <?php endif; ?>  
+
+        <!-- End Supervisor Mid Year Actions -->
+
+
+
+         <!-- HR Mid Year Approval Actions -->
+
+         <?php if($model->Mid_Year_Approval_Status == 'Hr_Level'): ?>                                  
+                <div class="col-md-3"> 
+                                <?= Html::a('<i class="fas fa-forward"></i> Approve M.Y',['approve-my'],[
+                                                'class' => 'btn btn-app bg-success mx-1',
+                                                'title' => 'Approve Mid Year Appraisal and Send it to End Year Apraisal.',
+                                                'data' => [
+                                                    'confirm' => 'Are you sure you want to approve mid-year appraisal?',
+                                                    'params'=>[
+                                                        'appraisalNo'=> $model->Appraisal_Code,
+                                                        'employeeNo' => $model->Employee_No,
+                                                    ],
+                                                    'method' => 'post'
+                                                ]
+                                            ]);
+
+                                ?>  
+                </div>   
+        <?php endif; ?>  
+
+        <!-- End HR Mid Year Aproval Actions -->
+
 
             <div class="col-md-3">  
                    <?= Html::a('<i class="fas fa-book-open"></i> P.A Report',['report'],[
@@ -151,7 +322,24 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                     ]);
 
                         ?>  
-                    </div>   
+                </div>   
+
+                <div class="col-md-3"> 
+                        <?= Html::a('<i class="fas fa-backward"></i> Approve',['hr-goals-approval'],[
+                                        'class' => 'btn btn-app bg-success mx-1',
+                                        'title' => 'Send Appraisal Back To Supervisor..',
+                                        'data' => [
+                                             'confirm' => 'Are you sure you want to approve this document?',
+                                            'params'=>[
+                                                'appraisalNo'=> $model->Appraisal_Code,
+                                                'employeeNo' => $model->Employee_No,
+                                            ],
+                                            'method' => 'get'
+                                        ]
+                                    ]);
+
+                        ?>  
+                </div>  
                                     
                                 
 
@@ -297,7 +485,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                 <div class="card-body">
 
                    <?php if(is_array($model->KRA)){ //show Objectives ?>
-                <table class="table table-bordered">
+                <table class="table table-bordered table-md" style="max-width:100%">
                     <thead>
                         <tr>
                              <td>#</td>
@@ -337,7 +525,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                 <tr class="child">
                                     <td colspan="6" >
                                         <div class="table-responsive">
-                                            <table class="table table-hover table-borderless table-info">
+                                            <table class="table table-sm table-hover table-borderless table-info" style="max-width: 100%">
                                                 <thead>
                                                 <tr >
                                                     <td><b>KPI</b></td>
@@ -345,6 +533,13 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                     <td><b>Target</b></td>
                                                     <td><b>Maximum Weight</b></td>
                                                     <td><b>Target Achieved</b></td>
+
+                                                    <td><b>Mid Year Self Assesment</b></td>
+                                                    <td><b>Mid Year Joint Assesment</b></td>
+                                                    <td><b>Mid Year Self Comments</b></td>
+                                                    <td><b>Mid Year Supervisor Comments</b></td>
+                                                    <td><b>Mid Year Weighted Rating</b></td>
+
                                                     <td><b>Self Assesment</b></td>
                                                     <td><b>Self Comments</b></td>
                                                     <td><b>Joint Assesment</b></td>
@@ -378,6 +573,19 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                 <td><?= !empty($kpi->Target)?$kpi->Target:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Maximum_Weight)?$kpi->Maximum_Weight:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Target_Achieved)?$kpi->Target_Achieved:'Not Set' ?></td>
+
+                                                <td><?= !empty($kpi->Mid_Year_Self_Assesment)?$kpi->Mid_Year_Self_Assesment:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Mid_Year_Joint_Assesment)?$kpi->Mid_Year_Joint_Assesment:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Mid_Year_Self_Comments)?$kpi->Mid_Year_Self_Comments:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Mid_Year_Supervisor_Comments)?$kpi->Mid_Year_Supervisor_Comments:'Not Set' ?></td>
+                                                <td><?= !empty($kpi->Mid_Year_Weighted_Rating)?$kpi->Mid_Year_Weighted_Rating:'Not Set' ?></td>
+
+
+
+
+
+
+
                                                 <td><?= !empty($kpi->Self_Assesment)?$kpi->Self_Assesment:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Self_Comments)?$kpi->Self_Comments:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Joint_Assesment)?$kpi->Joint_Assesment:'Not Set' ?></td>

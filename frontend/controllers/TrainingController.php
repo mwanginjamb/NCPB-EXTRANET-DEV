@@ -98,7 +98,7 @@ class TrainingController extends Controller
             }
         }
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Training'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Training'],$model,['Training_Program']) ){
 
             /*Read the card again to refresh Key in case it changed*/
            
@@ -162,7 +162,7 @@ class TrainingController extends Controller
         
 
 
-        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Training'],$model) ){
+        if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Training'],$model,['Training_Program']) ){
             
             /*Read the card again to refresh Key in case it changed*/
             $refresh = Yii::$app->navhelper->readByKey($service, $model->Key);;
@@ -390,7 +390,7 @@ class TrainingController extends Controller
     }
 
    
-/** Update this method to use a Key instead of filterkey */
+/** Updates a single field */
     public function actionSetfield($field){
         $service = 'TrainingRequestHeader';
         $value = Yii::$app->request->post('fieldValue');
@@ -398,8 +398,7 @@ class TrainingController extends Controller
         $result = Yii::$app->navhelper->Commit($service,[$field => $value],Yii::$app->request->post('Key'));
         Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
         return $result;
-      
-        
+          
     }
 
 
