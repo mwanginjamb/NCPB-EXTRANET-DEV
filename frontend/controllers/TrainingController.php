@@ -72,8 +72,11 @@ class TrainingController extends Controller
         $model = new Training();
         $service = Yii::$app->params['ServiceName']['TrainingRequestHeader'];
 
+        $model->Start_Date = date('Y-m-d');
+        $model->End_Date = date('Y-m-d');
+
         /*Do initial request */
-        if(!isset(Yii::$app->request->post()['Training']) || !Yii::$app->request->post()){
+        if(empty(Yii::$app->request->post()['Training']) ){
 
 
             $request = Yii::$app->navhelper->postData($service,$model);
@@ -81,6 +84,14 @@ class TrainingController extends Controller
             if(is_object($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
+                return $this->render('create',[
+                    'model' => $model,
+                    'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters(),
+                    'tAreas' => $this->getTrainingAreas(),
+                    'employees' => $this->getEmployees()
+                   
+                ]);
             }else{
                 Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
                 return $this->render('index');
@@ -91,14 +102,14 @@ class TrainingController extends Controller
 
             /*Read the card again to refresh Key in case it changed*/
            
-            $refresh = Yii::$app->navhelper->readBykey($service, $model->key);
+            $refresh = Yii::$app->navhelper->readBykey($service, $model->Key);
             $model->Key = $refresh->Key;
             
             $result = Yii::$app->navhelper->updateData($service,$model);
             if(!is_string($result)){
 
                 Yii::$app->session->setFlash('success','Document saved Successfully.' );
-                return $this->redirect(['view','No' => $result->Request_No]);
+                return $this->redirect(['view','No' => $result->Key]);
 
             }else{
                 Yii::$app->session->setFlash('error','Error  '.$result );
@@ -115,7 +126,8 @@ class TrainingController extends Controller
             'model' => $model,
             'functions' => $this->getFunctioncodes(),
             'budgetCenters' => $this->getBudgetcenters(),
-            
+            'tAreas' => $this->getTrainingAreas(),
+            'employees' => $this->getEmployees()
            
         ]);
     }
@@ -128,16 +140,26 @@ class TrainingController extends Controller
         $service = Yii::$app->params['ServiceName']['TrainingRequestHeader'];
         $model->isNewRecord = false;
 
+        if(Yii::$app->request->post('Key') && empty(Yii::$app->request->post()['Training']))
+        {
+            $result = Yii::$app->navhelper->readBykey($service, Yii::$app->request->post('Key'));
 
-        $result = Yii::$app->navhelper->readBykey($service, Yii::$app->request->post('Key'));
-
-        if(is_object($result)){
-            //load nav result to model
-            $model = Yii::$app->navhelper->loadmodel($result,$model) ;
-        }else{
-            Yii::$app->session->setFlash('error', $result);
-             return $this->render('index');
+            if(is_object($result)){
+                //load nav result to model
+                $model = Yii::$app->navhelper->loadmodel($result,$model) ;
+                return $this->render('update', [
+                    'model' => $model,
+                    'functions' => $this->getFunctioncodes(),
+                    'budgetCenters' => $this->getBudgetcenters(),
+                    'tAreas' => $this->getTrainingAreas(),
+                    'employees' => $this->getEmployees()               
+                ]);
+            }else{
+                Yii::$app->session->setFlash('error', $result);
+                return $this->render('index');
+            }
         }
+        
 
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Training'],$model) ){
@@ -152,7 +174,7 @@ class TrainingController extends Controller
 
                 Yii::$app->session->setFlash('success','Record Updated Successfully.' );
 
-                return $this->redirect(['view','No' => $result->Key]);
+                return $this->redirect(['view','Key' => $result->Key]);
 
             }else{
                 Yii::$app->session->setFlash('success','Error Updating Record'.$result );
@@ -167,6 +189,8 @@ class TrainingController extends Controller
                 'model' => $model,
                 'functions' => $this->getFunctioncodes(),
                 'budgetCenters' => $this->getBudgetcenters(),
+                'tAreas' => $this->getTrainingAreas(),
+                'employees' => $this->getEmployees()
                                 
             ]);
         }
@@ -175,6 +199,8 @@ class TrainingController extends Controller
                 'model' => $model,
                 'functions' => $this->getFunctioncodes(),
                 'budgetCenters' => $this->getBudgetcenters(),
+                'tAreas' => $this->getTrainingAreas(),
+                'employees' => $this->getEmployees()
                 
         ]);
     }
@@ -184,18 +210,25 @@ class TrainingController extends Controller
         $result = Yii::$app->navhelper->deleteData($service,Yii::$app->request->get('Key'));
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         if(!is_string($result)){
-
-            return ['note' => '<div class="alert alert-success">Record Purged Successfully</div>'];
+            Yii::$app->session->setFlash('success','Record Purged Successfully');
+            return $this->redirect(['index']);
         }else{
-            return ['note' => '<div class="alert alert-danger">Error Purging Record: '.$result.'</div>' ];
+            Yii::$app->session->setFlash('error','Error Purging Record: '.$result);
+            return $this->redirect(['index']);
         }
     }
 
-    public function actionView(){
+    public function actionView($Key=''){
         $model = new Training();
         $service = Yii::$app->params['ServiceName']['TrainingRequestHeader'];
 
-        $result = Yii::$app->navhelper->readByKey($service, Yii::$app->request->post('Key'));
+        if(Yii::$app->request->get('Key'))
+        {
+            $result = Yii::$app->navhelper->readByKey($service, Yii::$app->request->get('Key'));
+        }else{
+            $result = Yii::$app->navhelper->readByKey($service, Yii::$app->request->post('Key'));
+        }
+       
 
 
         //load nav result to model
@@ -222,7 +255,7 @@ class TrainingController extends Controller
         foreach($results as $item){
 
             
-            $ApprovalLink = $updateLink = $ViewLink =  '';
+            $ApprovalLink = $updateLink = $ViewLink = $deleteLink =   '';
             $ViewLink = Html::a('<i class="fas fa-eye"></i>',['view'],['title' => 'View Claim.',
             'class'=>'btn btn-outline-primary btn-xs',
             'data' => [
@@ -235,6 +268,14 @@ class TrainingController extends Controller
             'data' => [
                 'params' => ['Key' => $item->Key],
                 'method' => 'POST'
+                ]
+            ]):'';
+
+            $deleteLink = ($item->Status == 'New')?Html::a('<i class="fas fa-trash"></i>',['delete'],['title' => 'Delete Training.',
+            'class'=>'mx-2 btn btn-outline-primary btn-xs',
+            'data' => [
+                'params' => ['Key' => $item->Key],
+                'method' => 'GET'
                 ]
             ]):'';
             if($item->Status == 'New'){
@@ -250,7 +291,7 @@ class TrainingController extends Controller
                 'Start_Date' => !empty($item->Start_Date)?$item->Start_Date:'',
                 'End_Date' => !empty($item->End_Date)?$item->End_Date:'',
                 'Status' => !empty($item->Status)?$item->Status:'',
-                'Actions' => $ApprovalLink.' '.$ViewLink.' '.$updateLink ,
+                'Actions' => $ApprovalLink.' '.$ViewLink.' '.$updateLink.$deleteLink ,
 
             ];
         }
@@ -261,36 +302,16 @@ class TrainingController extends Controller
     
 
 
-   
+    public function getTrainingAreas(){
+        $service = Yii::$app->params['ServiceName']['TrainingAreas'];
+        $res = \Yii::$app->navhelper->getData($service);
+        return Yii::$app->navhelper->refactorArray($res,'Code','Description');
+    }
 
-
-    
-   
-
-   
     public function getEmployees(){
         $service = Yii::$app->params['ServiceName']['EmployeeList'];
-
         $employees = \Yii::$app->navhelper->getData($service);
-        // Yii::$app->recruitment->printrr($employees);
-        $data = [];
-        $i = 0;
-        if(is_array($employees)){
-
-            foreach($employees as  $emp){
-                $i++;
-                if(!empty($emp->FullName) && !empty($emp->No)){
-                    $data[$i] = [
-                        'No' => $emp->No,
-                        'Full_Name' => $emp->FullName
-                    ];
-                }
-
-            }
-
-        }
-
-        return ArrayHelper::map($data,'No','Full_Name');
+        return Yii::$app->navhelper->refactorArray($employees,'No','FullName');
     }
 
     /* Call Approval Workflow Methods */
@@ -371,12 +392,10 @@ class TrainingController extends Controller
    
 /** Update this method to use a Key instead of filterkey */
     public function actionSetfield($field){
-        $service = 'MileageCard';
-        $value = Yii::$app->request->post($field);
-        $filterValue =Yii::$app->request->post('No'); 
-        $filterKey = 'Claim_No';
-
-        $result = Yii::$app->navhelper->Commit($service,$field,$value,$filterKey,$filterValue);
+        $service = 'TrainingRequestHeader';
+        $value = Yii::$app->request->post('fieldValue');
+       
+        $result = Yii::$app->navhelper->Commit($service,[$field => $value],Yii::$app->request->post('Key'));
         Yii::$app->response->format = \yii\web\response::FORMAT_JSON;
         return $result;
       

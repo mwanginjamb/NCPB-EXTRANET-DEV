@@ -429,7 +429,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <a href="#" class="nav-link <?= currentCtrl(['appraisal'])?'active':'' ?>">
                                 <i class="nav-icon fas fa-briefcase " ></i>
                                 <p>
-                                    Performance Appraisal
+                                    Balanced Score Card
                                     <i class="fas fa-angle-left right"></i>
                                     <!--<span class="badge badge-info right">6</span>-->
                                 </p>
@@ -530,7 +530,32 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             </ul>
                         </li>
 
+                        <!----Training---->
 
+                        <li class="nav-item has-treeview <?= Yii::$app->recruitment->currentCtrl(['training'])?'menu-open':'' ?>">
+                            <a href="#" class="nav-link <?= currentCtrl(['training'])?'active':'' ?>">
+                                <i class="nav-icon fas fa-briefcase " ></i>
+                                <p>
+                                    Training
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>training" class="nav-link <?= currentaction('training','index')?'active':'' ?>">
+                                        <i class="fa fa-check-square nav-icon"></i>
+                                        <p>Training Request List </p>
+                                    </a>
+                                </li>
+
+                    
+
+                               
+
+                            </ul>
+                        </li>
 
                         <!-- Procurement Management -->
 

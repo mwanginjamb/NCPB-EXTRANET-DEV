@@ -39,14 +39,14 @@ public $Budget_G_L;
 public $isNewRecord;
 
 public $Status;
-public object $Training_Request_Line;
+
 
     
 
     public function rules()
     {
         return [
-
+            [['Start_Date','End_Date'], 'required'],
         ];
     }
 

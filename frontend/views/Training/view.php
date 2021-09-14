@@ -79,10 +79,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Training Request Card', 'url' => [
                         <div class=" row col-md-12">
                             <div class="col-md-6">
 
-                                <?= $form->field($model, 'Training_Area')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
-                                <?= $form->field($model, 'Training_Area')->textarea(['rows'=> 2, 'maxlength'=> 200, 'readonly'=> true]) ?>
-                                <?= $form->field($model, 'Training_Program')->textInput(['type' => 'date','required' =>  true,'readonly'=> true]) ?>
-                                <?= $form->field($model, 'Description')->textInput(['type'=> 'date', 'required'=> true, 'readonly'=> true]) ?>
+                                <?= $form->field($model, 'Request_No')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
+                                <?= $form->field($model, 'Training_Area')->textInput(['rows'=> 2, 'maxlength'=> 200, 'readonly'=> true]) ?>
+                                <?= $form->field($model, 'Training_Program')->textInput(['readonly'=> true]) ?>
+                                <?= $form->field($model, 'Description')->textInput(['required'=> true, 'readonly'=> true]) ?>
                                 <?= $form->field($model, 'Start_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'End_Date')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Institute_Name')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
@@ -90,10 +90,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Training Request Card', 'url' => [
                                 <?= $form->field($model, 'Training_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 <?= $form->field($model, 'Trainer_Type')->textInput(['readonly'=> true, 'disabled'=>true]) ?>
                                 
-
-
-
-
                                 <p class="parent"><span>+</span>
 
 
@@ -164,13 +160,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Training Request Card', 'url' => [
                         <table class="table table-bordered">
                             <thead>
                             <tr>
-                                <td><b>Employee_No</b></td>
+                                <td><b>Employee No</b></td>
                                 
-                                <td><b>Employee_Name</b></td>
-                                <td><b>Employee_ID</b></td>
+                                <td><b>Employee Name</b></td>
+                                <td><b>Employee ID</b></td>
                                 <td><b>Attending</b></td>
-                               
-                               
                                 <td><b>Actions</b></td>
 
 
@@ -228,7 +222,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Training Request Card', 'url' => [
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Safari Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Training Management</h4>
                 </div>
                 <div class="modal-body">
 

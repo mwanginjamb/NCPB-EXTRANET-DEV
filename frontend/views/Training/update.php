@@ -11,8 +11,8 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\AgendaDocument */
-$this->title = 'Update Leave Application';
-$this->params['breadcrumbs'][] = ['label' => 'Leaves', 'url' => ['index']];
+$this->title = 'Update Application';
+$this->params['breadcrumbs'][] = ['label' => 'Training Requests List', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Update Request', 'url' => ['update']];
 
 $model->isNewRecord = false;
@@ -25,9 +25,10 @@ $model->Start_Date = date('m-d-Y', strtotime($now.' + 2 days'));*/
 
     <?= $this->render('_form',[
         'model' => $model,
-        'safariRequests' => $safariRequests,
         'functions' => $functions,
-        'budgetCenters' => $budgetCenters
+        'budgetCenters' => $budgetCenters,
+        'tAreas' => $tAreas,
+        'employees' => $employees
     ]) ?>
 
 </div>

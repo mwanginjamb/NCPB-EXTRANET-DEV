@@ -20,6 +20,7 @@ public $Employee_No;
 public $Employee_Name;
 public $Employee_ID;
 public $Attending;
+public $Request_No;
 public $isNewRecord;
 
     

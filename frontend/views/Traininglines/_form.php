@@ -20,69 +20,14 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                 <?php
                $form = ActiveForm::begin(); ?>
                 <div class="row">
-
-
-
-
-
                         <?= $form->field($model, 'Key')->hiddenInput(['readonly'=> true])->label(false) ?>
-                        <div class="col-md-6">
-                                
-                                
-                               
-                                <?= $form->field($model, 'Expense_Date')->textInput(['type' => 'date']) ?>
-                                 <?= $form->field($model, 'Return_Date')->textInput(['type' => 'date']) ?>
-                                <?= $form->field($model, 'Travel_From')->dropDownList($towns,['prompt' => 'Select ...']) ?>
-                                <?= $form->field($model, 'Nights_Spent')->textInput(['type' => 'number','readonly' =>  true]) ?>
-                                
-                               
-
+                        <div class="col-md-12">
+                                <?= $form->field($model, 'Employee_No')->dropDownList($employees,['prompt' => 'Select ...']) ?>
+                                <?= $form->field($model, 'Attending')->checkbox(['Attending', $model->Attending]) ?>
+                                                             
                         </div>
-
-                        <div class="col-md-6">
-                                <?= $form->field($model, 'Document_No')->textInput(['readonly' => true]); ?>
-                                <?= $form->field($model, 'Total_Distance')->textInput(['maxlength'=> 4,'type' => 'number']) ?>
-                                
-                                <?= $form->field($model, 'Travel_To')->dropDownList($towns,['prompt' => 'Select ...']) ?>
-                                <?= $form->field($model, 'Days_Spent')->textInput(['type' => 'number','readonly' => true]) ?>
-                               
-                                     
-                        </div>
-
-                    
-
-                        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 </div>
-
-
-
-
-
-
-
-
-
-
-
 
                 <div class="row">
 
