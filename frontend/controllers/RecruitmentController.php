@@ -51,12 +51,12 @@ class RecruitmentController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index','vacancies'],
+                        'actions' => ['index','vacancies','submit'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['index','vacancies'],
+                        'actions' => ['index','vacancies','submit'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return \Yii::$app->session->has('HRUSER');
