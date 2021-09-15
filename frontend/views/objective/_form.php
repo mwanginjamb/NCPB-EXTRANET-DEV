@@ -42,7 +42,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
                                     <?= $form->field($model, 'Employee_No')->hiddenInput()->label(false) ?>
                                    
-                                    <?= (Yii::$app->session->get('Approval_Status') == 'Appraisee_Level')?$form->field($model, 'KRA_Code')->dropDownList($kra,['prompt' => 'Select ...']):'' ?>
+                                    <?= (Yii::$app->session->get('Goal_Setting_Status') == 'Appraisee_Level')?$form->field($model, 'KRA_Code')->dropDownList($kra,['prompt' => 'Select ...']):'' ?>
 
 
                                      <?= $form->field($model, 'Objective')->textInput(['readonly' => true]) ?>

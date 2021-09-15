@@ -32,7 +32,7 @@ class RefereeController extends Controller
                 'only' => ['logout', 'signup','index','getreferee'],
                 'rules' => [
                     [
-                        'actions' => ['signup','index'],
+                        'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -40,6 +40,13 @@ class RefereeController extends Controller
                         'actions' => ['logout','index','getreferee'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index','getreferee'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->session->has('HRUSER');
+                        },
                     ],
                 ],
             ],
@@ -62,6 +69,11 @@ class RefereeController extends Controller
     }
 
     public function actionIndex(){
+
+        if(Yii::$app->session->has('HRUSER'))
+        {
+            $this->layout = 'external';
+        }
 
         return $this->render('index');
 

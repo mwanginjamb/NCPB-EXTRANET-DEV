@@ -533,20 +533,22 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                     <td><b>Target</b></td>
                                                     <td><b>Maximum Weight</b></td>
                                                     <td><b>Target Achieved</b></td>
-
+                            <?php if($model->Mid_Year_Approval_Status == 'Appraisee_Level' || $model->Mid_Year_Approval_Status == 'Supervisor_Level' || $model->Mid_Year_Approval_Status == 'Hr_Level'  ): ?>
                                                     <td><b>Mid Year Self Assesment</b></td>
                                                     <td><b>Mid Year Joint Assesment</b></td>
                                                     <td><b>Mid Year Self Comments</b></td>
                                                     <td><b>Mid Year Supervisor Comments</b></td>
                                                     <td><b>Mid Year Weighted Rating</b></td>
 
+                            <?php endif; ?>
+                            <?php if($model->Approval_Status == 'Appraisee_Level' || $model->Approval_Status == 'Supervisor_Level' || $model->Approval_Status == 'Hr_Level'  ): ?>
                                                     <td><b>Self Assesment</b></td>
                                                     <td><b>Self Comments</b></td>
                                                     <td><b>Joint Assesment</b></td>
                                                     <td><b>Supervisor Comments</b></td>
                                                     <td><b>Weighted Rating</b></td>
                                                     <td><b>Hr Comments</b></td>
-                                                    
+                            <?php endif; ?>                       
 
                                                     <th><b>Action</b></th>
 
@@ -573,18 +575,19 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                 <td><?= !empty($kpi->Target)?$kpi->Target:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Maximum_Weight)?$kpi->Maximum_Weight:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Target_Achieved)?$kpi->Target_Achieved:'Not Set' ?></td>
+                                    <?php if($model->Mid_Year_Approval_Status == 'Appraisee_Level' || $model->Mid_Year_Approval_Status == 'Supervisor_Level' || $model->Mid_Year_Approval_Status == 'Hr_Level'  ): ?>
 
                                                 <td><?= !empty($kpi->Mid_Year_Self_Assesment)?$kpi->Mid_Year_Self_Assesment:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Mid_Year_Joint_Assesment)?$kpi->Mid_Year_Joint_Assesment:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Mid_Year_Self_Comments)?$kpi->Mid_Year_Self_Comments:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Mid_Year_Supervisor_Comments)?$kpi->Mid_Year_Supervisor_Comments:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Mid_Year_Weighted_Rating)?$kpi->Mid_Year_Weighted_Rating:'Not Set' ?></td>
+                                    <?php endif; ?>
 
 
 
 
-
-
+                                    <?php if($model->Approval_Status == 'Appraisee_Level' || $model->Approval_Status == 'Supervisor_Level' || $model->Approval_Status == 'Hr_Level'  ): ?>
 
                                                 <td><?= !empty($kpi->Self_Assesment)?$kpi->Self_Assesment:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Self_Comments)?$kpi->Self_Comments:'Not Set' ?></td>
@@ -593,7 +596,7 @@ Yii::$app->session->set('Approval_Status',$model->Approval_Status);
                                                 <td><?= !empty($kpi->Weighted_Rating)?$kpi->Weighted_Rating:'Not Set' ?></td>
                                                 <td><?= !empty($kpi->Hr_Comments)?$kpi->Hr_Comments:'Not Set' ?></td>
                                                 
-
+                                    <?php endif; ?>
                                 
 
                                                 <td><?= $updateLink.$deleteLink ?></td>

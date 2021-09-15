@@ -30,7 +30,7 @@ class LanguageController extends Controller
                 'only' => ['logout', 'signup','index'],
                 'rules' => [
                     [
-                        'actions' => ['signup','index'],
+                        'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -38,6 +38,13 @@ class LanguageController extends Controller
                         'actions' => ['logout','index'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->session->has('HRUSER');
+                        },
                     ],
                 ],
             ],
@@ -60,7 +67,10 @@ class LanguageController extends Controller
     }
 
     public function actionIndex(){
-
+        if(Yii::$app->session->has('HRUSER'))
+        {
+            $this->layout = 'external';
+        }
         return $this->render('index');
 
     }

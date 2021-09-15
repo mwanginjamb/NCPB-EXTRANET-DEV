@@ -1,14 +1,15 @@
 <?php
 return [
-    'adminEmail' => 'rck.support@softeboard.com',
-    'supportEmail' => 'rck.support@softeboard.com',
-    'senderEmail' => 'customer@softeboard.com',
+    'adminEmail' => 'navision@rckkenya.org',
+    'supportEmail' => 'navision@rckkenya.org',
+    'senderEmail' => 'navision@rckkenya.org',
     'senderName' => 'NCPB Mailer',
     'user.passwordResetTokenExpire' => 36000,
     'powered' => 'Iansoft Technologies Ltd.',
     'NavisionUsername'=>'Administrator',
     'NavisionPassword'=>'Ncpb&admin&',
     'generalTitle' => 'NCPB EXTRANET ',
+    'recruitmentTitle' => 'NCPB CAREERS',
 
 
     'NavTestApprover' => 'Approver',

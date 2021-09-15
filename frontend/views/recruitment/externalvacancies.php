@@ -10,7 +10,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'HRMIS - COGRI Careers';
+$this->title = Yii::$app->params['generalTitle'].' - '.Yii::$app->params['recruitmentTitle'];
 $this->params['breadcrumbs'][] = ['label' => 'Recruitment ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'External Vacancies', 'url' => ['externalvacancies']];
 ?>

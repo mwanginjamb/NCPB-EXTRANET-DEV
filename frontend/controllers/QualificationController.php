@@ -30,7 +30,7 @@ class QualificationController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index'],
+                'only' => ['logout', 'signup','index','professional'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -38,9 +38,16 @@ class QualificationController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout','index','professional'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index','professional'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->session->has('HRUSER');
+                        },
                     ],
                 ],
             ],
@@ -64,12 +71,20 @@ class QualificationController extends Controller
 
     public function actionIndex(){
 
+        if(Yii::$app->session->has('HRUSER'))
+        {
+            $this->layout = 'external';
+        }
         return $this->render('index');
 
     }
 
      public function actionProfessional(){
 
+        if(Yii::$app->session->has('HRUSER'))
+        {
+            $this->layout = 'external';
+        }
         return $this->render('professional');
 
     }

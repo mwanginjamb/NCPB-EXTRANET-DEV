@@ -429,7 +429,7 @@ $employee = (!Yii::$app->user->isGuest)?Yii::$app->user->identity->employee[0]:[
                             <a href="#" class="nav-link <?= currentCtrl(['appraisal'])?'active':'' ?>">
                                 <i class="nav-icon fas fa-briefcase " ></i>
                                 <p>
-                                    Balanced Score Card
+                                    Performance Mgt.
                                     <i class="fas fa-angle-left right"></i>
                                     <!--<span class="badge badge-info right">6</span>-->
                                 </p>

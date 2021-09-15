@@ -43,10 +43,10 @@ class RecruitmentController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index','vacancies'],
+                'only' => ['index','vacancies','submit'],
                 'rules' => [
                     [
-                        'actions' => ['vacancies'],
+                        'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -54,6 +54,13 @@ class RecruitmentController extends Controller
                         'actions' => ['index','vacancies'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index','vacancies'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->session->has('HRUSER');
+                        },
                     ],
                 ],
             ],
@@ -294,7 +301,10 @@ class RecruitmentController extends Controller
     }
 
     public function actionExternalvacancies(){
-        $this->layout = 'external';
+        if(Yii::$app->session->has('HRUSER'))
+        {
+            $this->layout = 'external';
+        }
         return $this->render('externalvacancies');
     }
 
@@ -505,7 +515,8 @@ class RecruitmentController extends Controller
         $model = new SignupForm(); //This signup form in common is for registering external hrusers
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $model->goHome();//redirect to recruitment login
+           // return $model->goHome();//redirect to recruitment login
+           return $this->redirect(['recruitment/login']);
         }
 
         return $this->render('signup', [
@@ -600,7 +611,7 @@ class RecruitmentController extends Controller
 
     public function actionSubmit(){
         // Yii::$app->recruitment->printrr($_SESSION);
-        if(Yii::$app->session->has('mode') && Yii::$app->session->get('mode') == 'external'){
+        if(Yii::$app->session->has('mode') && Yii::$app->session->get('mode') == 'external' || Yii::$app->session->has('HRUSER')){
             $this->layout = 'external';
         }
 

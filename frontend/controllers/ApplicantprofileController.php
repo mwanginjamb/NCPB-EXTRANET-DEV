@@ -79,7 +79,7 @@ class ApplicantprofileController extends Controller
             $this->layout = 'external';
 
             if(!Yii::$app->session->has('HRUSER')){
-               return $this->redirect(['./recruitment/login']);
+               return $this->redirect(['./recruitment/update']);
            }
         }
 
@@ -181,15 +181,19 @@ class ApplicantprofileController extends Controller
 
 
     public function actionUpdate(){
+        
         if(!Yii::$app->user->isGuest && !empty( Yii::$app->user->identity->Employee[0]->ProfileID)){ //Profile ID for internal user
+            
             $profileID = Yii::$app->user->identity->Employee[0]->ProfileID;
 
             Yii::$app->session->set('ProfileID',$profileID);
 
         }else if(Yii::$app->session->has('HRUSER')){ //Profile ID for external user
+           
             $hruser = \common\models\Hruser::findByUsername(Yii::$app->session->get('HRUSER')->username);
             $profileID =  $hruser->profileID;
             Yii::$app->session->set('ProfileID',$profileID);
+           
         }
         //Remove Requirement entries if found persistent
 
@@ -201,9 +205,9 @@ class ApplicantprofileController extends Controller
             Yii::$app->session->remove('REQUISITION_NO');
         }*/
 
-        if(Yii::$app->session->has('ProfileID')){
+       /* if(Yii::$app->session->has('ProfileID')){
             Yii::$app->session->remove('ProfileID');
-        }
+        }*/
 
         if(Yii::$app->session->has('REQ_ENTRIES')){
             Yii::$app->session->remove('REQ_ENTRIES');
@@ -259,6 +263,8 @@ class ApplicantprofileController extends Controller
 
         $Countries = $this->getCountries();
        // $Religion = $this->getReligion();
+       
+       // Yii::$app->recruitment->printrr($_SESSION);
         return $this->render('update',[
             'model' => $model,
             'countries' => ArrayHelper::map($Countries,'Code','Name'),
