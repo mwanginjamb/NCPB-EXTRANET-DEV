@@ -28,7 +28,8 @@ $model->Start_Date = date('m-d-Y', strtotime($now.' + 2 days'));*/
         'functions' => $functions,
         'budgetCenters' => $budgetCenters,
         'tAreas' => $tAreas,
-        'employees' => $employees
+        'employees' => $employees,
+        'header' => $header
     ]) ?>
 
 </div>

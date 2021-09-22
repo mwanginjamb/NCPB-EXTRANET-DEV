@@ -28,7 +28,8 @@ $model->isNewRecord = true;
         'functions' => $functions,
         'budgetCenters' => $budgetCenters,
         'tAreas' => $tAreas,
-        'employees' => $employees
+        'employees' => $employees,
+        'header' => $header
     ]) ?>
 
 </div>

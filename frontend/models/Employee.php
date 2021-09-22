@@ -85,6 +85,7 @@ public $Notice_Period_End_Date;
 public $Date_of_Leaving_the_Company;
 public $Pension_Scheme_Join;
 public $Time_on_Pension_Scheme;
+public $ProfileID;
 
     public function rules()
     {

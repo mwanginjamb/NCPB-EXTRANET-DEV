@@ -51,12 +51,12 @@ class RecruitmentController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['index','vacancies','submit'],
+                        'actions' => ['index','vacancies','submit','externalvacancies'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['index','vacancies','submit'],
+                        'actions' => ['index','vacancies','submit','externalvacancies'],
                         'allow' => true,
                         'matchCallback' => function ($rule, $action) {
                             return \Yii::$app->session->has('HRUSER');
@@ -301,10 +301,9 @@ class RecruitmentController extends Controller
     }
 
     public function actionExternalvacancies(){
-        if(Yii::$app->session->has('HRUSER'))
-        {
+       
             $this->layout = 'external';
-        }
+        
         return $this->render('externalvacancies');
     }
 

@@ -8,6 +8,7 @@
 
 namespace frontend\models;
 use common\models\User;
+use stdClass;
 use Yii;
 use yii\base\Model;
 
@@ -15,6 +16,7 @@ use yii\base\Model;
 class Training extends Model
 {
 
+    
 public $Key;
 public $Request_No;
 public $Training_Area;
@@ -41,8 +43,8 @@ public $isNewRecord;
 public $Status;
 
 
-    
-
+   
+  
     public function rules()
     {
         return [

@@ -122,12 +122,12 @@ class TraininglinesController extends Controller
     }
 
 
-    public function actionUpdate(){
+    public function actionUpdate($Key=""){
         $model = new Traininglines();
         $model->isNewRecord = false;
         $service = Yii::$app->params['ServiceName']['TrainingRequestLine'];
         
-        $result = Yii::$app->navhelper->readByKey($service,Yii::$app->request->post('Key'));
+        $result = Yii::$app->navhelper->readByKey($service,$Key);
         if(is_object($result)){
             //load nav result to model
             $model = Yii::$app->navhelper->loadmodel($result,$model) ;
@@ -138,7 +138,7 @@ class TraininglinesController extends Controller
 
         if(Yii::$app->request->post() && Yii::$app->navhelper->loadpost(Yii::$app->request->post()['Traininglines'],$model) ){
 
-            $refresh = Yii::$app->navhelper->readByKey($service, $model->Key);
+            $refresh = Yii::$app->navhelper->readByKey($service, Yii::$app->request->post()['Traininglines']['Key']);
            
 
            if(is_object($refresh)){
@@ -188,14 +188,7 @@ class TraininglinesController extends Controller
   
 
 
-    public function actionSetfield($field){
-        $service = 'safariLine';     
-        $field = [ $field => \Yii::$app->request->post($field)];
-        $Key = (Yii::$app->request->post('Key'))?Yii::$app->request->post('Key'):'';
-        $result = Yii::$app->navhelper->Commit($service,$field,$Key);
-        return $result;
-        
-    }  
+    
 
 
 }

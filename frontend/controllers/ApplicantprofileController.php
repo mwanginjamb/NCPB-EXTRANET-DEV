@@ -31,7 +31,7 @@ class ApplicantprofileController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index'],
+                'only' => ['logout', 'signup','index','create'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -39,9 +39,16 @@ class ApplicantprofileController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout','index','create'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index','logout','create'],
+                        'allow' => true,
+                        'matchCallback' => function ($rule, $action) {
+                            return \Yii::$app->session->has('HRUSER');
+                        },
                     ],
                 ],
             ],
@@ -74,11 +81,11 @@ class ApplicantprofileController extends Controller
     public function actionCreate(){
 
 
-        //Yii::$app->recruitment->printrr(Yii::$app->session->get('HRUSER'));
+       // Yii::$app->recruitment->printrr($_SESSION);
         if(Yii::$app->session->has('mode') || Yii::$app->session->get('mode') == 'external' || Yii::$app->session->has('HRUSER')){
             $this->layout = 'external';
 
-            if(!Yii::$app->session->has('HRUSER')){
+            if(!Yii::$app->session->has('HRUSER') && Yii::$app->session->has('ProfileID')){
                return $this->redirect(['./recruitment/update']);
            }
         }

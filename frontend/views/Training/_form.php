@@ -119,17 +119,85 @@ if(Yii::$app->session->hasFlash('success')){
 
 
 
-                <div class="row">
+               <!-- <div class="row">
 
                     <div class="form-group">
                         <?= Html::submitButton(($model->isNewRecord)?'Save':'Update', ['class' => 'btn btn-success','id' => 'submit']) ?>
                     </div>
 
 
-                </div>
+                </div>-->
                 <?php ActiveForm::end(); ?>
             </div>
         </div>
+
+        
+            <!--Objectives card -->
+
+            <?php // Yii::$app->recruitment->printrr($model->getLines($model->Application_No)) ?>
+
+
+
+            <div class="card card-success">
+                <div class="card-header">
+                    <div class="card-title">   <?= ($model->Status == 'New')? Html::a('<i class="fa fa-plus-square"></i> New Line',['traininglines/create','No'=>$model->Request_No],['class' => 'add-objective btn btn-outline-warning']):'' ?></div>
+                </div>
+
+
+
+                <div class="card-body">
+
+
+
+
+
+                    <?php
+                    if(property_exists($header->Training_Request_Line,'Training_Request_Line')){ //show Lines ?>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td><b>Employee No</b></td>
+                                
+                                <td><b>Employee Name</b></td>
+                                <td><b>Employee ID</b></td>
+                                <td><b>Attending</b></td>
+                                <td><b>Actions</b></td>
+
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            // print '<pre>'; print_r($model->getObjectives()); exit;
+
+                            foreach($header->Training_Request_Line->Training_Request_Line as $obj):
+                               
+                                $attending = ($obj->Attending)?'Yes':'No';
+                                $updateLink = Html::a('<i class="fa fa-edit"></i>',['traininglines/update',
+                                    'Key'=> $obj->Key
+                                ],
+                                ['class' => 'update-objective btn btn-outline-info btn-xs','title' => 'update line']);
+                                $deleteLink = Html::a('<i class="fa fa-trash"></i>',['traininglines/delete','Key'=> $obj->Key ],['class'=>'delete btn btn-outline-danger btn-xs']);
+                                ?>
+                                <tr>
+
+                                    <td><?= !empty($obj->Employee_No)?$obj->Employee_No:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Employee_Name)?$obj->Employee_Name:'Not Set' ?></td>
+                                    <td><?= !empty($obj->Employee_ID)?$obj->Employee_ID:'Not Set' ?></td>
+                                    <td><?= $attending ?></td>
+                                    
+                                    
+
+                                    <td><?= ($header->Status == 'New')?$updateLink.'|'.$deleteLink:'' ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } ?>
+                </div>
+            </div>
+
+            <!--objectives card -->
 
 
 
@@ -147,7 +215,7 @@ if(Yii::$app->session->hasFlash('success')){
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Safari Management</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="position: absolute">Training Management</h4>
                 </div>
                 <div class="modal-body">
 
@@ -176,7 +244,34 @@ $script = <<<JS
                 },'json');
         });*/
 
-        // Set Cover Type
+    /*Deleting Records*/
+     
+    $('.delete, .delete-objective').on('click',function(e){
+         e.preventDefault();
+           var secondThought = confirm("Are you sure you want to delete this record ?");
+           if(!secondThought){//if user says no, kill code execution
+                return;
+           }
+           
+         var url = $(this).attr('href');
+         $.get(url).done(function(msg){
+             $('.modal').modal('show')
+                    .find('.modal-body')
+                    .html(msg.note);
+         },'json');
+     });
+
+       //Add a training plan
+    
+       $('.add-objective, .update-objective').on('click',function(e){
+        e.preventDefault();
+        var url = $(this).attr('href');
+        console.log('clicking...');
+        $('.modal').modal('show')
+                        .find('.modal-body')
+                        .load(url); 
+
+     });
         
      
      /*Set training Area*/
@@ -257,6 +352,7 @@ $script = <<<JS
                            
                             $(keyField).val(msg.Key);
                             $(targetField).val(msg[fieldName]);
+                            $('#training-training_program').val(msg.Training_Program);
 
                            
                             if((typeof msg) === 'string') { // A string is an error

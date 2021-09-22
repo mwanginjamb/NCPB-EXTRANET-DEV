@@ -20,6 +20,7 @@ use yii\web\BadRequestHttpException;
 
 use yii\web\Response;
 use kartik\mpdf\Pdf;
+use stdClass;
 
 class TrainingController extends Controller
 {
@@ -79,19 +80,12 @@ class TrainingController extends Controller
         if(empty(Yii::$app->request->post()['Training']) ){
 
 
-            $request = Yii::$app->navhelper->postData($service,$model);
+            $request = Yii::$app->navhelper->postData($service,$model,['Training_Request_Line']);
             //Yii::$app->recruitment->printrr($request);
             if(is_object($request) )
             {
                 Yii::$app->navhelper->loadmodel($request,$model);
-                return $this->render('create',[
-                    'model' => $model,
-                    'functions' => $this->getFunctioncodes(),
-                    'budgetCenters' => $this->getBudgetcenters(),
-                    'tAreas' => $this->getTrainingAreas(),
-                    'employees' => $this->getEmployees()
-                   
-                ]);
+                return $this->redirect(['update','Key' => $request->Key]);
             }else{
                 Yii::$app->session->setFlash('error', 'Error : ' . $request, true);
                 return $this->render('index');
@@ -105,7 +99,7 @@ class TrainingController extends Controller
             $refresh = Yii::$app->navhelper->readBykey($service, $model->Key);
             $model->Key = $refresh->Key;
             
-            $result = Yii::$app->navhelper->updateData($service,$model);
+            $result = Yii::$app->navhelper->updateData($service,$model,['Training_Program']);
             if(!is_string($result)){
 
                 Yii::$app->session->setFlash('success','Document saved Successfully.' );
@@ -127,7 +121,8 @@ class TrainingController extends Controller
             'functions' => $this->getFunctioncodes(),
             'budgetCenters' => $this->getBudgetcenters(),
             'tAreas' => $this->getTrainingAreas(),
-            'employees' => $this->getEmployees()
+            'employees' => $this->getEmployees(),
+            'header' => new stdClass()
            
         ]);
     }
@@ -135,14 +130,20 @@ class TrainingController extends Controller
 
 
 
-    public function actionUpdate(){
+    public function actionUpdate($Key = ""){
         $model = new Training();
         $service = Yii::$app->params['ServiceName']['TrainingRequestHeader'];
         $model->isNewRecord = false;
 
-        if(Yii::$app->request->post('Key') && empty(Yii::$app->request->post()['Training']))
+        if($Key || (Yii::$app->request->post('Key') && empty(Yii::$app->request->post()['Training'])))
         {
-            $result = Yii::$app->navhelper->readBykey($service, Yii::$app->request->post('Key'));
+            if($Key)
+            {
+                $result = Yii::$app->navhelper->readBykey($service, $Key);
+            }else{
+                $result = Yii::$app->navhelper->readBykey($service, Yii::$app->request->post('Key'));
+            }
+            
 
             if(is_object($result)){
                 //load nav result to model
@@ -152,7 +153,8 @@ class TrainingController extends Controller
                     'functions' => $this->getFunctioncodes(),
                     'budgetCenters' => $this->getBudgetcenters(),
                     'tAreas' => $this->getTrainingAreas(),
-                    'employees' => $this->getEmployees()               
+                    'employees' => $this->getEmployees()  ,
+                    'header' => $result             
                 ]);
             }else{
                 Yii::$app->session->setFlash('error', $result);
@@ -190,7 +192,8 @@ class TrainingController extends Controller
                 'functions' => $this->getFunctioncodes(),
                 'budgetCenters' => $this->getBudgetcenters(),
                 'tAreas' => $this->getTrainingAreas(),
-                'employees' => $this->getEmployees()
+                'employees' => $this->getEmployees(),
+                'header' => new stdClass()
                                 
             ]);
         }
@@ -200,7 +203,8 @@ class TrainingController extends Controller
                 'functions' => $this->getFunctioncodes(),
                 'budgetCenters' => $this->getBudgetcenters(),
                 'tAreas' => $this->getTrainingAreas(),
-                'employees' => $this->getEmployees()
+                'employees' => $this->getEmployees(),
+                'header' => new stdClass()
                 
         ]);
     }
