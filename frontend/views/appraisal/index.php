@@ -81,27 +81,24 @@ $script = <<<JS
     $(function(){
          /*Data Tables*/
          
-        $.fn.dataTable.ext.errMode = 'throw';
+       // $.fn.dataTable.ext.errMode = 'throw';
         const url = $('#url').val();
     
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'appraisal/list',
+            ajax: url+'appraisal/list-gs-appraisee',
             paging: true,
             columns: [
-                { title: 'No' ,data: 'No'},
+                { title: 'No' ,data: 'Appraisal_No'},
                 { title: 'Employee No' ,data: 'Employee_No'},
                 { title: 'Employee Name' ,data: 'Employee_Name'},
-                { title: 'Department' ,data: 'Department'},
-                { title: 'Appraisal Start Date' ,data: 'Appraisal_Start_Date'},
-                               
+                { title: 'Level_Grade' ,data: 'Level_Grade'},
+                { title: 'Job Title' ,data: 'Job_Title'},
+                { title: 'Appraisal Period' ,data: 'Appraisal_Period'},
+                { title: 'Appraisal Start Date' ,data: 'Appraisal_Start_Date'},             
                 { title: 'Appraisal End Date' ,data: 'Appraisal_End_Date'},
-                { title: 'Remaining Days', data: 'Remaining_Days' },
-                { title: 'Total KPIs', data: 'Total_KPI_x0027_s' },
-                { title: 'Created By', data: 'Created_By' },
-                { title: 'Created On', data: 'Created_On' },
-                { title: 'Actions', data: 'Actions' },
+                { title: 'Action', data: 'Action' },
                
             ] ,                              
            language: {
@@ -115,7 +112,7 @@ $script = <<<JS
         
        //Hidding some 
        var table = $('#table').DataTable();
-      table.columns([8,9]).visible(false);
+      // table.columns([8,9]).visible(false);
     
     /*End Data tables*/
         $('#table').on('click','tr', function(){

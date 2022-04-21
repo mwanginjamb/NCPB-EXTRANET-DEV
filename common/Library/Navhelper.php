@@ -17,7 +17,7 @@ class Navhelper extends Component{
         $creds->UserName = $username;
         $creds->PassWord = $password;
 
-        // Yii::$app->recruitment->printrr($creds);
+        //Yii::$app->recruitment->printrr($identity);
         $url = new Services($service);
 
         $soapWsdl= $url->getUrl();
@@ -49,34 +49,43 @@ class Navhelper extends Component{
 
     }
 
-    /*Get A single Record */
-    public function findOne($service,$filterKey, $filterValue){
+    
+
+      /*Read a single entry*/
+
+    
+      public function findOne($service,$filter,$credentials = []){
 
         $url  =  new Services($service);
         $wsdl = $url->getUrl();
-        $username = (!Yii::$app->user->isGuest)? Yii::$app->user->identity->{'User ID'} :  Yii::$app->params['ldPrefix'].'\\'.Yii::$app->params['NavisionUsername'];
-        $password = Yii::$app->session->has('IdentityPassword')? Yii::$app->session->get('IdentityPassword'):Yii::$app->params['NavisionPassword'];
 
-        $creds = (object)[];
-        $creds->UserName = $username;
-        $creds->PassWord = $password;
+        if(empty($credentials))
+        {        
+                $username = (!Yii::$app->user->isGuest)? Yii::$app->user->identity->{'User ID'} :  Yii::$app->params['ldPrefix'].'\\'.Yii::$app->params['NavisionUsername'];
+                $password = Yii::$app->session->has('IdentityPassword')? Yii::$app->session->get('IdentityPassword'):Yii::$app->params['NavisionPassword'];
+    
+                $credentials = (object)[];
+                $credentials->UserName = $username;
+                $credentials->PassWord = $password;
+        }
 
-        if(!Yii::$app->navision->isUp($wsdl,$creds)) {
+        if(!Yii::$app->navision->isUp($wsdl,$credentials)) {
 
             return ['error' => 'Service unavailable.'];
 
         }
 
 
-        $res = (array)$result = Yii::$app->navision->readEntry($creds, $wsdl, $filterKey, $filterValue);
-
-        if(count($res)){
+        $res = (array)$result = Yii::$app->navision->readEntry($credentials, $wsdl, $filter);
+        //var_dump($res); exit;
+        if(count($res) && !isset($res[0])){
             return $res[$service];
         }else{
-            return false;
+            return $res;
         }
-        
+
     }
+
 
 
 
@@ -343,6 +352,8 @@ class Navhelper extends Component{
   
       // Refactor an array with valid and existing data
 
+    // Refactor an array with valid and existing data
+
     public function refactorArray($arr,$from,$to)
     {
         $list = [];
@@ -367,6 +378,27 @@ class Navhelper extends Component{
 
         return $list;
     }
+
+    
+
+    public function dropdown($service,$from,$to, $filterValues = []){
+        
+        $service = Yii::$app->params['ServiceName'][$service];
+        
+        $filter = [];
+        if(count($filterValues) && is_array($filterValues))
+        {
+            foreach($filterValues  as $key => $value){
+                $filter = [$key => $value];  
+            }
+        }else {
+            $filter = [];
+        }
+
+        $result = \Yii::$app->navhelper->getData($service, $filter);
+        return Yii::$app->navhelper->refactorArray($result,$from,$to);
+    }
+
 }
 
 

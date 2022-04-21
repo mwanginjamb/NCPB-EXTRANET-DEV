@@ -24,25 +24,23 @@ class AdminlteAsset extends AssetBundle
         'plugins/icheck-bootstrap/icheck-bootstrap.min.css',
         'plugins/jqvmap/jqvmap.min.css',
         'plugins/datatables-bs4/css/dataTables.bootstrap4.css',
+        'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css',
         'https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css',
-        'dist/css/adminlte.min.css',
+        'dist/css/adminlte.css',
         'plugins/overlayScrollbars/css/OverlayScrollbars.min.css',
         'plugins/daterangepicker/daterangepicker.css',
         'plugins/summernote/summernote-bs4.css',
         'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700',
-        //'plugins/js/datatables/fixedHeader.bootstrap.min.css',
-        //'plugins/js/datatables/responsive.bootstrap.min.css',
-        //'plugins/js/datatables/scroller.bootstrap.min.css',
-        //'https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css',
-        //'css/plugins/timepicker/bootstrap-timepicker.css',
+
+        'https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.css',
+
         'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css',
         'css/steps.css',
-        'css/validation.css'
+        'css/validation.css',
 
     ];
     public $js = [
 
-        //'plugins/jquery/jquery.min.js',
         'plugins/bootstrap/js/bootstrap.bundle.min.js',
         'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js',
         'dist/js/adminlte.js',
@@ -52,7 +50,7 @@ class AdminlteAsset extends AssetBundle
         'plugins/jquery-mapael/jquery.mapael.min.js',
         'plugins/jquery-mapael/maps/usa_states.min.js',
         'plugins/chart.js/Chart.min.js',
-        'dist/js/pages/dashboard2.js',
+        // 'dist/js/pages/dashboard2.js',
 
         'plugins/sparklines/sparkline.js',
         'plugins/jqvmap/jquery.vmap.min.js',
@@ -68,12 +66,14 @@ class AdminlteAsset extends AssetBundle
         'plugins/jquery-mapael/jquery.mapael.min.js',
         'plugins/jquery-mapael/maps/usa_states.min.js',
         'plugins/chart.js/Chart.min.js',
+        'plugins/sweetalert2/sweetalert2.min.js',
 
 
         'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.full.min.js',
         'https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js',
         'https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js ',
-
+        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js',
+        'Js/custom.js',
         'Js/app.js',
     ];
     public $depends = [

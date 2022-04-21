@@ -16,24 +16,42 @@ class Appraisalcard extends Model
 {
 
 public $Key;
-public $Appraisal_Code;
+public $Appraisal_No;
 public $Employee_No;
 public $Employee_Name;
-public $Department;
-public $Calender_Code;
+public $Employee_User_Id;
+public $Level_Grade;
+public $Job_Title;
+public $Appraisal_Period;
 public $Appraisal_Start_Date;
-public $Appraisal_End_Date;
-public $Total_KPI_x0027_s;
-public $Deparrtment_Name;
-public $Approval_Status;
-public $Action_ID;
-public $Employee_Appraisal_KRAs;
-public $Hr_User_ID;
-
-public $Mid_Year_Approval_Status;
-public $Mid_Year_Score;
-public $End_Year_Score;
+public $Goal_Setting_Start_Date;
+public $Goal_Setting_End_Date;
+public $MY_Start_Date;
+public $MY_End_Date;
+public $EY_Start_Date;
+public $EY_End_Date;
 public $Goal_Setting_Status;
+public $MY_Appraisal_Status;
+public $EY_Appraisal_Status;
+public $Supervisor_No;
+public $Supervisor_Name;
+public $Supervisor_User_Id;
+public $Overview_Manager;
+public $Overview_Manager_Name;
+public $Overview_Manager_UserID;
+public $Over_View_Manager_Comments;
+public $Supervisor_Overall_Comments;
+public $Overall_Score;
+public $Overview_Rejection_Comments;
+public $Supervisor_Rejection_Comments;
+public $Is_Long_Term;
+public $Overview_Mid_Year_Comments;
+public $Line_Manager_Mid_Year_Comments;
+public $Mid_Year_Overrall_rating;
+public $Rejection_No;
+public $Recomended_Action;
+
+
 
     public function rules()
     {
@@ -45,32 +63,84 @@ public $Goal_Setting_Status;
     public function attributeLabels()
     {
         return [
+            'MY_End_Date' => 'Mid Year Appraisal End Date',
+            'MY_Start_Date' => 'Mid Year Appraisal Start Date',
+            'EY_End_Date' => 'End Year Appraisal End Date',
+            'EY_Start_Date' =>  'End Year Start Date',
+            'EY_Appraisal_Status' => 'End Year Appraisal Status',
+            'MY_Appraisal_Status' => 'Mid Year Appraisal Status'
+
 
         ];
     }
 
-
-     public function getKRA(){
-        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKRAs'];
-        $filter = [
-            'Appraisal_Code' => $this->Appraisal_Code,
-            'Employee_No' => $this->Employee_No,
-        ];
-
-        $results = Yii::$app->navhelper->getData($service, $filter);
-        return $results;
-    }
-
-    public function getKPI($KRA_Code){
+    public function getKPI($KRA_Line_No){
         $service = Yii::$app->params['ServiceName']['EmployeeAppraisalKPIs'];
         $filter = [
-            'Appraisal_Code' => $this->Appraisal_Code,
-            'Employee_No' => $this->Employee_No,
-            'KRA_Code' => $KRA_Code
+            'Appraisal_No' => $this->Appraisal_No,
+            'KRA_Line_No' => $KRA_Line_No
         ];
 
-        $results = Yii::$app->navhelper->getData($service, $filter);
-        return $results;
+        $kpas = Yii::$app->navhelper->getData($service, $filter);
+        return $kpas;
+    }
+
+    public function getAppraisalbehaviours($Category_Line_No){
+        $service = Yii::$app->params['ServiceName']['EmployeeAppraisalBehaviours'];
+        $filter = [
+            'Appraisal_Code' => $this->Appraisal_No,
+            'Category_Line_No' => $Category_Line_No
+        ];
+
+        $behaviours = Yii::$app->navhelper->getData($service, $filter);
+        return $behaviours;
+    }
+
+    public function getCareerdevelopmentstrengths($Goal_Line_No){
+        $service = Yii::$app->params['ServiceName']['CareerDevStrengths'];
+        $filter = [
+            'Appraisal_Code' => $this->Appraisal_No,
+            'Goal_Line_No' => $Goal_Line_No
+        ];
+
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        return $result;
+    }
+
+    public function getWeaknessdevelopmentplan($Wekaness_Line_No){
+        $service = Yii::$app->params['ServiceName']['WeeknessDevPlan'];
+        $filter = [
+            'Appraisal_No' => $this->Appraisal_No,
+            'Wekaness_Line_No' => $Wekaness_Line_No
+        ];
+
+        $result = Yii::$app->navhelper->getData($service, $filter);
+        return $result;
+    }
+
+
+    //get supervisor status
+
+    public function isSupervisor()
+    {
+
+        return (Yii::$app->user->identity->{'Employee No_'} == $this->Supervisor_No);
+
+    }
+
+
+     public function isOverView()
+    {
+
+        return (Yii::$app->user->identity->{'Employee No_'} == $this->Overview_Manager);
+
+    }
+
+     public function isAppraisee()
+    {
+        
+        return (Yii::$app->user->identity->{'Employee No_'} == $this->Employee_No);
+
     }
 
 

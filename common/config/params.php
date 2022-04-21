@@ -6,8 +6,8 @@ return [
     'senderName' => 'NCPB Mailer',
     'user.passwordResetTokenExpire' => 36000,
     'powered' => 'Iansoft Technologies Ltd.',
-    'NavisionUsername'=>'Administrator',
-    'NavisionPassword'=>'Ncpb&admin&',
+    'NavisionUsername'=>'administrator',
+    'NavisionPassword'=>'Ncpb@admin',
     'generalTitle' => 'NCPB EXTRANET ',
     'recruitmentTitle' => 'NCPB CAREERS',
 
@@ -15,16 +15,16 @@ return [
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'application.cereals',
-    'WebServicePort'=>'7050',//Nav server Port
+    'server'=>'192.168.1.40',
+    'WebServicePort'=>'7047',//Nav server Port
     'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
     'ServiceCompanyName'=>'NCPB',//Nav Company,
     'DbCompanyName' => 'NCPB$',
-    'ldPrefix'=>'cereals',//ACTIVE DIRECTORY prefix
+    'ldPrefix'=> 'cereals',//ACTIVE DIRECTORY prefix
     'adServer' => '192.168.0.2',//'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
 
     //sharepoint config
-    'sharepointUrl' => 'https://ackads.sharepoint.com',
+    'sharepointUrl' => '',
     'sharepointUsername' => 'francis@ackads.onmicrosoft.com',
     'sharepointPassword' => '@crm1220#*',
     'library' => 'Mydocs',
@@ -99,39 +99,29 @@ return [
 
         //-------------NCPB Appraisal--------------------------------------------------------------------------------
 
-        'AppraisalList' => 'AppraisalList', //60007
-        'AppraisalCard' => 'AppraisalCard', //60008
-        'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
-        'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
-        'ScoreCards' => 'ScoreCards', //60011
-
-        'GoalSettingAppraisalList' => 'GoalSettingAppraisalList', //60053
-        'GoalSettingSuper' => 'GoalSettingSuper', // 60054
-        'GoalSettingHr' => 'GoalSettingHr', //60055
-
-        'MyAppraisee' => 'MyAppraisee', //60050
-        'MySuper' => 'MySuper', //60051
-        'MyHr' => 'MyHr', //60052
-
-
-        'AppraisalListSupervisor' => 'AppraisalListSupervisor', //60012
-        'AppraisalListHr' => 'AppraisalListHr', //60013
-        'AppraisalListClosed' => 'AppraisalListClosed', //60014
-        'AppraisalListExtraSupervisor' => 'AppraisalListExtraSupervisor', //60015
-        'ApprovedAppraisals' => 'ApprovedAppraisals', //60016
-        'ApprovedAppraisalCard' => 'ApprovedAppraisalCard', //60017
-        'ApprovedAppraisalKRAs' => 'ApprovedAppraisalKRAs', //60018
-        'ApprovedKPIs' => 'ApprovedKPIs', //60019
-        'KPIAttachments' => 'KPIAttachments', //60020
-        'KRALookup'=> 'KRALookup', //60046 KRALookup
-        'PerspectiveObjectives' => 'PerspectiveObjectives', //60006
-        'AppraisalObjectives' => 'AppraisalObjectives', // 60001
-
-        'AppraisalStatusChange' => 'AppraisalStatusChange', // Code Unit
-        'AppraisalManagement' => 'AppraisalManagement', // 60000 Code Unit
+        
 
         /*End Appraisal service declaration*/
 
+        'AppraisalCard' => 'AppraisalCard', // 60008
+		'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
+		'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
+		'EmployeeAppraisalCompetence' => 'EmployeeAppraisalCompetence', //60033
+		'EmployeeAppraisalBehaviours' => 'EmployeeAppraisalBehaviours', //60034
+		'AppraisalRatings' => 'AppraisalRatings', //60023
+		
+		'ObjectiveSettingList' => 'ObjectiveSettingList', //60007
+		'LineMgrObjectiveApprovalList' => 'LineMgrObjectiveApprovalList', //60012
+		'OverviewMgrObjectiveApprovalList' => 'OverviewMgrObjectiveApprovalList', //60013
+		'MYAppraiseelList' => 'MYAppraiseelList', //60014
+		'MYSupervisorList' => 'MYSupervisorList', //60015
+		'MYOverviewList' => 'MYOverviewList',// 60020
+		'MYAgreementlist' => 'MYAgreementlist', //51005
+		'EYAppraiseeList' => 'EYAppraiseeList', //60017
+		'EYsupervisorList' => 'EYsupervisorList', // 60018
+		'EYOverviewList' => 'EYOverviewList', //60019
+		'EYAgreementList' => 'EYAgreementList', //60021
+		'ClosedAppraisalList' => 'ClosedAppraisalList', // 60022
 
         //Payslip report
         'Payrollperiods' => 'Payrollperiods', //70255

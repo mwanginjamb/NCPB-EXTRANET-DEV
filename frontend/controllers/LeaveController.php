@@ -256,12 +256,13 @@ class LeaveController extends Controller
         $results = \Yii::$app->navhelper->getData($service,$filter);
         $result = [];
         foreach($results as $item){
+            $status = !empty($item->Approval_Status)?$item->Approval_Status:null;
             $link = $updateLink = $deleteLink =  '';
             $Viewlink = Html::a('<i class="fas fa-eye"></i>',['view','No'=> $item->Application_No ],['class'=>'btn btn-outline-primary btn-xs']);
-            if($item->Approval_Status == 'New'){
+            if($status == 'New'){
                 $link = Html::a('<i class="fas fa-paper-plane"></i>',['send-for-approval','No'=> $item->Application_No ],['title'=>'Send Approval Request','class'=>'btn btn-primary btn-xs']);
                 $updateLink = Html::a('<i class="far fa-edit"></i>',['update','No'=> $item->Application_No],['class'=>'btn btn-info btn-xs']);
-            }else if($item->Approval_Status == 'Approval_Pending'){
+            }else if($status == 'Approval_Pending'){
                 $link = Html::a('<i class="fas fa-times"></i>',['cancel-request','No'=> $item->Application_No ],['title'=>'Cancel Approval Request','class'=>'btn btn-warning btn-xs']);
             }
 
@@ -272,7 +273,7 @@ class LeaveController extends Controller
                 'Employee_Name' => !empty($item->Employee_Name)?$item->Employee_Name:'',
                 'Application_Date' => !empty($item->Application_Date)?$item->Application_Date:'',
                 'Days_Applied' => !empty($item->Days_Applied)?$item->Days_Applied:'',
-                'Status' => $item->Approval_Status,
+                'Status' => !empty($item->Approval_Status)?$item->Approval_Status:'',
                 'Action' => $link,
                 'Update_Action' => $updateLink,
                 'view' => $Viewlink

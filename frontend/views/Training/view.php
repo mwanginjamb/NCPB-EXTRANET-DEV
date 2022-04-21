@@ -262,16 +262,7 @@ $script = <<<JS
      });
       
     
-    /*Evaluate KRA*/
-        $('.evalkra').on('click', function(e){
-             e.preventDefault();
-            var url = $(this).attr('href');
-            console.log('clicking...');
-            $('.modal').modal('show')
-                            .find('.modal-body')
-                            .load(url); 
-
-        });
+    
         
         
       //Add a training plan
