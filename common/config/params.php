@@ -6,8 +6,8 @@ return [
     'senderName' => 'NCPB Mailer',
     'user.passwordResetTokenExpire' => 36000,
     'powered' => 'Iansoft Technologies Ltd.',
-    'NavisionUsername'=>'administrator',
-    'NavisionPassword'=>'Ncpb@admin',
+    'NavisionUsername' => 'administrator',
+    'NavisionPassword' => 'Ncpb@admin',
     'generalTitle' => 'NCPB EXTRANET ',
     'recruitmentTitle' => 'NCPB CAREERS',
 
@@ -15,13 +15,13 @@ return [
     'NavTestApprover' => 'Approver',
     'NavTestApproverPassword' => '@Approver123',
 
-    'server'=>'192.168.1.40',
-    'WebServicePort'=>'7047',//Nav server Port
-    'ServerInstance'=>'DynamicsNAV100',//Nav Server Instance
-    'ServiceCompanyName'=>'NCPB',//Nav Company,
+    'server' => '192.168.1.40',
+    'WebServicePort' => '7047', //Nav server Port
+    'ServerInstance' => 'DynamicsNAV100', //Nav Server Instance
+    'ServiceCompanyName' => 'NCPB', //Nav Company,
     'DbCompanyName' => 'NCPB$',
-    'ldPrefix'=> 'cereals',//ACTIVE DIRECTORY prefix
-    'adServer' => '192.168.0.2',//'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
+    'ldPrefix' => 'cereals', //ACTIVE DIRECTORY prefix
+    'adServer' => '192.168.0.2', //'KRB-SVR7.KRBHQS.GO.KE', //Active directory domain controller
 
     //sharepoint config
     'sharepointUrl' => '',
@@ -42,15 +42,14 @@ return [
         'employeerequisition'
     ],
     'codeUnits' => [
-       'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005
-       'AppraisalStatusChange' => 'AppraisalStatusChange', //50020 
-       'AppraisalManagement' => 'AppraisalManagement', // 60000 Appraisal Mgt
-       'JobApplicationManagement' => 'JobApplicationManagement', // 50600
+        'wsPortalWorkflow' => 'wsPortalWorkflow', // 80005
+        'AppraisalStatusChange' => 'AppraisalStatusChange', //50228 
+        'JobApplicationManagement' => 'JobApplicationManagement', // 50600
     ],
-    'ServiceName'=>[
+    'ServiceName' => [
 
         'EmployeeCard' => 'EmployeeCard', // 70000
-        'EmployeeList' => 'EmployeeList',// 5201
+        'EmployeeList' => 'EmployeeList', // 5201
         'EthnicGroups' => 'EthnicGroups', //70409
         'Regions' => 'Regions', // 50112
         'Stations' => 'Stations', //70410
@@ -60,7 +59,7 @@ return [
         /******************************NCPB LEAVE************************************/
         'LeaveApplicationList' => 'LeaveApplicationList', // 70053
         'LeaveApplicationHeader' => 'LeaveApplicationHeader', //70075
-        'LeaveApplicationLines' => 'LeaveApplicationLines',//70055
+        'LeaveApplicationLines' => 'LeaveApplicationLines', //70055
         'LeaveTypesSetup' => 'LeaveTypesSetup', //50076
 
 
@@ -70,7 +69,7 @@ return [
         'ApprovalComments' => 'ApprovalComments', //660
         'RejectedApprovalEntries' => 'RejectedApprovalEntries', //50003
 
-        
+
 
 
         /*NCPB CONTRACT MGT SERVICES*/
@@ -85,43 +84,43 @@ return [
         'ContractCard' => 'ContractCard', //60030
         'ContractLines' => 'ContractLines', //60031
         'PurchaseOrderList' => 'PurchaseOrderList', //9307
-        'RFQList' => 'RFQList',// 50045
+        'RFQList' => 'RFQList', // 50045
         'TenderTypes' => 'TenderTypes', //50084
         'procurementMethods' => 'procurementMethods', //60032
         'HRdepartments' => 'HRdepartments', // 70042
         'PurchaseOrderArchives' => 'PurchaseOrderArchives', // 9347
-        'PurchaseOrderArchive' => 'PurchaseOrderArchive',//5167
+        'PurchaseOrderArchive' => 'PurchaseOrderArchive', //5167
         'ContractsNearingExpiry' => 'ContractsNearingExpiry', // 60111
         'PbondMonitoringList' => 'PbondMonitoringList', //60112
 
 
-        
+
 
         //-------------NCPB Appraisal--------------------------------------------------------------------------------
 
-        
 
-        /*End Appraisal service declaration*/
+
 
         'AppraisalCard' => 'AppraisalCard', // 60008
-		'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
-		'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
-		'EmployeeAppraisalCompetence' => 'EmployeeAppraisalCompetence', //60033
-		'EmployeeAppraisalBehaviours' => 'EmployeeAppraisalBehaviours', //60034
-		'AppraisalRatings' => 'AppraisalRatings', //60023
-		
-		'ObjectiveSettingList' => 'ObjectiveSettingList', //60007
-		'LineMgrObjectiveApprovalList' => 'LineMgrObjectiveApprovalList', //60012
-		'OverviewMgrObjectiveApprovalList' => 'OverviewMgrObjectiveApprovalList', //60013
-		'MYAppraiseelList' => 'MYAppraiseelList', //60014
-		'MYSupervisorList' => 'MYSupervisorList', //60015
-		'MYOverviewList' => 'MYOverviewList',// 60020
-		'MYAgreementlist' => 'MYAgreementlist', //51005
-		'EYAppraiseeList' => 'EYAppraiseeList', //60017
-		'EYsupervisorList' => 'EYsupervisorList', // 60018
-		'EYOverviewList' => 'EYOverviewList', //60019
-		'EYAgreementList' => 'EYAgreementList', //60021
-		'ClosedAppraisalList' => 'ClosedAppraisalList', // 60022
+        'EmployeeAppraisalKRAs' => 'EmployeeAppraisalKRAs', //60009
+        'EmployeeAppraisalKPIs' => 'EmployeeAppraisalKPIs', //60010
+        'EmployeeAppraisalCompetence' => 'EmployeeAppraisalCompetence', //60033
+        'EmployeeAppraisalBehaviours' => 'EmployeeAppraisalBehaviours', //60034
+        'AppraisalRatings' => 'AppraisalRatings', //60023
+
+        'ObjectiveSettingList' => 'ObjectiveSettingList', //60007
+        'LineMgrObjectiveApprovalList' => 'LineMgrObjectiveApprovalList', //60012
+        'OverviewMgrObjectiveApprovalList' => 'OverviewMgrObjectiveApprovalList', //60013
+        'MYAppraiseelList' => 'MYAppraiseelList', //60014
+        'MYSupervisorList' => 'MYSupervisorList', //60015
+        'MYOverviewList' => 'MYOverviewList', // 60020
+        'MYAgreementlist' => 'MYAgreementlist', //51005
+        'EYAppraiseeList' => 'EYAppraiseeList', //60017
+        'EYsupervisorList' => 'EYsupervisorList', // 60018
+        'EYOverviewList' => 'EYOverviewList', //60019
+        'EYAgreementList' => 'EYAgreementList', //60021
+        'ClosedAppraisalList' => 'ClosedAppraisalList', // 60022
+        'AppraisalStatusChange' => 'AppraisalStatusChange', // 50228 --Codeunit
 
         //Payslip report
         'Payrollperiods' => 'Payrollperiods', //70255
@@ -162,20 +161,20 @@ return [
 
         /*************Recruitment***************************/
 
-        'JobsList' => 'JobsList',//55057 --> Approved Requisitions
-        'JobsCard' => 'JobsCard',//55055
-        'RequirementSpecification'=> 'RequirementSpecification', //55049
+        'JobsList' => 'JobsList', //55057 --> Approved Requisitions
+        'JobsCard' => 'JobsCard', //55055
+        'RequirementSpecification' => 'RequirementSpecification', //55049
         'ResponsibilitySpecification' => 'ResponsibilitySpecification', //55048
         'JobApplicantProfile' => 'JobApplicantProfile', //55081
-        'referees' => 'referees',//55060
+        'referees' => 'referees', //55060
         'applicantLanguages' => 'applicantLanguages', //55061
         'experience' => 'experience', //55062
         'hobbies' => 'hobbies', //55063
-        'qualifications' => 'qualifications',//55064
+        'qualifications' => 'qualifications', //55064
         'HRqualifications' => 'HRqualifications', //5205
         'JobApplicantRequirementEntries' => 'JobApplicantRequirementEntries', //55065
         'HRJobApplicationsList' => 'HRJobApplicationsList', //55058
-        'HRJobApplicationsCard'=>'HRJobApplicationsCard',//55059
+        'HRJobApplicationsCard' => 'HRJobApplicationsCard', //55059
 
         'JobApplicationManagement' => 'JobApplicationManagement', // 50600 - Application Code Unit
 
@@ -198,7 +197,7 @@ return [
         'TrainingRequestHeader' => 'TrainingRequestHeader', //70402
         'TrainingRequestLine' => 'TrainingRequestLine', //70403
         'TrainingAreas' => 'TrainingAreas', //70400
-       
+
     ],
     'QualificationsMimeTypes' => [
 

@@ -8,8 +8,8 @@
                         <td class="text text-bold text-center">KPI</td>
                         <td class="text text-bold text-center">Target</td>
                         <td class="text text-bold text-center">Weight</td>
-                        <td class="text text-bold text-center text-info">Mid_Year Appraisee Assesment</td>
-                        <td class="text text-bold text-center text-info">Mid_Year Appraisee Comments</td>
+                        <td class="text text-bold text-center ">Mid_Year Appraisee Assesment</td>
+                        <td class="text text-bold text-center">Mid_Year Appraisee Comments</td>
                         <td class="text text-bold text-center">Mid_Year Supervisor Assesment</td>
                         <td class="text text-bold text-center">Mid_Year Supervisor Comments</td>
                         <td class="text text-bold text-center">Mid Year Agreement</td>
@@ -18,8 +18,8 @@
                         <td class="text text-bold text-center">Employee Comments</td>
                         <td class="text text-bold text-center">Appraiser Rating</td>
                         <td class="text text-bold text-center">End_Year Supervisor_Comments</td>
-                        <td class="text text-bold text-center">Agree</td>
-                        <td class="text text-bold text-center">Disagreement Comments</td>
+                        <td class="text text-bold text-center text-info">Agree</td>
+                        <td class="text text-bold text-center text-info">Disagreement Comments</td>
                         <td class="text text-bold text-center">Non-Achievement Reasons</td>
                         <td class="text text-bold text-center">Target Status</td>
 
@@ -37,8 +37,8 @@
                                 <td><?= !empty($kpi->KPI) ? $kpi->KPI : '' ?></td>
                                 <td><?= !empty($kpi->Target) ? $kpi->Target : '' ?></td>
                                 <td><?= !empty($kpi->Weight) ? $kpi->Weight : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Assesment" data-service="EmployeeAppraisalKPIs" ondblclick="addDropDown(this,'ratings')"><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Comments" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
+                                <td><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
+                                <td><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
                                 <td><?= !empty($kpi->Mid_Year_Supervisor_Assesment) ? $kpi->Mid_Year_Supervisor_Assesment : '' ?></td>
                                 <td><?= !empty($kpi->Mid_Year_Supervisor_Comments) ? $kpi->Mid_Year_Supervisor_Comments : '' ?></td>
                                 <td><?= $Myagreement ?></td>
@@ -47,8 +47,8 @@
                                 <td><?= !empty($kpi->Employee_Comments) ? $kpi->Employee_Comments : '' ?></td>
                                 <td><?= !empty($kpi->Appraiser_Rating) ? $kpi->Appraiser_Rating : '' ?></td>
                                 <td><?= !empty($kpi->End_Year_Supervisor_Comments) ? $kpi->End_Year_Supervisor_Comments : '' ?></td>
-                                <td><?= !empty($agree) ? $agree : '' ?></td>
-                                <td><?= !empty($kpi->Disagreement_Comments) ? $kpi->Disagreement_Comments : '' ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Agree" data-service="EmployeeAppraisalKPIs" ondblclick="addInput(this,'checkbox')"><?= !empty($agree) ? $agree : '' ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Disagreement_Comments" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Disagreement_Comments) ? $kpi->Disagreement_Comments : '' ?></td>
                                 <td><?= !empty($kpi->Non_Achievement_Reasons) ? $kpi->Non_Achievement_Reasons : '' ?></td>
                                 <td><?= !empty($kpi->Target_Status) ? $kpi->Target_Status : '' ?></td>
 

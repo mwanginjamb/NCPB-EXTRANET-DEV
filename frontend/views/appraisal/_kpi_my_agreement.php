@@ -8,12 +8,12 @@
                         <td class="text text-bold text-center">KPI</td>
                         <td class="text text-bold text-center">Target</td>
                         <td class="text text-bold text-center">Weight</td>
-                        <td class="text text-bold text-center text-info">Mid_Year Appraisee Assesment</td>
-                        <td class="text text-bold text-center text-info">Mid_Year Appraisee Comments</td>
+                        <td class="text text-bold text-center">Mid_Year Appraisee Assesment</td>
+                        <td class="text text-bold text-center">Mid_Year Appraisee Comments</td>
                         <td class="text text-bold text-center">Mid_Year Supervisor Assesment</td>
                         <td class="text text-bold text-center">Mid_Year Supervisor Comments</td>
-                        <td class="text text-bold text-center">Mid Year Agreement</td>
-                        <td class="text text-bold text-center">Mid Year Disagreement Comment</td>
+                        <td class="text text-bold text-center text-info">Mid Year Agreement</td>
+                        <td class="text text-bold text-center text-info">Mid Year Disagreement Comment</td>
                         <td class="text text-bold text-center">Appraisee Self_Rating</td>
                         <td class="text text-bold text-center">Employee Comments</td>
                         <td class="text text-bold text-center">Appraiser Rating</td>
@@ -37,12 +37,12 @@
                                 <td><?= !empty($kpi->KPI) ? $kpi->KPI : '' ?></td>
                                 <td><?= !empty($kpi->Target) ? $kpi->Target : '' ?></td>
                                 <td><?= !empty($kpi->Weight) ? $kpi->Weight : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Assesment" data-service="EmployeeAppraisalKPIs" ondblclick="addDropDown(this,'ratings')"><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Comments" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
+                                <td><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
+                                <td><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
                                 <td><?= !empty($kpi->Mid_Year_Supervisor_Assesment) ? $kpi->Mid_Year_Supervisor_Assesment : '' ?></td>
                                 <td><?= !empty($kpi->Mid_Year_Supervisor_Comments) ? $kpi->Mid_Year_Supervisor_Comments : '' ?></td>
-                                <td><?= $Myagreement ?></td>
-                                <td><?= !empty($kpi->Mid_Year_Disagreement_Comment) ? $kpi->Mid_Year_Disagreement_Comment : '' ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Agreement" data-service="EmployeeAppraisalKPIs" ondblclick="addInput(this,'checkbox')"><?= $Myagreement ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Disagreement_Comment" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Mid_Year_Disagreement_Comment) ? $kpi->Mid_Year_Disagreement_Comment : '' ?></td>
                                 <td><?= !empty($kpi->Appraisee_Self_Rating) ? $kpi->Appraisee_Self_Rating : '' ?></td>
                                 <td><?= !empty($kpi->Employee_Comments) ? $kpi->Employee_Comments : '' ?></td>
                                 <td><?= !empty($kpi->Appraiser_Rating) ? $kpi->Appraiser_Rating : '' ?></td>
