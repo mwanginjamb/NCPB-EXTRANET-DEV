@@ -241,6 +241,75 @@ class AppraisalController extends Controller
         return $result;
     }
 
+    public function actionListGsSupervisor()
+    {
+
+        $service = Yii::$app->params['ServiceName']['LineMgrObjectiveApprovalList'];
+        $filter = [
+            'Supervisor_No' => Yii::$app->user->identity->{'Employee No_'},
+        ];
+        $appraisals = \Yii::$app->navhelper->getData($service, $filter);
+
+        $result = [];
+
+        if (is_array($appraisals)) {
+            foreach ($appraisals as $req) {
+
+                $Viewlink = Bootstrap4Html::a('<i class="fas fa-eye mx-1"></i> View', ['view', 'Key' => $req->Key], ['class' => 'btn btn-outline-primary btn-xs']);
+
+                $result['data'][] = [
+                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
+                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
+                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
+                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
+                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
+                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ? $req->Appraisal_Period : '',
+                    'Appraisal_Start_Date' =>  !empty($req->Appraisal_Start_Date) ? $req->Appraisal_Start_Date : '',
+                    'Appraisal_End_Date' =>  !empty($req->Appraisal_End_Date) ? $req->Appraisal_End_Date : '',
+                    'Action' =>   $Viewlink,
+
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+
+    public function actionListGsOverview()
+    {
+
+        $service = Yii::$app->params['ServiceName']['OverviewMgrObjectiveApprovalList'];
+        $filter = [
+            'Overview_Manager' => Yii::$app->user->identity->{'Employee No_'},
+        ];
+        $appraisals = \Yii::$app->navhelper->getData($service, $filter);
+
+        $result = [];
+
+        if (is_array($appraisals)) {
+            foreach ($appraisals as $req) {
+
+                $Viewlink = Bootstrap4Html::a('<i class="fas fa-eye mx-1"></i> View', ['view', 'Key' => $req->Key], ['class' => 'btn btn-outline-primary btn-xs']);
+
+                $result['data'][] = [
+                    'Appraisal_No' => !empty($req->Appraisal_No) ? $req->Appraisal_No : 'Not Set',
+                    'Employee_No' => !empty($req->Employee_No) ? $req->Employee_No : '',
+                    'Employee_Name' => !empty($req->Employee_Name) ? $req->Employee_Name : 'Not Set',
+                    'Level_Grade' => !empty($req->Level_Grade) ? $req->Level_Grade : 'Not Set',
+                    'Job_Title' => !empty($req->Job_Title) ? $req->Job_Title : '',
+                    'Appraisal_Period' =>  !empty($req->Appraisal_Period) ? $req->Appraisal_Period : '',
+                    'Appraisal_Start_Date' =>  !empty($req->Appraisal_Start_Date) ? $req->Appraisal_Start_Date : '',
+                    'Appraisal_End_Date' =>  !empty($req->Appraisal_End_Date) ? $req->Appraisal_End_Date : '',
+                    'Action' =>   $Viewlink,
+
+                ];
+            }
+        }
+
+        return $result;
+    }
+
     public function actionListMyAppraisee()
     {
 
@@ -734,7 +803,7 @@ class AppraisalController extends Controller
             'approvalURL' => Yii::$app->urlManager->createAbsoluteUrl(['appraisal/viewsubmitted', 'Appraisal_No' => $appraisalNo, 'Employee_No' => $employeeNo])
         ];
 
-        $result = Yii::$app->navhelper->IanSendGoalSettingForApproval($service, $data);
+        $result = Yii::$app->navhelper->codeunit($service, $data, 'IanSendGoalSettingForApproval');
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Perfomance Appraisal Submitted Successfully.', true);
@@ -766,10 +835,10 @@ class AppraisalController extends Controller
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Successfully sent to overview manager.', true);
-            return $this->redirect(['submitted']);
+            return $this->redirect(['gs-supervisor']);
         } else {
             Yii::$app->session->setFlash('error', 'Error sending to overview manager : ' . $result);
-            return $this->redirect(['submitted']);
+            return $this->redirect(['gs-supervisor']);
         }
     }
 
@@ -926,11 +995,11 @@ class AppraisalController extends Controller
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Mid Year Perfomance Appraisal Pushed to Agreement Stage Successfully.', true);
-            return $this->redirect(['myagreementsuper']);
+            return $this->redirect(['my-supervisor']);
         } else {
 
             Yii::$app->session->setFlash('error', 'Error : ' . $result);
-            return $this->redirect(['myagreementsuper']);
+            return $this->redirect(['my-supervisor']);
         }
     }
 
@@ -985,11 +1054,11 @@ class AppraisalController extends Controller
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Mid Year Agreement Appraisal Sent Back to Line Manager Successfully.', true);
-            return $this->redirect(['myagreement']);
+            return $this->redirect(['my-supervisor']);
         } else {
 
             Yii::$app->session->setFlash('error', 'Error : ' . $result);
-            return $this->redirect(['myagreement']);
+            return $this->redirect(['my-supervisor']);
         }
     }
 
@@ -1323,7 +1392,7 @@ class AppraisalController extends Controller
     public function actionReport()
     {
 
-        $service = Yii::$app->params['ServiceName']['PortalReports'];
+        $service = Yii::$app->params['ServiceName']['AppraisalStatusChange'];
 
         if (Yii::$app->request->post()) {
 
@@ -1331,9 +1400,9 @@ class AppraisalController extends Controller
                 'appraisalNo' => Yii::$app->request->post('appraisalNo'),
                 'employeeNo' => Yii::$app->request->post('employeeNo')
             ];
-            //$path = Yii::$app->navhelper->IanGenerateAppraisalReport($service,$data);
-            $path = Yii::$app->navhelper->CodeUnit($service, $data, 'IanGenerateNewEmployeeAppraisalReport');
-            //Yii::$app->recruitment->printrr($path);
+
+            $path = Yii::$app->navhelper->CodeUnit($service, $data, 'IanGenerateReport');
+            // Yii::$app->recruitment->printrr($path);
             if (!isset($path['return_value']) || !is_file($path['return_value'])) {
 
                 return $this->render('report', [
@@ -1402,11 +1471,11 @@ class AppraisalController extends Controller
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Goals Sent Back Line Manager with comments Successfully.', true);
-            return $this->redirect(['myoverviewlist']);
+            return $this->redirect(['gs-overview']);
         } else {
 
             Yii::$app->session->setFlash('error', 'Error : ' . $result);
-            return $this->redirect(['myoverviewlist']);
+            return $this->redirect(['gs-overview']);
         }
     }
 
@@ -1427,11 +1496,11 @@ class AppraisalController extends Controller
 
         if (!is_string($result)) {
             Yii::$app->session->setFlash('success', 'Mid Year Appraisal Sent Back to Line Mgr Successfully.', true);
-            return $this->redirect(['myoverviewlist']);
+            return $this->redirect(['my-overview']);
         } else {
 
             Yii::$app->session->setFlash('error', 'Error : ' . $result);
-            return $this->redirect(['myoverviewlist']);
+            return $this->redirect(['my-overview']);
         }
     }
 
@@ -1450,12 +1519,12 @@ class AppraisalController extends Controller
         $result = Yii::$app->navhelper->CodeUnit($service, $data, 'IanApproveGoalSetting');
 
         if (!is_string($result)) {
-            Yii::$app->session->setFlash('success', 'Probation Goals Approved Successfully.', true);
-            return $this->redirect(['overviewgoalslist']);
+            Yii::$app->session->setFlash('success', 'Goals Approved Successfully.', true);
+            return $this->redirect(['gs-overview']);
         } else {
 
-            Yii::$app->session->setFlash('error', 'Error Approving Probation Goals  : ' . $result);
-            return $this->redirect(['overviewgoalslist']);
+            Yii::$app->session->setFlash('error', 'Error Approving  Goals  : ' . $result);
+            return $this->redirect(['gs-overview']);
         }
     }
 }

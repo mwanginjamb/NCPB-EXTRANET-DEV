@@ -5,6 +5,8 @@
                 <thead>
                     <tr>
 
+                        <td class="text text-bold text-center">Objective</td>
+                        <td class="text text-bold text-center">Initiative</td>
                         <td class="text text-bold text-center">KPI</td>
                         <td class="text text-bold text-center">Target</td>
                         <td class="text text-bold text-center">Weight</td>
@@ -34,6 +36,8 @@
                     ?>
                             <tr>
 
+                                <td><?= !empty($kpi->Objective) ? $kpi->Objective : '' ?></td>
+                                <td><?= !empty($kpi->Initiative) ? $kpi->Initiative : '' ?></td>
                                 <td><?= !empty($kpi->KPI) ? $kpi->KPI : '' ?></td>
                                 <td><?= !empty($kpi->Target) ? $kpi->Target : '' ?></td>
                                 <td><?= !empty($kpi->Weight) ? $kpi->Weight : '' ?></td>

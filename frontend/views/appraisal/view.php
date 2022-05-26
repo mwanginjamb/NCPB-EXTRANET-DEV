@@ -39,10 +39,10 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                 <div class="row">
                     <?php if ($model->Goal_Setting_Status == 'New') : ?>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
 
                             <?= Html::a('<i class="fas fa-forward"></i> submit', ['submit', 'appraisalNo' => $model->Appraisal_No, 'employeeNo' => $model->Employee_No], [
-                                'class' => 'btn btn-app submitforapproval mx-1', 'data' => [
+                                'class' => 'btn btn-app submitforapproval mx-auto', 'data' => [
                                     'confirm' => 'Are you sure you want to submit this appraisal?',
                                     'method' => 'post',
                                 ],
@@ -55,7 +55,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
                     <div class="col-md-4">
                         <?= Html::a('<i class="fas fa-book-open"></i> P.A Report', ['report', 'appraisalNo' => $model->Appraisal_No, 'employeeNo' => $model->Employee_No], [
-                            'class' => 'btn btn-app bg-success  pull-right mx-1',
+                            'class' => 'btn btn-app bg-success  pull-right mx-auto',
                             'title' => 'Generate Performance Appraisal Report',
                             'target' => '_blank',
                             'data' => [

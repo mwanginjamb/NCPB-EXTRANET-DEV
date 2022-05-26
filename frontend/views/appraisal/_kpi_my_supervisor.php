@@ -4,7 +4,8 @@
             <table class="table table-hover table-borderless table-info">
                 <thead>
                     <tr>
-
+                        <td class="text text-bold text-center">Objective</td>
+                        <td class="text text-bold text-center">Initiative</td>
                         <td class="text text-bold text-center">KPI</td>
                         <td class="text text-bold text-center">Target</td>
                         <td class="text text-bold text-center">Weight</td>
@@ -33,12 +34,13 @@
                             $Myagreement = ($kpi->Mid_Year_Agreement) ? 'Yes' : 'No';
                     ?>
                             <tr>
-
+                                <td><?= !empty($kpi->Objective) ? $kpi->Objective : '' ?></td>
+                                <td><?= !empty($kpi->Initiative) ? $kpi->Initiative : '' ?></td>
                                 <td><?= !empty($kpi->KPI) ? $kpi->KPI : '' ?></td>
                                 <td><?= !empty($kpi->Target) ? $kpi->Target : '' ?></td>
                                 <td><?= !empty($kpi->Weight) ? $kpi->Weight : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Assesment" data-service="EmployeeAppraisalKPIs" ondblclick="addDropDown(this,'ratings')"><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
-                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Comments" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Assesment" data-service="EmployeeAppraisalKPIs"><?= !empty($kpi->Mid_Year_Appraisee_Assesment) ? $kpi->Mid_Year_Appraisee_Assesment : '' ?></td>
+                                <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Appraisee_Comments" data-service="EmployeeAppraisalKPIs"><?= !empty($kpi->Mid_Year_Appraisee_Comments) ? $kpi->Mid_Year_Appraisee_Comments : '' ?></td>
                                 <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Supervisor_Assesment" data-service="EmployeeAppraisalKPIs" ondblclick="addDropDown(this,'ratings')"><?= !empty($kpi->Mid_Year_Supervisor_Assesment) ? $kpi->Mid_Year_Supervisor_Assesment : '' ?></td>
                                 <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Supervisor_Comments" data-service="EmployeeAppraisalKPIs" ondblclick="addTextarea(this)"><?= !empty($kpi->Mid_Year_Supervisor_Comments) ? $kpi->Mid_Year_Supervisor_Comments : '' ?></td>
                                 <td data-key="<?= $kpi->Key ?>" data-name="Mid_Year_Agreement" data-service="EmployeeAppraisalKPIs" ondblclick="addInput(this,'checkbox')"><?= $Myagreement ?></td>

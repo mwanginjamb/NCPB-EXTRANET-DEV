@@ -45,13 +45,7 @@ if (Yii::$app->session->hasFlash('success')) {
     <div class="col-md-12">
         <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Mid Year Agreement Performance Appraisal List</h3>
-
-
-
-
-
-
+                <h3 class="card-title">Goal Setting Supervisor List</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -77,7 +71,7 @@ $script = <<<JS
           $('#table').DataTable({
            
             //serverSide: true,  
-            ajax: url+'appraisal/list-my-agreement',
+            ajax: url+'appraisal/list-gs-supervisor',
             paging: true,
             columns: [
                 { title: 'No' ,data: 'Appraisal_No'},

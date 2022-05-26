@@ -37,32 +37,13 @@ if (Yii::$app->session->hasFlash('success')) {
 ?>
 
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-body">
-                <?= \yii\helpers\Html::a('New', ['create'], ['class' => 'btn btn-info mx-1 py-2', 'data' => [
-                    'confirm' => 'Are you sure you want to create a new Appraisal?',
-                    'method' => 'get',
-                ],]) ?>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 <div class="row">
     <div class="col-md-12">
         <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Performance Appraisal List</h3>
-
-
-
-
-
-
+                <h3 class="card-title">End Year Appraisee Performance Appraisal List</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
